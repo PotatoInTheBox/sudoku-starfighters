@@ -5,3 +5,4 @@ be working on creating Space Invaders in Java
 
 Contributers:
 Steven Truong
+Thomas Obrenovich
