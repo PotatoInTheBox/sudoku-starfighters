@@ -1,0 +1,1 @@
+Place all documents (class diagram, sequence diagram, javadoc ...) in this package
