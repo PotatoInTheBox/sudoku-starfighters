@@ -2,16 +2,18 @@ package model;
 
 public class Player extends Entity
 {
-	public Player() {
-		
+	protected float speed;
+	
+	public Player(float _speed) {
+		speed = _speed;
 	}
 	
 	public void moveLeft() {
-		
+		positionX -= speed;
 	}
 	
 	public void moveRight() {
-		
+		positionX += speed;
 	}
 	
 	public boolean isHit() {
