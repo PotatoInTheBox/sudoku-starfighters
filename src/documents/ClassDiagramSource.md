@@ -21,13 +21,14 @@ package "model" {
   class Player {
     + moveLeft()
     + moveRight()
-    + isHit(): boolean
     + shootBullet()
   }
 
   class InvadersGroup {
     - aliveInvaders: Invader[]
     - invadersColumns: InvadersColumn[]
+    + getInvaders(): Invader[]
+    + getFrontInvaders(): Invader[]
     + setDirection(direction: float)
     + moveVertically()
     + moveHorizontally()
@@ -42,7 +43,7 @@ package "model" {
   }
 
   class Invader {
-    + isHit()
+    - directionX: int
     + setDirection(direction: float)
     + moveVertically()
     + moveHorizontally()
