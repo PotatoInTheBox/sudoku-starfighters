@@ -1,6 +1,6 @@
 package view_controller;
 
-public class Input
+public class GamePane
 {
-	
+
 }
