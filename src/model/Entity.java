@@ -7,6 +7,22 @@ public abstract class Entity
 	protected float sizeX;
 	protected float sizeY;
 	
+	public Entity()
+	{
+		positionX = 0;
+		positionY = 0;
+		sizeX = 20;
+		sizeY = 20;
+	}
+	
+	public Entity(float xPos, float yPos, float xSize, float ySize)
+	{
+		positionX = xPos;
+		positionY = yPos;
+		sizeX = xSize;
+		sizeY = ySize;
+	}
+	
 	public float getPositionX() {
 		return positionX;
 	}
