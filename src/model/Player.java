@@ -5,6 +5,7 @@ public class Player extends Entity
 	protected float speed;
 	
 	public Player(float _speed) {
+		super(375, 600, 20, 20);
 		speed = _speed;
 	}
 	
