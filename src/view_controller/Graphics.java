@@ -1,10 +1,14 @@
 package view_controller;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -25,20 +29,21 @@ public class Graphics extends Pane {
     private final int MAX_FRAME_COUNT = 60;
     private long[] fpsRecord = new long[MAX_FRAME_COUNT];
 
+    Image playerSprite;
+
     public Graphics(Scene scene, double width, double height, Game game) {
         this.scene = scene;
         this.game = game;
         canvas = new Canvas(width, height);
         gc = canvas.getGraphicsContext2D();
         getChildren().add(canvas);
+        loadSprites();
     }
 
     public void update() {
         drawRectangle(0, 0, canvas.getWidth(), canvas.getHeight(), Color.BLACK);
-        drawWireFrame(game.getPlayer(), Color.RED);
-        for (Entity e : game.bullets) {
-            drawWireFrame(e, Color.YELLOW);
-        }
+        drawAllSprites();
+        drawAllWireFrames();
         updateFps();
         drawText(fpsAverageString, 10, 10);
     }
@@ -57,6 +62,28 @@ public class Graphics extends Pane {
         fpsRecord[fpsCounter] = (thisTime - lastFpsTime) / 1_000;
         lastFpsTime = thisTime;
         fpsCounter++;
+    }
+
+    private void loadSprites() {
+        FileInputStream playerImageFile;
+        try {
+            playerImageFile = new FileInputStream("./resources/images/player_ship_scaled.png");
+            playerSprite = new Image(playerImageFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("Could not find ./resources/images/player_ship_scaled.png");
+        }
+        
+    }
+
+    private void drawAllSprites() {
+        gc.drawImage(playerSprite, game.getPlayer().getX(), game.getPlayer().getY(), game.getPlayer().getWidth(), game.getPlayer().getHeight());
+    }
+
+    private void drawAllWireFrames() {
+        drawWireFrame(game.getPlayer(), Color.RED);
+        for (Entity e : game.bullets) {
+            drawWireFrame(e, Color.YELLOW);
+        }
     }
 
     private void drawText(String string, float x, float y) {

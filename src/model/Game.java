@@ -23,7 +23,7 @@ public class Game {
     }
 
     public void startGame() {
-        this.player = new Player(50f, 50f, 40f, 20f, 10f);
+        this.player = new Player(50f, 50f, 40f, 40f, 10f);
     }
 
     // This update is primarily for user input, game logic shouldn't go here
