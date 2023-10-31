@@ -1,30 +1,32 @@
 package view_controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javafx.animation.AnimationTimer;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.animation.AnimationTimer;
 import model.Bullet;
-import model.Entity;
 import model.Game;
 
 public class GamePane extends Pane {
+
     private Input input;
     private Game game;
     private Scene scene;
     private Graphics graphics;
-
+    private Timer timer;
     private long lastTime = 0l;
 
-    public GamePane(Scene scene, double width, double height) {
+    public GamePane(Scene scene, Input input, double width, double height) {
         this.scene = scene;
-        this.input = new Input(scene);
+        this.input = input;
         this.game = new Game((float) width, (float) height);
         this.graphics = new Graphics(scene, width, height, game);
-        getChildren().add(graphics);
+        this.timer = new Timer();
 
         input.onKeyDown(e -> {
             if (e.getCode().equals(KeyCode.Z)) {
@@ -32,16 +34,17 @@ public class GamePane extends Pane {
                 game.bullets.add(bullet);
             }
         });
-
-        Timer newTimer = new Timer();
-        lastTime = System.currentTimeMillis();
-        newTimer.start();
+        getChildren().add(graphics);
+        unpauseGame();
     }
 
-    private void fixedUpdate() {
-        game.movePlayer(input.getJoystickX(), input.getJoystickY());
-        game.fixedUpdate();
-        graphics.update();
+    public void pauseGame() {
+        timer.stop();
+    }
+
+    public void unpauseGame() {
+        lastTime = System.currentTimeMillis();
+        timer.start();
     }
 
     private void update() {
@@ -61,11 +64,16 @@ public class GamePane extends Pane {
         }
     }
 
+    private void fixedUpdate() {
+        game.movePlayer(input.getJoystickX(), input.getJoystickY());
+        game.fixedUpdate();
+        graphics.update();
+    }
+
     private class Timer extends AnimationTimer {
         @Override
         public void handle(long arg0) {
             update();
         }
-
     }
 }
