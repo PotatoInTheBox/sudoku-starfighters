@@ -2,6 +2,7 @@ package view_controller;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -50,7 +51,9 @@ public class GamePane extends BorderPane
 	private void drawObjects()
 	{
 		Player player = game.getPlayer();
-		graphics.setStroke(Color.WHITE);
-		graphics.strokeRect(player.getPositionX(), player.getPositionY(), player.getSizeX(), player.getSizeY());
+	    Image playerImage = new Image("file:player_ship.png");
+		graphics.drawImage(playerImage, player.getPositionX(), player.getPositionY(), player.getSizeX() * 2, player.getSizeY() * 2);
+		//graphics.setStroke(Color.WHITE);
+		//graphics.strokeRect(player.getPositionX(), player.getPositionY(), player.getSizeX(), player.getSizeY());
 	}
 }
