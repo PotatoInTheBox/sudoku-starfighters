@@ -1,3 +1,4 @@
-lib/
-.vscode/
-bin/
+/lib/
+/.vscode/
+/bin/
+/.project
