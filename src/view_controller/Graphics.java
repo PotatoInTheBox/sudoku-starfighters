@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import model.Bullet;
 import model.Entity;
 import model.Game;
+import model.Score;
 
 public class Graphics extends Pane {
 
@@ -28,6 +29,8 @@ public class Graphics extends Pane {
     private int fpsCounter = 0;
     private final int MAX_FRAME_COUNT = 60;
     private long[] fpsRecord = new long[MAX_FRAME_COUNT];
+    
+    private Score score = new Score();
 
     Image playerSprite;
 
@@ -89,7 +92,12 @@ public class Graphics extends Pane {
     private void drawText(String string, float x, float y) {
         gc.setLineWidth(1);
         gc.setStroke(Color.WHITE);
-        gc.strokeText(string, x, y);
+        gc.strokeText(string, x, y + 5);
+        
+        gc.strokeText("Score: " + Integer.toString(score.getScore()), x, y + 20);
+        
+        gc.strokeText("Lives: " + Integer.toString(score.getLives()), x, y + 35);
+
     }
 
     private void drawWireFrame(Entity entity, Color color) {
