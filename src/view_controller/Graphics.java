@@ -48,7 +48,9 @@ public class Graphics extends Pane {
         drawAllSprites();
         drawAllWireFrames();
         updateFps();
-        drawText(fpsAverageString, 10, 10);
+        drawText(fpsAverageString, 10, 15);
+        drawText("Score: " + Integer.toString(score.getScore()), 10, 30);
+        drawText("Lives: " + Integer.toString(score.getLives()), 10, 45);
     }
 
     private void updateFps() {
@@ -93,11 +95,6 @@ public class Graphics extends Pane {
         gc.setLineWidth(1);
         gc.setStroke(Color.WHITE);
         gc.strokeText(string, x, y + 5);
-        
-        gc.strokeText("Score: " + Integer.toString(score.getScore()), x, y + 20);
-        
-        gc.strokeText("Lives: " + Integer.toString(score.getLives()), x, y + 35);
-
     }
 
     private void drawWireFrame(Entity entity, Color color) {
