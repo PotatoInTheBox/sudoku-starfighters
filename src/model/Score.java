@@ -4,10 +4,12 @@ public class Score
 {
 	private int score;
 	private int lives;
+	private String username;
 	
 	public Score() {
 		score = 0;
 		lives = 3;
+		username = "";
 	}
 	
 	public int getScore(){
@@ -16,6 +18,14 @@ public class Score
 	
 	public int getLives() {
 		return lives;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+	
+	public void setUsername(String user) {
+		username = user;
 	}
 	
 	public void changeScore(int change) {

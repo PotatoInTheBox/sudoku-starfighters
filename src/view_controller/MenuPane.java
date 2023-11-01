@@ -17,27 +17,31 @@ public class MenuPane extends GridPane {
     private Button newGameButton;
     private Button optionsButton;
     private Button exitButton;
+    private Button leaderboardButton;
 
     private List<EventHandler<ActionEvent>> continueGameHandlers = new ArrayList<>();
     private List<EventHandler<ActionEvent>> newGameHandlers = new ArrayList<>();
+    private List<EventHandler<ActionEvent>> leaderboardHandlers = new ArrayList<>();
     private List<EventHandler<ActionEvent>> optionsHandlers = new ArrayList<>();
     private List<EventHandler<ActionEvent>> exitHandlers = new ArrayList<>();
 
     public MenuPane() {
         continueButton = new Button("Continue");
         newGameButton = new Button("New Game");
+        leaderboardButton = new Button("Leaderboard");
         optionsButton = new Button("Options");
         exitButton = new Button("Exit");
 
         setAlignment(Pos.CENTER);
         setHalignment(continueButton, HPos.CENTER);
         setHalignment(newGameButton, HPos.CENTER);
+        setHalignment(leaderboardButton, HPos.CENTER);
         setHalignment(optionsButton, HPos.CENTER);
         setHalignment(exitButton, HPos.CENTER);
 
         setVgap(20);
 
-        addColumn(0, continueButton, newGameButton, optionsButton, exitButton);
+        addColumn(0, continueButton, newGameButton, leaderboardButton, optionsButton, exitButton);
 
         continueButton.setOnAction(e -> {
             for (EventHandler<ActionEvent> event : continueGameHandlers)
@@ -45,6 +49,10 @@ public class MenuPane extends GridPane {
         });
         newGameButton.setOnAction(e -> {
             for (EventHandler<ActionEvent> event : newGameHandlers)
+                event.handle(e);
+        });
+        leaderboardButton.setOnAction(e -> {
+            for (EventHandler<ActionEvent> event : leaderboardHandlers)
                 event.handle(e);
         });
         optionsButton.setOnAction(e -> {
@@ -64,6 +72,10 @@ public class MenuPane extends GridPane {
 
     public void onNewGame(EventHandler<ActionEvent> eventHandler) {
         newGameHandlers.add(eventHandler);
+    }
+    
+    public void onLeaderboard(EventHandler<ActionEvent> eventHandler) {
+    	leaderboardHandlers.add(eventHandler);
     }
 
     public void onOptions(EventHandler<ActionEvent> eventHandler) {

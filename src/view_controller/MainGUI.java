@@ -11,11 +11,12 @@ public class MainGUI extends Application {
 
     GamePane gamePane;
     MenuPane menuPane;
+    LeaderboardPane leaderboardPane;
     Input input;
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("JavaFX Window Template");
+        primaryStage.setTitle("Space Invaders");
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root, 600, 600);
         this.input = new Input(scene);
@@ -23,6 +24,7 @@ public class MainGUI extends Application {
         loadCssStyleFile(scene);
 
         menuPane = new MenuPane();
+        leaderboardPane = new LeaderboardPane();
 
         menuPane.onNewGame(e -> {
             gamePane = new GamePane(scene, input, 600, 600);
@@ -36,12 +38,19 @@ public class MainGUI extends Application {
                 System.err.println("No game currently exists!");
             }
         });
+        menuPane.onLeaderboard(e -> {
+        	leaderboardPane.updateScores();
+            root.setCenter(leaderboardPane);
+        });
         menuPane.onOptions(e -> {
             System.out.println("Unimplemented");
         });
         menuPane.onExit(e -> {
             Platform.exit();
             System.exit(0);
+        });
+        leaderboardPane.onBack(e -> {
+            root.setCenter(menuPane);
         });
 
         input.onKeyDown(e -> {
