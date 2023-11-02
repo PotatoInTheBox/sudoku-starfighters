@@ -25,33 +25,7 @@ public class Game {
 
     public void startNewGame() {
         spawnPlayer(width - 20, height - 20, 40, 40);
-
-        final float START_X_SPAWN = 10f;
-        final float END_SPAWN = height - START_X_SPAWN;
-        final int INVADER_X_COUNT = 13;
-        for (int i = 0; i < INVADER_X_COUNT; i++) {
-            float newSpawnXPos = (END_SPAWN - START_X_SPAWN) * i / INVADER_X_COUNT;
-            final int INVADER_Y_COUNT = 6;
-            final float START_Y_SPAWN = 70f;
-            for (int j = 0; j < INVADER_Y_COUNT; j++) {
-                InvaderType invaderType;
-                switch (j%3) {
-                    case 0:
-                        invaderType = InvaderType.ONION;
-                        break;
-                    case 1:
-                        invaderType = InvaderType.SPIDER;
-                        break;
-                    default:
-                        invaderType = InvaderType.MUSHROOM;
-                        break;
-                }
-                float newSpawnYPos = START_Y_SPAWN + ((END_SPAWN - START_X_SPAWN) / INVADER_X_COUNT) * j;
-                spawnInvader(newSpawnXPos, newSpawnYPos, 35, 35, invaderType);
-            }
-
-        }
-
+        spawnAllInvaders();
     }
 
     // This update is primarily for user input, game logic shouldn't go here
@@ -156,6 +130,36 @@ public class Game {
         Invader invader = new Invader(x, y, width, height, 2f);
         invader.setInvaderType(invaderType);
         invaders.add(invader);
+    }
+    
+    private void spawnAllInvaders()
+    {
+    	final float START_X_SPAWN = 10f;
+        final float END_SPAWN = height - START_X_SPAWN;
+        final int INVADER_X_COUNT = 13;
+        for (int i = 0; i < INVADER_X_COUNT; i++) {
+            float newSpawnXPos = (END_SPAWN - START_X_SPAWN) * i / INVADER_X_COUNT;
+            final int INVADER_Y_COUNT = 6;
+            final float START_Y_SPAWN = 70f;
+            for (int j = 0; j < INVADER_Y_COUNT; j++) {
+                InvaderType invaderType;
+                switch (j%3) {
+                    case 0:
+                        invaderType = InvaderType.ONION;
+                        break;
+                    case 1:
+                        invaderType = InvaderType.SPIDER;
+                        break;
+                    default:
+                        invaderType = InvaderType.MUSHROOM;
+                        break;
+                }
+                float newSpawnYPos = START_Y_SPAWN + ((END_SPAWN - START_X_SPAWN) / INVADER_X_COUNT) * j;
+                spawnInvader(newSpawnXPos, newSpawnYPos, 35, 35, invaderType);
+            }
+
+        }
+
     }
 
     // for rendering only
