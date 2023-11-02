@@ -36,7 +36,7 @@ public class Game {
                 float newSpawnYPos = START_Y_SPAWN + ((END_SPAWN - START_X_SPAWN) / INVADER_X_COUNT) * j;
                 spawnInvader(newSpawnXPos, newSpawnYPos, 30, 30);
             }
-            
+
         }
 
     }
@@ -77,8 +77,15 @@ public class Game {
 
         // bound player to map
         if (player != null && player.isOutOfBounds(0f, 0f, (float) width, (float) height)) {
-            player.setX((float) width / 2);
-            player.setY((float) height / 2);
+            if (player.getX() < 0) {
+                player.setX(0);
+            } else if (player.getX() + player.getWidth() > width) {
+                player.setX(width - player.getWidth());
+            } else if (player.getY() < 0) {
+                player.setY(0);
+            } else if (player.getY() + player.getHeight() > height) {
+                player.setY(height - player.getHeight());
+            }
         }
 
         // bound invaders to map
@@ -89,6 +96,8 @@ public class Game {
             if (hitEntity != null) {
                 markedForRemoval.add(bullet);
                 markedForRemoval.add(hitEntity);
+            } else if (bullet.isOutOfBounds(0, 0, width, height)){
+                markedForRemoval.add(bullet);
             }
         }
     }
