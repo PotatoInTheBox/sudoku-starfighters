@@ -66,11 +66,14 @@ public class Game {
         if (player != null && player.isOutOfBounds(0f, 0f, (float) width, (float) height)) {
             if (player.getX() < 0) {
                 player.setX(0);
-            } else if (player.getX() + player.getWidth() > width) {
+            }
+            if (player.getX() + player.getWidth() > width) {
                 player.setX(width - player.getWidth());
-            } else if (player.getY() < 0) {
+            }
+            if (player.getY() < 0) {
                 player.setY(0);
-            } else if (player.getY() + player.getHeight() > height) {
+            }
+            if (player.getY() + player.getHeight() > height) {
                 player.setY(height - player.getHeight());
             }
         }
@@ -83,11 +86,11 @@ public class Game {
             if (hitEntity != null) {
                 markedForRemoval.add(bullet);
                 markedForRemoval.add(hitEntity);
-            } else if (bullet.isOutOfBounds(0, 0, width, height)){
+            } else if (bullet.isOutOfBounds(0, 0, width, height)) {
                 markedForRemoval.add(bullet);
             }
         }
-        
+
         tryInvaderShootBullet(5 + (78 - invaders.size()));
     }
 
@@ -107,9 +110,9 @@ public class Game {
     public void shootPlayerBullet() {
         bullets.add(player.shootBullet());
     }
-    
+
     public void shootInvaderBullet(Invader entity) {
-    	bullets.add(entity.shootBullet());
+        bullets.add(entity.shootBullet());
     }
 
     public void addBullet(Bullet bullet) {
@@ -131,10 +134,9 @@ public class Game {
         invader.setInvaderType(invaderType);
         invaders.add(invader);
     }
-    
-    private void spawnAllInvaders()
-    {
-    	final float START_X_SPAWN = 10f;
+
+    private void spawnAllInvaders() {
+        final float START_X_SPAWN = 10f;
         final float END_SPAWN = height - START_X_SPAWN;
         final int INVADER_X_COUNT = 13;
         for (int i = 0; i < INVADER_X_COUNT; i++) {
@@ -143,7 +145,7 @@ public class Game {
             final float START_Y_SPAWN = 70f;
             for (int j = 0; j < INVADER_Y_COUNT; j++) {
                 InvaderType invaderType;
-                switch (j%3) {
+                switch (j % 3) {
                     case 0:
                         invaderType = InvaderType.ONION;
                         break;
@@ -191,16 +193,15 @@ public class Game {
     public final List<Entity> getMarkedForRemovalEntities() {
         return markedForRemoval;
     }
-    
+
     private void tryInvaderShootBullet(int threshhold) {
-    	Random r = new Random();
-    	
-    	Invader toShoot = invaders.get(r.nextInt(Integer.MAX_VALUE) % invaders.size());
-    	
-    	if (r.nextInt(1000) < threshhold)
-    	{
-    		shootInvaderBullet(toShoot);
-    	}
-    	
+        Random r = new Random();
+
+        Invader toShoot = invaders.get(r.nextInt(Integer.MAX_VALUE) % invaders.size());
+
+        if (r.nextInt(1000) < threshhold) {
+            shootInvaderBullet(toShoot);
+        }
+
     }
 }
