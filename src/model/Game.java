@@ -33,8 +33,20 @@ public class Game {
             final int INVADER_Y_COUNT = 5;
             final float START_Y_SPAWN = 10f;
             for (int j = 0; j < INVADER_Y_COUNT; j++) {
+                InvaderType invaderType;
+                switch (j%3) {
+                    case 0:
+                        invaderType = InvaderType.ONION;
+                        break;
+                    case 1:
+                        invaderType = InvaderType.SPIDER;
+                        break;
+                    default:
+                        invaderType = InvaderType.MUSHROOM;
+                        break;
+                }
                 float newSpawnYPos = START_Y_SPAWN + ((END_SPAWN - START_X_SPAWN) / INVADER_X_COUNT) * j;
-                spawnInvader(newSpawnXPos, newSpawnYPos, 30, 30);
+                spawnInvader(newSpawnXPos, newSpawnYPos, 30, 30, invaderType);
             }
 
         }
@@ -130,6 +142,12 @@ public class Game {
 
     public void spawnInvader(float x, float y, float width, float height) {
         Invader invader = new Invader(x, y, width, height, 2f);
+        invaders.add(invader);
+    }
+
+    public void spawnInvader(float x, float y, float width, float height, InvaderType invaderType) {
+        Invader invader = new Invader(x, y, width, height, 2f);
+        invader.setInvaderType(invaderType);
         invaders.add(invader);
     }
 

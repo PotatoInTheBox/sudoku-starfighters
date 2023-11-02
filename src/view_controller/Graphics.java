@@ -15,6 +15,8 @@ import javafx.scene.paint.Color;
 import model.Bullet;
 import model.Entity;
 import model.Game;
+import model.Invader;
+import model.InvaderType;
 import model.Score;
 
 public class Graphics extends Pane {
@@ -29,10 +31,11 @@ public class Graphics extends Pane {
     private int fpsCounter = 0;
     private final int MAX_FRAME_COUNT = 60;
     private long[] fpsRecord = new long[MAX_FRAME_COUNT];
-    
+
     private Score score = new Score();
 
     Image playerSprite;
+    Image[] invaderSprites;
 
     public Graphics(Scene scene, double width, double height, Game game) {
         this.scene = scene;
@@ -70,18 +73,41 @@ public class Graphics extends Pane {
     }
 
     private void loadSprites() {
+        playerSprite = getSpriteFromFile("./resources/images/player_ship.png");
+        invaderSprites = new Image[6];
+        invaderSprites[0] = getSpriteFromFile("./resources/images/enemy1_frame1.png");
+        invaderSprites[1] = getSpriteFromFile("./resources/images/enemy1_frame2.png");
+        invaderSprites[2] = getSpriteFromFile("./resources/images/enemy2_frame1.png");
+        invaderSprites[3] = getSpriteFromFile("./resources/images/enemy2_frame2.png");
+        invaderSprites[4] = getSpriteFromFile("./resources/images/enemy3_frame1.png");
+        invaderSprites[5] = getSpriteFromFile("./resources/images/enemy3_frame2.png");
+    }
+
+    private Image getSpriteFromFile(String path) {
         FileInputStream playerImageFile;
         try {
-            playerImageFile = new FileInputStream("./resources/images/player_ship_scaled.png");
-            playerSprite = new Image(playerImageFile);
+            playerImageFile = new FileInputStream(path);
+            Image sprite = new Image(playerImageFile);
+            return sprite;
         } catch (FileNotFoundException e) {
-            System.out.println("Could not find ./resources/images/player_ship_scaled.png");
+            System.out.println("Could not find" + path);
+            return null;
         }
-        
     }
 
     private void drawAllSprites() {
-        gc.drawImage(playerSprite, game.getPlayer().getX(), game.getPlayer().getY(), game.getPlayer().getWidth(), game.getPlayer().getHeight());
+        gc.drawImage(playerSprite, game.getPlayer().getX(), game.getPlayer().getY(), game.getPlayer().getWidth(),
+                game.getPlayer().getHeight());
+        for (Invader invader : game.getInvaders()) {
+            Image invaderSprite = null;
+            if (invader.getInvaderType() == InvaderType.ONION)
+                invaderSprite = invaderSprites[0];
+            else if (invader.getInvaderType() == InvaderType.SPIDER)
+                invaderSprite = invaderSprites[1];
+            else
+                invaderSprite = invaderSprites[2]; // == InvaderType.MUSHROOM
+            gc.drawImage(invaderSprite, invader.getX(), invader.getY(), invader.getWidth(), invader.getHeight());
+        }
     }
 
     private void drawAllWireFrames() {
