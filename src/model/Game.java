@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Game {
 
@@ -112,6 +113,8 @@ public class Game {
                 markedForRemoval.add(bullet);
             }
         }
+        
+        tryInvaderShootBullet(5 + (78 - invaders.size()));
     }
 
     private Entity getBulletHitEntity(Bullet bullet) {
@@ -129,6 +132,10 @@ public class Game {
 
     public void shootPlayerBullet() {
         bullets.add(player.shootBullet());
+    }
+    
+    public void shootInvaderBullet(Invader entity) {
+    	bullets.add(entity.shootBullet());
     }
 
     public void addBullet(Bullet bullet) {
@@ -179,5 +186,17 @@ public class Game {
 
     public final List<Entity> getMarkedForRemovalEntities() {
         return markedForRemoval;
+    }
+    
+    private void tryInvaderShootBullet(int threshhold) {
+    	Random r = new Random();
+    	
+    	Invader toShoot = invaders.get(r.nextInt(Integer.MAX_VALUE) % invaders.size());
+    	
+    	if (r.nextInt(1000) < threshhold)
+    	{
+    		shootInvaderBullet(toShoot);
+    	}
+    	
     }
 }
