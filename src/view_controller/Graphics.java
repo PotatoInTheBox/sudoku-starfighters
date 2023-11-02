@@ -42,6 +42,7 @@ public class Graphics extends Pane {
         this.game = game;
         canvas = new Canvas(width, height);
         gc = canvas.getGraphicsContext2D();
+        gc.setImageSmoothing(false);
         getChildren().add(canvas);
         loadSprites();
     }
