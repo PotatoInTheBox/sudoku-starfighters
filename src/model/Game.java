@@ -27,11 +27,11 @@ public class Game {
 
         final float START_X_SPAWN = 10f;
         final float END_SPAWN = height - START_X_SPAWN;
-        final int INVADER_X_COUNT = 10;
+        final int INVADER_X_COUNT = 13;
         for (int i = 0; i < INVADER_X_COUNT; i++) {
             float newSpawnXPos = (END_SPAWN - START_X_SPAWN) * i / INVADER_X_COUNT;
-            final int INVADER_Y_COUNT = 5;
-            final float START_Y_SPAWN = 10f;
+            final int INVADER_Y_COUNT = 6;
+            final float START_Y_SPAWN = 70f;
             for (int j = 0; j < INVADER_Y_COUNT; j++) {
                 InvaderType invaderType;
                 switch (j%3) {
@@ -46,7 +46,7 @@ public class Game {
                         break;
                 }
                 float newSpawnYPos = START_Y_SPAWN + ((END_SPAWN - START_X_SPAWN) / INVADER_X_COUNT) * j;
-                spawnInvader(newSpawnXPos, newSpawnYPos, 30, 30, invaderType);
+                spawnInvader(newSpawnXPos, newSpawnYPos, 35, 35, invaderType);
             }
 
         }

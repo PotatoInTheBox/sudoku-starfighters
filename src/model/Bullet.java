@@ -3,7 +3,7 @@ package model;
 public class Bullet extends Entity {
 
 	public Bullet(float positionX, float positionY, float dy, Team team) {
-		this(positionX, positionY, 3f, 5f, dy, team);
+		this(positionX, positionY, 5f, 10f, dy, team);
 	}
 
 	public Bullet(float positionX, float positionY, float sizeX, float sizeY, float dy, Team team) {

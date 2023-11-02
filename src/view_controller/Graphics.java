@@ -36,6 +36,7 @@ public class Graphics extends Pane {
 
     Image playerSprite;
     Image[] invaderSprites;
+    Image bulletSprite;
 
     public Graphics(Scene scene, double width, double height, Game game) {
         this.scene = scene;
@@ -50,7 +51,7 @@ public class Graphics extends Pane {
     public void update() {
         drawRectangle(0, 0, canvas.getWidth(), canvas.getHeight(), Color.BLACK);
         drawAllSprites();
-        drawAllWireFrames();
+        //drawAllWireFrames();
         updateFps();
         drawText(fpsAverageString, 10, 15);
         drawText("Score: " + Integer.toString(score.getScore()), 10, 30);
@@ -82,6 +83,7 @@ public class Graphics extends Pane {
         invaderSprites[3] = getSpriteFromFile("./resources/images/enemy2_frame2.png");
         invaderSprites[4] = getSpriteFromFile("./resources/images/enemy3_frame1.png");
         invaderSprites[5] = getSpriteFromFile("./resources/images/enemy3_frame2.png");
+        bulletSprite = getSpriteFromFile("./resources/images/bullet.png");
     }
 
     private Image getSpriteFromFile(String path) {
@@ -108,6 +110,9 @@ public class Graphics extends Pane {
             else
                 invaderSprite = invaderSprites[2]; // == InvaderType.MUSHROOM
             gc.drawImage(invaderSprite, invader.getX(), invader.getY(), invader.getWidth(), invader.getHeight());
+        }
+        for (Bullet bullet : game.getBullets()) {
+            gc.drawImage(bulletSprite, bullet.getX(), bullet.getY(), bullet.getWidth(), bullet.getHeight());
         }
     }
 
