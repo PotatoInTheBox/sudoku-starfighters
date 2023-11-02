@@ -23,8 +23,15 @@ public class Player extends Entity {
 		return false;
 	}
 
+	// TODO, should a player really have this method?
 	public Bullet shootBullet() {
 		Bullet newBullet = new Bullet(x + width/2, y + height/2, -BULLET_SPEED, team);
+		return newBullet;
+	}
+
+	// TODO, should a player really have this method?
+	public Bullet shootBullet(float speed) {
+		Bullet newBullet = new Bullet(x + width/2, y + height/2, -speed, team);
 		return newBullet;
 	}
 }

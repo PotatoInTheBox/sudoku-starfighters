@@ -30,11 +30,11 @@ public class GamePane extends Pane {
 
         input.onKeyDown(e -> {
             if (e.getCode().equals(KeyCode.Z)) {
-                Bullet bullet = game.getPlayer().shootBullet();
-                game.bullets.add(bullet);
+                game.shootPlayerBullet();
             }
         });
         getChildren().add(graphics);
+        game.startNewGame();
         unpauseGame();
     }
 

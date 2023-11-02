@@ -86,8 +86,11 @@ public class Graphics extends Pane {
 
     private void drawAllWireFrames() {
         drawWireFrame(game.getPlayer(), Color.RED);
-        for (Entity e : game.bullets) {
+        for (Entity e : game.getBullets()) {
             drawWireFrame(e, Color.YELLOW);
+        }
+        for (Entity e : game.getInvaders()) {
+            drawWireFrame(e, Color.RED);
         }
     }
 
