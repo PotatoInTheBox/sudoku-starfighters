@@ -195,6 +195,10 @@ public class Game {
     }
 
     private void tryInvaderShootBullet(int threshhold) {
+        if (invaders.size() == 0) {
+            return;
+        }
+
         Random r = new Random();
 
         Invader toShoot = invaders.get(r.nextInt(Integer.MAX_VALUE) % invaders.size());
