@@ -43,6 +43,21 @@ public class EntityTest {
         assertNotEquals(Team.NEUTRAL, newEntity.getTeam());
         assertNotEquals(Team.INVADERS, newEntity.getTeam());
 
+        // center checks
+        newEntity.setX(5);
+        newEntity.setY(15);
+        newEntity.setWidth(10);
+        newEntity.setHeight(20);
+
+        assertEquals(10, newEntity.getCenterX());
+        assertEquals(25, newEntity.getCenterY());
+
+        newEntity.setCenterX(50);
+        newEntity.setCenterY(60);
+
+        assertEquals(45, newEntity.getX());
+        assertEquals(50, newEntity.getY());
+
     }
 
     @Test
@@ -142,4 +157,6 @@ public class EntityTest {
         assertEquals(-3, entity.getX());
         assertEquals(-38, entity.getY());
     }
+
+    // TODO maybe add test for isOutofBounds()
 }

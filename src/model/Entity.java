@@ -1,6 +1,5 @@
 package model;
 
-
 public abstract class Entity {
 	protected float x, y, width, height;
 	protected float dx = 0f;
@@ -68,6 +67,22 @@ public abstract class Entity {
 
 	public Team getTeam() {
 		return team;
+	}
+
+	public float getCenterX() {
+		return x + width / 2;
+	}
+
+	public float getCenterY() {
+		return y + height / 2;
+	}
+
+	public void setCenterX(float x) {
+		this.x = x - width / 2;
+	}
+
+	public void setCenterY(float y) {
+		this.y = y - height / 2;
 	}
 
 	public void move() {
