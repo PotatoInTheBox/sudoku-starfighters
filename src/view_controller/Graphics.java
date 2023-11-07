@@ -21,16 +21,12 @@ import model.Score;
 
 public class Graphics extends Pane {
 
+    private GamePane gamePane;
     private Game game;
-    private Scene scene;
     private Canvas canvas;
     private GraphicsContext gc;
 
-    private long lastFpsTime = 0l;
-    private String fpsAverageString = "";
-    private int fpsCounter = 0;
-    private final int MAX_FRAME_COUNT = 60;
-    private long[] fpsRecord = new long[MAX_FRAME_COUNT];
+    private FrameRateTracker frameRateTracker = new FrameRateTracker(200);
 
     private Score score = new Score();
 
@@ -38,9 +34,9 @@ public class Graphics extends Pane {
     Image[] invaderSprites;
     Image bulletSprite;
 
-    public Graphics(Scene scene, double width, double height, Game game) {
-        this.scene = scene;
-        this.game = game;
+    public Graphics(GamePane gamePane, double width, double height) {
+        this.gamePane = gamePane;
+        this.game = gamePane.game;
         canvas = new Canvas(width, height);
         gc = canvas.getGraphicsContext2D();
         gc.setImageSmoothing(false);
@@ -52,26 +48,15 @@ public class Graphics extends Pane {
         drawRectangle(0, 0, canvas.getWidth(), canvas.getHeight(), Color.BLACK);
         drawAllSprites();
         //drawAllWireFrames();
-        updateFps();
+        double fpsAvg = frameRateTracker.getAverageUpdate();
+        double tpsAvg = gamePane.frameRateTracker.getAverageUpdate();
+        String fpsAverageString = String.format("FPS/UPS: %8.4f / %8.4f", fpsAvg, tpsAvg);
+
         drawText(fpsAverageString, 10, 15);
         drawText("Score: " + Integer.toString(score.getScore()), 10, 30);
         drawText("Lives: " + Integer.toString(score.getLives()), 10, 45);
-    }
 
-    private void updateFps() {
-        if (fpsCounter >= MAX_FRAME_COUNT) {
-            long total = 0l;
-            for (int i = 0; i < MAX_FRAME_COUNT; i++) {
-                total += fpsRecord[i];
-            }
-            double average = 1_000 / (total / 1_000d / (double) MAX_FRAME_COUNT);
-            fpsAverageString = String.format("FPS: %.4f", average);
-            fpsCounter = 0;
-        }
-        long thisTime = System.nanoTime();
-        fpsRecord[fpsCounter] = (thisTime - lastFpsTime) / 1_000;
-        lastFpsTime = thisTime;
-        fpsCounter++;
+        frameRateTracker.logFrameUpdate();
     }
 
     private void loadSprites() {

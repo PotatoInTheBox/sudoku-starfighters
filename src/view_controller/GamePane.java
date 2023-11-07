@@ -15,17 +15,20 @@ import model.Game;
 public class GamePane extends Pane {
 
     private Input input;
-    private Game game;
+    public Game game;
     private Scene scene;
     private Graphics graphics;
     private Timer timer;
     private long lastTime = 0l;
+    private long unprocessedTime = 0l;
+    private final long TARGET_NANO_TIME = 16_666_666L; // (1/60)
+    public FrameRateTracker frameRateTracker = new FrameRateTracker(200);
 
     public GamePane(Scene scene, Input input, double width, double height) {
         this.scene = scene;
         this.input = input;
         this.game = new Game((float) width, (float) height);
-        this.graphics = new Graphics(scene, width, height, game);
+        this.graphics = new Graphics(this, width, height);
         this.timer = new Timer();
 
         input.onKeyDown(e -> {
@@ -43,23 +46,27 @@ public class GamePane extends Pane {
     }
 
     public void unpauseGame() {
-        lastTime = System.currentTimeMillis();
+        lastTime = System.nanoTime();
         timer.start();
     }
 
     // update() is called every time javafx wants a new frame drawn
     private void update() {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastTime > 20 * 5) {
-            // too many dropped frames, slow down the game and don't speed up
-            lastTime = currentTime;
+        long currentTime = System.nanoTime();
+        boolean hasUpdatedLogic = false;
+
+        long deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+        unprocessedTime += deltaTime;
+
+        while (unprocessedTime >= TARGET_NANO_TIME) {
+            logicUpdate();
+            frameRateTracker.logFrameUpdate();
+            hasUpdatedLogic = true;
+            unprocessedTime -= TARGET_NANO_TIME;
         }
-        if (currentTime - lastTime > 20) {
-            lastTime += 20;
-            logicUpdate(); // tie frame and logic updates (for now)
-            frameUpdate();
-        }
-        
+        if (hasUpdatedLogic)
+            frameUpdate(); // CAP FPS TO GAME LOGIC UPDATE (below 60hz is ok but not abote it)
     }
 
     private void frameUpdate() {
