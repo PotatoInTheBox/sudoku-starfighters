@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import model.Bullet;
 import model.Game;
+import model.Team;
 
 public class GamePane extends Pane {
 
@@ -33,7 +34,9 @@ public class GamePane extends Pane {
 
         input.onKeyDown(e -> {
             if (e.getCode().equals(KeyCode.Z)) {
-                game.shootPlayerBullet();
+                if (getActivePlayerBulletCount() < 1) {
+                    game.shootPlayerBullet(); // better make that shot count xd
+                }
             }
             if (e.getCode().equals(KeyCode.SPACE)) {
                 game.setPlayerHit(false);
@@ -93,5 +96,15 @@ public class GamePane extends Pane {
         public void handle(long arg0) {
             update();
         }
+    }
+
+    private int getActivePlayerBulletCount(){
+        int playerBulletCount = 0;
+        for (Bullet bullet : game.getBullets()) {
+            if (bullet.getTeam() == Team.PLAYER){
+                playerBulletCount += 1;
+            }
+        }
+        return playerBulletCount;
     }
 }
