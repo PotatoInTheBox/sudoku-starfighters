@@ -250,4 +250,22 @@ public class GameTest {
         assertTrue(dx2 != 0);
 
     }
+
+    @Test
+    void testPlayerLives() {
+        Game game = new Game(100, 100);
+        game.spawnPlayer(80, 80, 20, 20);
+
+        game.spawnInvader(90, 90, 10, 10);
+        Invader invader1 = game.getInvaders().get(0);
+        Bullet bullet = invader1.shootBullet();
+        game.addBullet(bullet);
+
+        int lastLives = game.playerLives;
+
+        game.update();
+
+        assertTrue(game.playerLives - lastLives < 0,
+                "Player should have lost a life from getting shot!");
+    }
 }
