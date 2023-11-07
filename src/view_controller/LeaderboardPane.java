@@ -29,19 +29,6 @@ public class LeaderboardPane extends GridPane {
 
 		backButton = new Button("Back");
 
-		Score t = new Score();
-		t.setUsername("tim");
-		t.changeScore(10);
-		Score s = new Score();
-		s.setUsername("sal");
-		s.changeScore(1990);
-		Score g = new Score();
-		g.setUsername("gus");
-		g.changeScore(100);
-		topScores.add(t);
-		topScores.add(s);
-		topScores.add(g);
-
 		pane = new VBox();
 		pane.setPadding(new Insets(10, 10, 10, 10));
 		pane.setSpacing(10);
@@ -59,8 +46,7 @@ public class LeaderboardPane extends GridPane {
 	}
 
 	/**
-	 * Updates the score for the LeaderBoard
-	 * 
+	 * Updates the score for the Leaderboard
 	 */
 	public void updateScores() {
 		getChildren().clear();
@@ -73,7 +59,10 @@ public class LeaderboardPane extends GridPane {
 				return Integer.compare(score2.getScore(), score1.getScore());
 			}
 		});
-
+		if(topScores.isEmpty()) {
+			Label cur = new Label("No Scores on Leaderboard");
+			pane.getChildren().add(cur);
+		}
 		int i = 0;
 		for (Score score : topScores) {
 			if (i < 10) {
