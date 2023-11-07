@@ -28,8 +28,6 @@ public class Graphics extends Pane {
 
     private FrameRateTracker frameRateTracker = new FrameRateTracker(200);
 
-    private Score score = new Score();
-
     Image playerSprite;
     Image[] invaderSprites;
     Image bulletSprite;
@@ -53,9 +51,12 @@ public class Graphics extends Pane {
         String fpsAverageString = String.format("Average FPS/UPS: %8.4f / %8.4f", fpsAvg, tpsAvg);
 
         drawText(fpsAverageString, 10, 15);
-        drawText("Score: " + Integer.toString(score.getScore()), 10, 30);
-        drawText("Lives: " + Integer.toString(score.getLives()), 10, 45);
-
+        drawText("Score: " + Integer.toString(game.getScore()), 10, 30);
+        drawText("Lives: " + Integer.toString(game.getLives()), 10, 45);
+        
+        if (game.getLives() <= 0)
+        	drawText("GAME OVER", 250, 300);
+        
         frameRateTracker.logFrameUpdate();
     }
 

@@ -42,8 +42,11 @@ public class GamePane extends Pane {
                 game.shootPlayerBullet(); // force bullet shoot anyways
             }
             if (e.getCode().equals(KeyCode.SPACE)) {
-                game.setPlayerHit(false);
-                unpauseGame(); // force continue game
+            	if (game.getLives() > 0)
+            	{
+            		game.setPlayerHit(false);
+            		unpauseGame(); // force continue game
+            	}
             }
         });
         getChildren().add(graphics);

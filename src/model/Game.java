@@ -19,6 +19,8 @@ public class Game {
 
     private float width;
     private float height;
+    
+    private Score score = new Score();
 
     public Game() {
         this(100, 100);
@@ -155,6 +157,8 @@ public class Game {
                 if (hitEntity.getTeam() == Team.INVADERS) {
                     markedForRemoval.add(bullet);
                     markedForRemoval.add(hitEntity);
+                    Invader invader = (Invader) hitEntity;
+                    score.changeScore(invader);
                 } else if (hitEntity.getTeam() == Team.PLAYER) {
                     playerHit();
                     markedForRemoval.add(bullet);
@@ -168,6 +172,7 @@ public class Game {
 
     private void playerHit() {
         isPlayerHit = true;
+        score.changeLives();
     }
 
     private void bindPlayerToCanvas() {
@@ -279,5 +284,13 @@ public class Game {
 
     public void setPlayerHit(boolean isPlayerHit) {
         this.isPlayerHit = isPlayerHit;
+    }
+    
+    public int getScore() {
+    	return score.getScore();
+    }
+    
+    public int getLives() {
+    	return score.getLives();
     }
 }
