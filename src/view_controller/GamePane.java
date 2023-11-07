@@ -35,6 +35,10 @@ public class GamePane extends Pane {
             if (e.getCode().equals(KeyCode.Z)) {
                 game.shootPlayerBullet();
             }
+            if (e.getCode().equals(KeyCode.SPACE)) {
+                game.setPlayerHit(false);
+                unpauseGame();
+            }
         });
         getChildren().add(graphics);
         game.startNewGame();
@@ -66,7 +70,7 @@ public class GamePane extends Pane {
             unprocessedTime -= TARGET_NANO_TIME;
         }
         if (hasUpdatedLogic)
-            frameUpdate(); // CAP FPS TO GAME LOGIC UPDATE (below 60hz is ok but not abote it)
+            frameUpdate(); // CAP FPS TO GAME LOGIC UPDATE (below 60hz is ok but not above it)
     }
 
     private void frameUpdate() {
@@ -76,6 +80,12 @@ public class GamePane extends Pane {
     private void logicUpdate() {
         game.movePlayer(input.getJoystickX(), input.getJoystickY());
         game.update();
+
+        if (game.isPlayerHit()) {
+            pauseGame();
+            System.out.println("Player has been hit, the game has been paused"
+                    + ", press space to override.");
+        }
     }
 
     private class Timer extends AnimationTimer {

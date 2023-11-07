@@ -11,7 +11,7 @@ public class Game {
     public ArrayList<Bullet> bullets = new ArrayList<>();
     public List<Entity> markedForRemoval = new ArrayList<>();
 
-    public int playerLives = 3;
+    private boolean isPlayerHit = false;
 
     private float invaderDirection = -1f;
     private float invaderSpeed = 1f;
@@ -152,21 +152,22 @@ public class Game {
         for (Bullet bullet : bullets) {
             Entity hitEntity = getBulletHitEntity(bullet);
             if (hitEntity != null) {
-                if (hitEntity.getTeam() == Team.INVADERS){
+                if (hitEntity.getTeam() == Team.INVADERS) {
                     markedForRemoval.add(bullet);
                     markedForRemoval.add(hitEntity);
-                } else if (hitEntity.getTeam() == Team.PLAYER){
+                } else if (hitEntity.getTeam() == Team.PLAYER) {
                     playerHit();
+                    markedForRemoval.add(bullet);
                 }
-                
+
             } else if (bullet.isOutOfBounds(0, 0, width, height)) {
                 markedForRemoval.add(bullet);
             }
         }
     }
 
-    private void playerHit(){
-        playerLives -= 1;
+    private void playerHit() {
+        isPlayerHit = true;
     }
 
     private void bindPlayerToCanvas() {
@@ -270,5 +271,13 @@ public class Game {
 
     public void flipInvaderDirection() {
         invaderDirection = -invaderDirection;
+    }
+
+    public boolean isPlayerHit() {
+        return isPlayerHit;
+    }
+
+    public void setPlayerHit(boolean isPlayerHit) {
+        this.isPlayerHit = isPlayerHit;
     }
 }

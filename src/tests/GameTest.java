@@ -261,11 +261,9 @@ public class GameTest {
         Bullet bullet = invader1.shootBullet();
         game.addBullet(bullet);
 
-        int lastLives = game.playerLives;
-
         game.update();
 
-        assertTrue(game.playerLives - lastLives < 0,
-                "Player should have lost a life from getting shot!");
+        assertTrue(game.isPlayerHit(),
+                "Player should have been hit from bullet!");
     }
 }
