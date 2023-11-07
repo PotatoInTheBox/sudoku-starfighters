@@ -58,6 +58,10 @@ public class LeaderboardPane extends GridPane {
 		backHandlers.add(eventHandler);
 	}
 
+	/**
+	 * Updates the score for the LeaderBoard
+	 * 
+	 */
 	public void updateScores() {
 		getChildren().clear();
 		pane = new VBox();

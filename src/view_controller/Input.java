@@ -25,14 +25,29 @@ public class Input {
         assignButtonHandlers();
     }
 
+    /**
+     * Takes input when the key is down
+     * 
+     * @param eventHandler
+     */
     public void onKeyDown(EventHandler<KeyEvent> eventHandler) {
         keyPressedHandlers.add(eventHandler);
     }
-
+    
+    /**
+     * Stops the input when the key isn't pressed
+     * 
+     * @param eventHandler
+     */
     public void onKeyUp(EventHandler<KeyEvent> eventHandler) {
         keyReleasedHandlers.add(eventHandler);
     }
 
+    /**
+     * Retrieves the X input converted based on key pressed
+     * 
+     * @return A float of the X input
+     */
     public float getJoystickX() {
         float joystickXInput = 0f;
 
@@ -45,6 +60,11 @@ public class Input {
         return joystickXInput;
     }
 
+    /**
+     * Retrieves the Y input converted based on key pressed
+     * 
+     * @return a float of the Y input
+     */
     public float getJoystickY() {
         float joystickYInput = 0f;
 
@@ -57,6 +77,14 @@ public class Input {
         return joystickYInput;
     }
 
+    /**
+     * Ensures that the current value is between min and max
+     * 
+     * @param min	The min value to clamp
+     * @param max	The max value to clamp
+     * @param val	The current value
+     * @return The resulting float after clamping
+     */
     private float clamp(float min, float max, float val) {
         if (val < min)
             return min;
@@ -65,6 +93,12 @@ public class Input {
         return val;
     }
 
+    /**
+     * Return true if a key is currently held down
+     * 
+     * @param keyCode	The key that is being pressed
+     * @return True if a key is held, false if not
+     */
     private boolean isKeyDown(KeyCode keyCode) {
         Boolean key = heldKeys.get(keyCode);
         if (key != null) {
@@ -73,6 +107,12 @@ public class Input {
             return false;
     }
 
+    /**
+     * Return true if no key is held down
+     * 
+     * @param keyCode	The key being pressed
+     * @return True if no key is held, false if one is
+     */
     private boolean isKeyUp(KeyCode keyCode) {
         Boolean key = heldKeys.get(keyCode);
         if (key != null) {
@@ -81,6 +121,9 @@ public class Input {
             return true; // if it's not in the set it can't be down
     }
 
+    /**
+     * Assigns button handlers for key pressed and key released
+     */
     private void assignButtonHandlers() {
         scene.setOnKeyPressed(e -> {
             boolean wasKeyAlreadyDown = isKeyDown(e.getCode());
