@@ -11,6 +11,8 @@ public class Game {
     public ArrayList<Bullet> bullets = new ArrayList<>();
     public List<Entity> markedForRemoval = new ArrayList<>();
 
+    private float invaderDirection = 1f;
+
     private float width;
     private float height;
 
@@ -25,7 +27,10 @@ public class Game {
 
     public void startNewGame() {
         spawnPlayer(width - 20, height - 20, 40, 40);
-        spawnAllInvaders();
+        final float xInvadersPadding = width / 8;
+        final float yInvadersHeight = height / 3;
+        spawnAllInvaders(xInvadersPadding, 20, width - xInvadersPadding, yInvadersHeight, 8, 5);
+        setInvaderDirection(invaderDirection);
     }
 
     // Game logic here, this will run at a constant rate.
@@ -47,15 +52,67 @@ public class Game {
         markedForRemoval.clear();
 
         // move bullets
-        for (Entity e : bullets) {
-            e.move();
+        for (Entity bullet : bullets) {
+            bullet.move();
         }
 
         // move invaders
+        for (Entity invader : invaders) {
+            invader.move();
+        }
 
         // player is moved elsewhere...
 
         // bound player to map
+        bindPlayerToCanvas();
+
+        // bound invaders to map
+        boundInvadersToCanvas();
+
+        // bullet collision detection
+        processBulletCollisions();
+
+        tryInvaderShootBullet(5 + (78 - invaders.size()));
+    }
+
+    private void boundInvadersToCanvas() {
+        boolean invaderOutofBounds = isAnyInvaderOutOfBounds();
+        if (invaderOutofBounds) {
+            invaderDirection = invaderDirection * -1;
+            setInvaderDirection(invaderDirection);
+            for (Entity invader : invaders) {
+                invader.move();
+            }
+            moveInvadersDown(35);
+        }
+    }
+
+    private boolean isAnyInvaderOutOfBounds() {
+        for (Entity invader : invaders) {
+            if (invader.isOutOfBounds(0, 0, width, height)) {
+                // make sure that the offender is an X cord
+                // it's extra computation but will make our debugging easier
+                if (invader.getX() < 0 || invader.getX() + invader.getWidth() > width) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void processBulletCollisions() {
+        for (Bullet bullet : bullets) {
+            Entity hitEntity = getBulletHitEntity(bullet);
+            if (hitEntity != null) {
+                markedForRemoval.add(bullet);
+                markedForRemoval.add(hitEntity);
+            } else if (bullet.isOutOfBounds(0, 0, width, height)) {
+                markedForRemoval.add(bullet);
+            }
+        }
+    }
+
+    private void bindPlayerToCanvas() {
         if (player != null && player.isOutOfBounds(0f, 0f, (float) width, (float) height)) {
             if (player.getX() < 0) {
                 player.setX(0);
@@ -70,21 +127,6 @@ public class Game {
                 player.setY(height - player.getHeight());
             }
         }
-
-        // bound invaders to map
-
-        // bullet collision detection
-        for (Bullet bullet : bullets) {
-            Entity hitEntity = getBulletHitEntity(bullet);
-            if (hitEntity != null) {
-                markedForRemoval.add(bullet);
-                markedForRemoval.add(hitEntity);
-            } else if (bullet.isOutOfBounds(0, 0, width, height)) {
-                markedForRemoval.add(bullet);
-            }
-        }
-
-        tryInvaderShootBullet(5 + (78 - invaders.size()));
     }
 
     private Entity getBulletHitEntity(Bullet bullet) {
@@ -128,17 +170,17 @@ public class Game {
         invaders.add(invader);
     }
 
-    private void spawnAllInvaders() {
-        final float START_X_SPAWN = 10f;
-        final float END_SPAWN = height - START_X_SPAWN;
-        final int INVADER_X_COUNT = 13;
-        for (int i = 0; i < INVADER_X_COUNT; i++) {
-            float newSpawnXPos = (END_SPAWN - START_X_SPAWN) * i / INVADER_X_COUNT;
-            final int INVADER_Y_COUNT = 6;
-            final float START_Y_SPAWN = 70f;
-            for (int j = 0; j < INVADER_Y_COUNT; j++) {
+    private void spawnAllInvaders(float startX, float startY, float width, float height, int xCount, int yCount) {
+        float invaderHeight = 35f;
+        float invaderWidth = 35f;
+
+        width = width - invaderWidth;
+        width = width - invaderHeight;
+
+        for (int y = 0; y < yCount; y++) {
+            for (int x = 0; x < xCount; x++) {
                 InvaderType invaderType;
-                switch (j % 3) {
+                switch (y % 3) {
                     case 0:
                         invaderType = InvaderType.ONION;
                         break;
@@ -149,15 +191,26 @@ public class Game {
                         invaderType = InvaderType.MUSHROOM;
                         break;
                 }
-                float newSpawnYPos = START_Y_SPAWN + ((END_SPAWN - START_X_SPAWN) / INVADER_X_COUNT) * j;
-                spawnInvader(newSpawnXPos, newSpawnYPos, 35, 35, invaderType);
+                float spawnX = x * width / xCount + startX;
+                float spawnY = y * height / yCount + startY;
+                spawnInvader(spawnX, spawnY, 35, 35, invaderType);
             }
-
         }
 
     }
 
-    // for rendering only
+    private void setInvaderDirection(float direction) {
+        for (Entity invader : invaders) {
+            invader.setDx(direction);
+        }
+    }
+
+    private void moveInvadersDown(float amount) {
+        for (Entity invader : invaders) {
+            invader.setY(invader.getY() + amount);
+        }
+    }
+
     public Player getPlayer() {
         // Not sure if I should return an error, maybe an "err" instead?
         // if (player == null)
@@ -166,12 +219,10 @@ public class Game {
         return player;
     }
 
-    // for rendering only
     public List<Invader> getInvaders() {
         return invaders;
     }
 
-    // for rendering only
     public List<Bullet> getBullets() {
         return bullets;
     }

@@ -50,7 +50,7 @@ public class Graphics extends Pane {
         //drawAllWireFrames();
         double fpsAvg = frameRateTracker.getAverageUpdate();
         double tpsAvg = gamePane.frameRateTracker.getAverageUpdate();
-        String fpsAverageString = String.format("FPS/UPS: %8.4f / %8.4f", fpsAvg, tpsAvg);
+        String fpsAverageString = String.format("Average FPS/UPS: %8.4f / %8.4f", fpsAvg, tpsAvg);
 
         drawText(fpsAverageString, 10, 15);
         drawText("Score: " + Integer.toString(score.getScore()), 10, 30);
