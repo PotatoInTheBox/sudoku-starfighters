@@ -97,7 +97,13 @@ public class Graphics extends Pane {
             gc.drawImage(invaderSprite, invader.getX(), invader.getY(), invader.getWidth(), invader.getHeight());
         }
         for (Bullet bullet : game.getBullets()) {
-            gc.drawImage(bulletSprite, bullet.getX(), bullet.getY(), bullet.getWidth(), bullet.getHeight());
+            // reverse the bullet sprite if it is going down
+            if (bullet.getDy() > 0f) {
+                gc.drawImage(bulletSprite, bullet.getX(), bullet.getY() + bullet.getHeight(), bullet.getWidth(), -bullet.getHeight());
+            } else {
+                gc.drawImage(bulletSprite, bullet.getX(), bullet.getY(), bullet.getWidth(), bullet.getHeight());
+            }
+
         }
     }
 
