@@ -132,28 +132,28 @@ public class GameTest {
         game.spawnPlayer(0, 80, 20, 20);
         Player player = game.getPlayer();
         game.spawnInvader(0, 0, 20, 40);
-        Invader invader2 = game.getInvaders().get(0);
+        Invader invader1 = game.getInvaders().get(0);
         game.spawnInvader(0, 40, 30, 40);
-        Invader invader1 = game.getInvaders().get(1);
+        Invader invader2 = game.getInvaders().get(1);
 
         Bullet newBullet1 = game.getPlayer().shootBullet(30.01f);
         game.addBullet(newBullet1);
 
         List<Entity> markedForRemoval = game.getMarkedForRemovalEntities();
 
-        assertTrue(game.getInvaders().contains(invader1));
         assertTrue(game.getInvaders().contains(invader2));
-        assertFalse(markedForRemoval.contains(invader1));
+        assertTrue(game.getInvaders().contains(invader1));
         assertFalse(markedForRemoval.contains(invader2));
+        assertFalse(markedForRemoval.contains(invader1));
         assertFalse(markedForRemoval.contains(player)); // player isn't hit by own bullet ofc
 
         game.update();
         markedForRemoval = game.getMarkedForRemovalEntities();
 
-        assertTrue(game.getInvaders().contains(invader1));
         assertTrue(game.getInvaders().contains(invader2));
-        assertTrue(markedForRemoval.contains(invader1));
-        assertFalse(markedForRemoval.contains(invader2));
+        assertTrue(game.getInvaders().contains(invader1));
+        assertTrue(markedForRemoval.contains(invader2));
+        assertFalse(markedForRemoval.contains(invader1));
         assertFalse(markedForRemoval.contains(player));
 
         game.update();
@@ -162,37 +162,92 @@ public class GameTest {
         Bullet newBullet2 = game.getPlayer().shootBullet(30.01f);
         game.addBullet(newBullet2);
 
-        assertFalse(game.getInvaders().contains(invader1));
-        assertTrue(game.getInvaders().contains(invader2));
-        assertFalse(markedForRemoval.contains(invader1));
-        assertFalse(markedForRemoval.contains(invader2));
-        assertFalse(markedForRemoval.contains(player));
-
-        game.update();
-        markedForRemoval = game.getMarkedForRemovalEntities();
-
-        assertFalse(game.getInvaders().contains(invader1));
-        assertTrue(game.getInvaders().contains(invader2));
-        assertFalse(markedForRemoval.contains(invader1));
-        assertFalse(markedForRemoval.contains(invader2));
-        assertFalse(markedForRemoval.contains(player));
-
-        game.update();
-        markedForRemoval = game.getMarkedForRemovalEntities();
-
-        assertFalse(game.getInvaders().contains(invader1));
-        assertTrue(game.getInvaders().contains(invader2));
-        assertFalse(markedForRemoval.contains(invader1));
-        assertTrue(markedForRemoval.contains(invader2));
-        assertFalse(markedForRemoval.contains(player));
-
-        game.update();
-        markedForRemoval = game.getMarkedForRemovalEntities();
-
-        assertFalse(game.getInvaders().contains(invader1));
         assertFalse(game.getInvaders().contains(invader2));
-        assertFalse(markedForRemoval.contains(invader1));
+        assertTrue(game.getInvaders().contains(invader1));
         assertFalse(markedForRemoval.contains(invader2));
+        assertFalse(markedForRemoval.contains(invader1));
         assertFalse(markedForRemoval.contains(player));
+
+        game.update();
+        markedForRemoval = game.getMarkedForRemovalEntities();
+
+        assertFalse(game.getInvaders().contains(invader2));
+        assertTrue(game.getInvaders().contains(invader1));
+        assertFalse(markedForRemoval.contains(invader2));
+        assertFalse(markedForRemoval.contains(invader1));
+        assertFalse(markedForRemoval.contains(player));
+
+        game.update();
+        markedForRemoval = game.getMarkedForRemovalEntities();
+
+        assertFalse(game.getInvaders().contains(invader2));
+        assertTrue(game.getInvaders().contains(invader1));
+        assertFalse(markedForRemoval.contains(invader2));
+        assertTrue(markedForRemoval.contains(invader1));
+        assertFalse(markedForRemoval.contains(player));
+
+        game.update();
+        markedForRemoval = game.getMarkedForRemovalEntities();
+
+        assertFalse(game.getInvaders().contains(invader2));
+        assertFalse(game.getInvaders().contains(invader1));
+        assertFalse(markedForRemoval.contains(invader2));
+        assertFalse(markedForRemoval.contains(invader1));
+        assertFalse(markedForRemoval.contains(player));
+    }
+
+    @Test
+    void testMoveInvadersLeftRightDown() {
+        float gameWidth = 100;
+        float gameHeight = 100;
+        float invaderWidth = 20f;
+        Game game = new Game(gameWidth, gameHeight);
+        // although the player is not used, it's expected to exist
+        game.spawnPlayer(80, 80, 20, 20);
+
+        float direction = game.getInvaderDirection();
+        assertTrue(direction == 1f || direction == -1f,
+                "Direction should be exactly 1 or -1");
+        float startX = direction > 0f ? gameWidth - 0.00001f - invaderWidth : invaderWidth + 0.00001f;
+
+        game.spawnInvader(startX, 0, invaderWidth, 40);
+        Invader invader1 = game.getInvaders().get(0);
+        game.spawnInvader(startX - invaderWidth, 40, invaderWidth, 40);
+        Invader invader2 = game.getInvaders().get(1);
+
+        // invaders are not in motion by default...
+        game.applyInvaderMotion();
+
+        float lastY1 = invader1.getY();
+        float lastX1 = invader1.getX();
+        float lastY2 = invader2.getY();
+        float lastX2 = invader2.getX();
+        float dy1, dx1, dy2, dx2;
+
+        game.update();
+
+        dy1 = invader1.getY() - lastY1;
+        dy2 = invader2.getY() - lastY2;
+        // invaders should have moved down
+        assertTrue(dy1 > 0);
+        assertTrue(dy2 > 0);
+        // (x is allowed to move so it won't be checked)
+
+        lastY1 = invader1.getY();
+        lastX1 = invader1.getX();
+        lastY2 = invader2.getY();
+        lastX2 = invader2.getX();
+        game.update();
+        dy1 = invader1.getY() - lastY1;
+        dy2 = invader2.getY() - lastY2;
+        dx1 = invader1.getX() - lastX1;
+        dx2 = invader2.getX() - lastX2;
+
+        // invaders then should have only moved on X
+        assertTrue(dy1 == 0);
+        assertTrue(dy2 == 0);
+        assertTrue(dx1 != 0);
+        assertTrue(dx2 != 0);
+
     }
 }

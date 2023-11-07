@@ -11,7 +11,9 @@ public class Game {
     public ArrayList<Bullet> bullets = new ArrayList<>();
     public List<Entity> markedForRemoval = new ArrayList<>();
 
-    private float invaderDirection = 1f;
+    private float invaderDirection = -1f;
+    private float invaderSpeed = 1f;
+    private float invaderEncroachAmount = 20f;
 
     private float width;
     private float height;
@@ -30,11 +32,10 @@ public class Game {
         final float xInvadersPadding = width / 8;
         final float yInvadersHeight = height / 3;
         spawnAllInvaders(xInvadersPadding, 20, width - xInvadersPadding, yInvadersHeight, 8, 5);
-        setInvaderDirection(invaderDirection);
+        applyInvaderMotion();
     }
 
     // Game logic here, this will run at a constant rate.
-    // CURRENTLY SET TO 50hz
     public void update() {
 
         // remove all marked entities
@@ -78,12 +79,12 @@ public class Game {
     private void boundInvadersToCanvas() {
         boolean invaderOutofBounds = isAnyInvaderOutOfBounds();
         if (invaderOutofBounds) {
-            invaderDirection = invaderDirection * -1;
-            setInvaderDirection(invaderDirection);
+            flipInvaderDirection();
+            applyInvaderMotion();
             for (Entity invader : invaders) {
                 invader.move();
             }
-            moveInvadersDown(35);
+            moveInvadersDown(invaderEncroachAmount);
         }
     }
 
@@ -196,13 +197,6 @@ public class Game {
                 spawnInvader(spawnX, spawnY, 35, 35, invaderType);
             }
         }
-
-    }
-
-    private void setInvaderDirection(float direction) {
-        for (Entity invader : invaders) {
-            invader.setDx(direction);
-        }
     }
 
     private void moveInvadersDown(float amount) {
@@ -236,6 +230,21 @@ public class Game {
 
     public final List<Entity> getMarkedForRemovalEntities() {
         return markedForRemoval;
+    }
+
+    public void applyInvaderMotion() {
+        float newDx = invaderDirection * invaderSpeed;
+        for (Entity invader : invaders) {
+            invader.setDx(newDx);
+        }
+    }
+
+    public float getInvaderDirection() {
+        return invaderDirection;
+    }
+
+    public void flipInvaderDirection() {
+        invaderDirection = -invaderDirection;
     }
 
     private void tryInvaderShootBullet(int threshhold) {
