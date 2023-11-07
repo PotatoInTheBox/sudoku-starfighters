@@ -38,9 +38,12 @@ public class GamePane extends Pane {
                     game.shootPlayerBullet(); // better make that shot count xd
                 }
             }
+            if (e.getCode().equals(KeyCode.X)) {
+                game.shootPlayerBullet(); // force bullet shoot anyways
+            }
             if (e.getCode().equals(KeyCode.SPACE)) {
                 game.setPlayerHit(false);
-                unpauseGame();
+                unpauseGame(); // force continue game
             }
         });
         getChildren().add(graphics);
