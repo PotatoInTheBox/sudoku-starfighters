@@ -71,7 +71,7 @@ public class GameTest {
         bulletY = bullet.getY();
 
         game.getPlayer().moveHorizontal(1f); // move player
-        game.fixedUpdate(); // let some time pass
+        game.update(); // let some time pass
         float newPlayerX, newBulletY;
         newPlayerX = game.getPlayer().getX();
         newBulletY = bullet.getY();
@@ -81,7 +81,7 @@ public class GameTest {
         assertNotEquals(playerX, newPlayerX, 0.0001f);
         assertNotEquals(bulletY, newBulletY, 0.0001f);
 
-        game.fixedUpdate(); // let some more time pass
+        game.update(); // let some more time pass
 
         playerX = newPlayerX;
         bulletY = newBulletY;
@@ -147,7 +147,7 @@ public class GameTest {
         assertFalse(markedForRemoval.contains(invader2));
         assertFalse(markedForRemoval.contains(player)); // player isn't hit by own bullet ofc
 
-        game.fixedUpdate();
+        game.update();
         markedForRemoval = game.getMarkedForRemovalEntities();
 
         assertTrue(game.getInvaders().contains(invader1));
@@ -156,7 +156,7 @@ public class GameTest {
         assertFalse(markedForRemoval.contains(invader2));
         assertFalse(markedForRemoval.contains(player));
 
-        game.fixedUpdate();
+        game.update();
         markedForRemoval = game.getMarkedForRemovalEntities();
 
         Bullet newBullet2 = game.getPlayer().shootBullet(30.01f);
@@ -168,7 +168,7 @@ public class GameTest {
         assertFalse(markedForRemoval.contains(invader2));
         assertFalse(markedForRemoval.contains(player));
 
-        game.fixedUpdate();
+        game.update();
         markedForRemoval = game.getMarkedForRemovalEntities();
 
         assertFalse(game.getInvaders().contains(invader1));
@@ -177,7 +177,7 @@ public class GameTest {
         assertFalse(markedForRemoval.contains(invader2));
         assertFalse(markedForRemoval.contains(player));
 
-        game.fixedUpdate();
+        game.update();
         markedForRemoval = game.getMarkedForRemovalEntities();
 
         assertFalse(game.getInvaders().contains(invader1));
@@ -186,7 +186,7 @@ public class GameTest {
         assertTrue(markedForRemoval.contains(invader2));
         assertFalse(markedForRemoval.contains(player));
 
-        game.fixedUpdate();
+        game.update();
         markedForRemoval = game.getMarkedForRemovalEntities();
 
         assertFalse(game.getInvaders().contains(invader1));

@@ -47,12 +47,8 @@ public class GamePane extends Pane {
         timer.start();
     }
 
+    // update() is called every time javafx wants a new frame drawn
     private void update() {
-        // if (e.getCode().equals(KeyCode.Z)) {
-        // Bullet bullet = game.getPlayer().shootBullet();
-        // game.bullets.add(bullet);
-        // }
-
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastTime > 20 * 5) {
             // too many dropped frames, slow down the game and don't speed up
@@ -60,14 +56,19 @@ public class GamePane extends Pane {
         }
         if (currentTime - lastTime > 20) {
             lastTime += 20;
-            fixedUpdate();
+            logicUpdate(); // tie frame and logic updates (for now)
+            frameUpdate();
         }
+        
     }
 
-    private void fixedUpdate() {
-        game.movePlayer(input.getJoystickX(), input.getJoystickY());
-        game.fixedUpdate();
+    private void frameUpdate() {
         graphics.update();
+    }
+
+    private void logicUpdate() {
+        game.movePlayer(input.getJoystickX(), input.getJoystickY());
+        game.update();
     }
 
     private class Timer extends AnimationTimer {

@@ -28,16 +28,9 @@ public class Game {
         spawnAllInvaders();
     }
 
-    // This update is primarily for user input, game logic shouldn't go here
-    // (can't guarentee that it will run at a constant rate)
-    // TODO figure out a use for frame update loop.
-    public void update() {
-
-    }
-
     // Game logic here, this will run at a constant rate.
     // CURRENTLY SET TO 50hz
-    public void fixedUpdate() {
+    public void update() {
 
         // remove all marked entities
         for (Entity entity : markedForRemoval) {
