@@ -76,29 +76,74 @@ public class Game {
         tryInvaderShootBullet(5 + (78 - invaders.size()));
     }
 
-    private void boundInvadersToCanvas() {
-        boolean invaderOutofBounds = isAnyInvaderOutOfBounds();
-        if (invaderOutofBounds) {
-            flipInvaderDirection();
-            applyInvaderMotion();
-            for (Entity invader : invaders) {
-                invader.move();
+    private void spawnAllInvaders(float startX, float startY, float width, float height, int xCount, int yCount) {
+        float invaderHeight = 35f;
+        float invaderWidth = 35f;
+
+        width = width - invaderWidth;
+        width = width - invaderHeight;
+
+        for (int y = 0; y < yCount; y++) {
+            for (int x = 0; x < xCount; x++) {
+                InvaderType invaderType;
+                switch (y % 3) {
+                    case 0:
+                        invaderType = InvaderType.ONION;
+                        break;
+                    case 1:
+                        invaderType = InvaderType.SPIDER;
+                        break;
+                    default:
+                        invaderType = InvaderType.MUSHROOM;
+                        break;
+                }
+                float spawnX = x * width / xCount + startX;
+                float spawnY = y * height / yCount + startY;
+                spawnInvader(spawnX, spawnY, 35, 35, invaderType);
             }
-            moveInvadersDown(invaderEncroachAmount);
         }
     }
 
-    private boolean isAnyInvaderOutOfBounds() {
-        for (Entity invader : invaders) {
-            if (invader.isOutOfBounds(0, 0, width, height)) {
-                // make sure that the offender is an X cord
-                // it's extra computation but will make our debugging easier
-                if (invader.getX() < 0 || invader.getX() + invader.getWidth() > width) {
-                    return true;
-                }
-            }
+    public void spawnPlayer(float x, float y, float width, float height) {
+        Player player = new Player(x, y, width, height, 10f);
+        this.player = player;
+    }
+
+    public void spawnInvader(float x, float y, float width, float height) {
+        Invader invader = new Invader(x, y, width, height, 2f);
+        invaders.add(invader);
+    }
+
+    public void spawnInvader(float x, float y, float width, float height, InvaderType invaderType) {
+        Invader invader = new Invader(x, y, width, height, 2f);
+        invader.setInvaderType(invaderType);
+        invaders.add(invader);
+    }
+
+    public void shootPlayerBullet() {
+        bullets.add(player.shootBullet());
+    }
+
+    public void shootInvaderBullet(Invader entity) {
+        bullets.add(entity.shootBullet());
+    }
+
+    private void tryInvaderShootBullet(int threshhold) {
+        if (invaders.size() == 0) {
+            return;
         }
-        return false;
+
+        Random r = new Random();
+
+        Invader toShoot = invaders.get(r.nextInt(Integer.MAX_VALUE) % invaders.size());
+
+        if (r.nextInt(1000) < threshhold) {
+            shootInvaderBullet(toShoot);
+        }
+    }
+
+    public void addBullet(Bullet bullet) {
+        bullets.add(bullet);
     }
 
     private void processBulletCollisions() {
@@ -130,6 +175,51 @@ public class Game {
         }
     }
 
+    private void boundInvadersToCanvas() {
+        boolean invaderOutofBounds = isAnyInvaderOutOfBounds();
+        if (invaderOutofBounds) {
+            flipInvaderDirection();
+            applyInvaderMotion();
+            for (Entity invader : invaders) {
+                invader.move();
+            }
+            moveInvadersDown(invaderEncroachAmount);
+        }
+    }
+
+    private boolean isAnyInvaderOutOfBounds() {
+        for (Entity invader : invaders) {
+            if (invader.isOutOfBounds(0, 0, width, height)) {
+                // make sure that the offender is an X cord
+                // it's extra computation but will make our debugging easier
+                if (invader.getX() < 0 || invader.getX() + invader.getWidth() > width) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void applyInvaderMotion() {
+        float newDx = invaderDirection * invaderSpeed;
+        for (Entity invader : invaders) {
+            invader.setDx(newDx);
+        }
+    }
+
+    private void moveInvadersDown(float amount) {
+        for (Entity invader : invaders) {
+            invader.setY(invader.getY() + amount);
+        }
+    }
+
+    public void movePlayer(float analogX, float analogY) {
+        if (player != null) {
+            player.moveHorizontal(analogX);
+            player.testMoveVertical(analogY);
+        }
+    }
+
     private Entity getBulletHitEntity(Bullet bullet) {
         if (bullet.getTeam() == Team.PLAYER) {
             for (Invader invader : invaders) {
@@ -141,68 +231,6 @@ public class Game {
                 return player;
         }
         return null;
-    }
-
-    public void shootPlayerBullet() {
-        bullets.add(player.shootBullet());
-    }
-
-    public void shootInvaderBullet(Invader entity) {
-        bullets.add(entity.shootBullet());
-    }
-
-    public void addBullet(Bullet bullet) {
-        bullets.add(bullet);
-    }
-
-    public void spawnPlayer(float x, float y, float width, float height) {
-        Player player = new Player(x, y, width, height, 10f);
-        this.player = player;
-    }
-
-    public void spawnInvader(float x, float y, float width, float height) {
-        Invader invader = new Invader(x, y, width, height, 2f);
-        invaders.add(invader);
-    }
-
-    public void spawnInvader(float x, float y, float width, float height, InvaderType invaderType) {
-        Invader invader = new Invader(x, y, width, height, 2f);
-        invader.setInvaderType(invaderType);
-        invaders.add(invader);
-    }
-
-    private void spawnAllInvaders(float startX, float startY, float width, float height, int xCount, int yCount) {
-        float invaderHeight = 35f;
-        float invaderWidth = 35f;
-
-        width = width - invaderWidth;
-        width = width - invaderHeight;
-
-        for (int y = 0; y < yCount; y++) {
-            for (int x = 0; x < xCount; x++) {
-                InvaderType invaderType;
-                switch (y % 3) {
-                    case 0:
-                        invaderType = InvaderType.ONION;
-                        break;
-                    case 1:
-                        invaderType = InvaderType.SPIDER;
-                        break;
-                    default:
-                        invaderType = InvaderType.MUSHROOM;
-                        break;
-                }
-                float spawnX = x * width / xCount + startX;
-                float spawnY = y * height / yCount + startY;
-                spawnInvader(spawnX, spawnY, 35, 35, invaderType);
-            }
-        }
-    }
-
-    private void moveInvadersDown(float amount) {
-        for (Entity invader : invaders) {
-            invader.setY(invader.getY() + amount);
-        }
     }
 
     public Player getPlayer() {
@@ -221,44 +249,15 @@ public class Game {
         return bullets;
     }
 
-    public void movePlayer(float analogX, float analogY) {
-        if (player != null) {
-            player.moveHorizontal(analogX);
-            player.testMoveVertical(analogY);
-        }
+    public float getInvaderDirection() {
+        return invaderDirection;
     }
 
     public final List<Entity> getMarkedForRemovalEntities() {
         return markedForRemoval;
     }
 
-    public void applyInvaderMotion() {
-        float newDx = invaderDirection * invaderSpeed;
-        for (Entity invader : invaders) {
-            invader.setDx(newDx);
-        }
-    }
-
-    public float getInvaderDirection() {
-        return invaderDirection;
-    }
-
     public void flipInvaderDirection() {
         invaderDirection = -invaderDirection;
-    }
-
-    private void tryInvaderShootBullet(int threshhold) {
-        if (invaders.size() == 0) {
-            return;
-        }
-
-        Random r = new Random();
-
-        Invader toShoot = invaders.get(r.nextInt(Integer.MAX_VALUE) % invaders.size());
-
-        if (r.nextInt(1000) < threshhold) {
-            shootInvaderBullet(toShoot);
-        }
-
     }
 }
