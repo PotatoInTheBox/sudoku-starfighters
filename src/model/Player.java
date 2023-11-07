@@ -10,28 +10,51 @@ public class Player extends Entity {
 		this.team = Team.PLAYER;
 	}
 
-	public void moveHorizontal(float analogIput) {
-		x += speed * analogIput;
+	/**
+	 * Moves the player left and right
+	 * 
+	 * @param analogInput The directional input of the user
+	 */
+	public void moveHorizontal(float analogInput) {
+		x += speed * analogInput;
 	}
 
-	// for testing purposes
-	public void testMoveVertical(float analogIput) {
-		y += speed * analogIput;
+	/**
+	 * Moves the player up and down for testing
+	 * 
+	 * @param analogInput The directional input of the user
+	 */
+	public void testMoveVertical(float analogInput) {
+		y += speed * analogInput;
 	}
 
+	/**
+	 * Specifies if the player is hit
+	 * 
+	 * @return If the player is hit
+	 */
 	public boolean isHit() {
 		return false;
 	}
 
-	// TODO, should a player really have this method?
+	/**
+	 * Shoots a bullet at default speed
+	 * 
+	 * @return The created bullet
+	 */
 	public Bullet shootBullet() {
-		Bullet newBullet = new Bullet(x + width/2, y + height/2, -BULLET_SPEED, team);
+		Bullet newBullet = new Bullet(x + width / 2, y + height / 2, -BULLET_SPEED, team);
 		return newBullet;
 	}
 
-	// TODO, should a player really have this method?
+	/**
+	 * Shoots a bullet at a specific speed
+	 * 
+	 * @param speed The speed at which to fire the bullet
+	 * @return The created bullet
+	 */
 	public Bullet shootBullet(float speed) {
-		Bullet newBullet = new Bullet(x + width/2, y + height/2, -speed, team);
+		Bullet newBullet = new Bullet(x + width / 2, y + height / 2, -speed, team);
 		return newBullet;
 	}
 }
