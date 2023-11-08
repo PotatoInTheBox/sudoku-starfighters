@@ -290,6 +290,10 @@ public class Game {
     	return score.getScore();
     }
     
+    public Score getUser() {
+    	return score;
+    }
+    
     public int getLives() {
     	return score.getLives();
     }

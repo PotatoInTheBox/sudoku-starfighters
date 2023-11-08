@@ -18,7 +18,7 @@ import model.Score;
 
 public class LeaderboardPane extends GridPane {
 
-	private ArrayList<Score> topScores = new ArrayList<Score>();
+	public static ArrayList<Score> topScores = new ArrayList<Score>();
 	private VBox pane;
 
 	private Button backButton;

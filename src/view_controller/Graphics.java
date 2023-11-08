@@ -5,12 +5,17 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import javafx.animation.AnimationTimer;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import model.Bullet;
 import model.Entity;
@@ -25,6 +30,8 @@ public class Graphics extends Pane {
     private Game game;
     private Canvas canvas;
     private GraphicsContext gc;
+    
+    private VBox centeringContainer = new VBox();
 
     private FrameRateTracker frameRateTracker = new FrameRateTracker(200);
 
@@ -54,8 +61,27 @@ public class Graphics extends Pane {
         drawText("Score: " + Integer.toString(game.getScore()), 10, 30);
         drawText("Lives: " + Integer.toString(game.getLives()), 10, 45);
         
-        if (game.getLives() <= 0)
+        if (game.getLives() <= 2) {
+        	drawRectangle(165, 270, 250, 180, Color.BLACK);
         	drawText("GAME OVER", 250, 300);
+        	drawText("ENTER NAME FOR LEADERBOARD", 200, 325);
+            TextArea inputBox = new TextArea();
+        	Button submitButton = new Button("SUBMIT");
+            centeringContainer.setAlignment(Pos.CENTER);
+            centeringContainer.setPadding(new Insets(350, 10, 10, 190));
+            centeringContainer.setSpacing(10);
+            inputBox.setPrefSize(200, 20);
+            centeringContainer.getChildren().addAll(inputBox, submitButton);
+            gamePane.getChildren().add(centeringContainer);
+            submitButton.setOnAction(event -> {
+            	if(!inputBox.getText().isBlank()) {
+                	game.getUser().setUsername(inputBox.getText());
+                	LeaderboardPane.topScores.add(game.getUser());
+                    centeringContainer.getChildren().clear();
+                	drawText("PRESS ESC TO RETURN TO MENU", 200, 350);	
+            	}
+    		});
+        }
         
         frameRateTracker.logFrameUpdate();
     }
