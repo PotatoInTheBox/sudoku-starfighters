@@ -20,6 +20,7 @@ public class GamePane extends Pane {
     private Scene scene;
     private Graphics graphics;
     private Timer timer;
+    private boolean isPaused;
     private long lastTime = 0l;
     private long unprocessedTime = 0l;
     private final long TARGET_NANO_TIME = 16_666_666L; // (1/60)
@@ -56,11 +57,20 @@ public class GamePane extends Pane {
 
     public void pauseGame() {
         timer.stop();
+        isPaused = true;
     }
 
     public void unpauseGame() {
+        if (game.isPlayerHit()){
+            return; // cannot unpause while the player is hit
+        }
         lastTime = System.nanoTime();
+        isPaused = false;
         timer.start();
+    }
+
+    public boolean isPaused(){
+        return isPaused;
     }
 
     // update() is called every time javafx wants a new frame drawn
