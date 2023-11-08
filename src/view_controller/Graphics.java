@@ -61,7 +61,7 @@ public class Graphics extends Pane {
         drawText("Score: " + Integer.toString(game.getScore()), 10, 30);
         drawText("Lives: " + Integer.toString(game.getLives()), 10, 45);
         
-        if (game.getLives() <= 2) {
+        if (game.getLives() <= 0) {
         	drawRectangle(165, 270, 250, 180, Color.BLACK);
         	drawText("GAME OVER", 250, 300);
         	drawText("ENTER NAME FOR LEADERBOARD", 200, 325);
