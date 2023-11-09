@@ -54,6 +54,14 @@ public class Game {
                 throw new RuntimeException("Cannot delete entity that is marked for deletion! " + entity);
             }
         }
+        
+        if(invaders.isEmpty()) {
+            final float xInvadersPadding = width / 8;
+            final float yInvadersHeight = height / 3;
+            spawnAllInvaders(xInvadersPadding, 20, width - xInvadersPadding, yInvadersHeight, 8, 5);
+            applyInvaderMotion();
+        }
+        
         markedForRemoval.clear();
 
         // move bullets
