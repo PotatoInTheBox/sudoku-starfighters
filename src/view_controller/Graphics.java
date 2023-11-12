@@ -51,7 +51,12 @@ public class Graphics extends Pane {
 
     public void update() {
         drawRectangle(0, 0, canvas.getWidth(), canvas.getHeight(), Color.BLACK);
-        drawAllSprites();
+        
+        long currentTime = System.currentTimeMillis();
+        long truncatedTime = currentTime / 1000;
+        int valueToPass = (truncatedTime % 2 == 0) ? 1 : 0;
+        drawAllSprites(valueToPass);
+        
         //drawAllWireFrames();
         double fpsAvg = frameRateTracker.getAverageUpdate();
         double tpsAvg = gamePane.frameRateTracker.getAverageUpdate();
@@ -110,17 +115,17 @@ public class Graphics extends Pane {
         }
     }
 
-    private void drawAllSprites() {
+    private void drawAllSprites(int animFrame) {
         gc.drawImage(playerSprite, game.getPlayer().getX(), game.getPlayer().getY(), game.getPlayer().getWidth(),
                 game.getPlayer().getHeight());
         for (Invader invader : game.getInvaders()) {
             Image invaderSprite = null;
             if (invader.getInvaderType() == InvaderType.ONION)
-                invaderSprite = invaderSprites[0];
+                invaderSprite = invaderSprites[0 + animFrame];
             else if (invader.getInvaderType() == InvaderType.SPIDER)
-                invaderSprite = invaderSprites[1];
+                invaderSprite = invaderSprites[2 + animFrame];
             else
-                invaderSprite = invaderSprites[2]; // == InvaderType.MUSHROOM
+                invaderSprite = invaderSprites[4 + animFrame]; // == InvaderType.MUSHROOM
             gc.drawImage(invaderSprite, invader.getX(), invader.getY(), invader.getWidth(), invader.getHeight());
         }
         for (Bullet bullet : game.getBullets()) {
