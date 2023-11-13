@@ -149,13 +149,11 @@ public class GamePane extends StackPane {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if (isPaused) {
-                    game.increaseDifficulty();
-                    game.startNewRound();
-                    game.startPlayerLife();
-                    if (disabledInputValue == false) {
-                        unpauseGame();
-                    }
+                game.increaseDifficulty();
+                game.startNewRound();
+                game.startPlayerLife();
+                if (disabledInputValue == false) {
+                    unpauseGame();
                 }
             });
             thread.start();
