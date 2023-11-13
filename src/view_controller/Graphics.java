@@ -25,11 +25,13 @@ import model.Game;
 import model.Invader;
 import model.InvaderType;
 import model.Score;
+import view_controller.options.OptionsPane;
 
 public class Graphics extends Pane {
 
     private GamePane gamePane;
     private Game game;
+    private OptionsPane optionsPane;
     private Canvas canvas;
     private GraphicsContext gc;
 
@@ -41,9 +43,10 @@ public class Graphics extends Pane {
     Image[] invaderSprites;
     Image bulletSprite;
 
-    public Graphics(GamePane gamePane, double width, double height) {
+    public Graphics(GamePane gamePane, OptionsPane optionsPane, double width, double height) {
         this.gamePane = gamePane;
         this.game = gamePane.game;
+        this.optionsPane = optionsPane;
         canvas = new Canvas(width, height);
         gc = canvas.getGraphicsContext2D();
         gc.setImageSmoothing(false);
@@ -66,7 +69,8 @@ public class Graphics extends Pane {
         int valueToPass = (truncatedTime % 2 == 0) ? 1 : 0;
         drawAllSprites(valueToPass);
 
-        // drawAllWireFrames();
+        if (optionsPane.isWireframeEnabled())
+            drawAllWireFrames();
         double fpsAvg = frameRateTracker.getAverageUpdate();
         double tpsAvg = gamePane.frameRateTracker.getAverageUpdate();
         String fpsAverageString = String.format("Average FPS/UPS: %8.4f / %8.4f", fpsAvg, tpsAvg);

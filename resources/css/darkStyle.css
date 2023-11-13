@@ -19,10 +19,6 @@
     -fx-font-size: 18px;
 }
 
-.button{
-    -fx-focus-traversable: false;
-}
-
 .button:hover{
     -fx-text-fill: white;
 }

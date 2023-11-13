@@ -12,11 +12,14 @@ import javafx.scene.layout.Pane;
 import model.Bullet;
 import model.Game;
 import model.Team;
+import view_controller.options.KeyBinding;
+import view_controller.options.OptionsPane;
 
 public class GamePane extends Pane {
 
     private Input input;
     public Game game;
+    private OptionsPane optionsPane;
     private Scene scene;
     private Graphics graphics;
     private Timer timer;
@@ -25,33 +28,49 @@ public class GamePane extends Pane {
     private long unprocessedTime = 0l;
     private final long TARGET_NANO_TIME = 16_666_666L; // (1/60)
     public FrameRateTracker frameRateTracker = new FrameRateTracker(200);
+    private boolean disabledInputValue = false;
 
-    public GamePane(Scene scene, Input input, double width, double height) {
+    public GamePane(Scene scene, Input input, OptionsPane optionsPane, double width, double height) {
         this.scene = scene;
         this.input = input;
+        this.optionsPane = optionsPane;
         this.game = new Game((float) width, (float) height);
-        this.graphics = new Graphics(this, width, height);
+        this.graphics = new Graphics(this, optionsPane, width, height);
         this.timer = new Timer();
+        addButtonHandlers();
+        
+        getChildren().add(graphics);
+        game.startNewGame();
+        unpauseGame();
+    }
 
+    private void addButtonHandlers() {
         input.onKeyDown(e -> {
-            if (e.getCode().equals(KeyCode.Z)) {
-                if (getActivePlayerBulletCount() < 1) {
-                    game.shootPlayerBullet(); // better make that shot count xd
-                }
+            if (disabledInputValue){ // do not accept ANY inputs below
+                return;
             }
-            if (e.getCode().equals(KeyCode.X)) {
-                game.shootPlayerBullet(); // force bullet shoot anyways
-            }
-            if (e.getCode().equals(KeyCode.SPACE)) {
+            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.FORCE_UNPAUSE))) {
                 if (game.getLives() > 0) {
                     game.setPlayerHit(false);
                     unpauseGame(); // force continue game
                 }
             }
+            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.WIREFRAME))){
+                optionsPane.setWireframeEnabled(!optionsPane.isWireframeEnabled());
+            }
+            if (isPaused) { // do game inputs below
+                return;
+            }
+            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.FIRE))) {
+                if (getActivePlayerBulletCount() < 1) {
+                    game.shootPlayerBullet(); // better make that shot count xd
+                }
+            }
+            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.RAPID_FIRE))) {
+                game.shootPlayerBullet(); // force bullet shoot anyways
+            }
+            
         });
-        getChildren().add(graphics);
-        game.startNewGame();
-        unpauseGame();
     }
 
     public void pauseGame() {
@@ -121,5 +140,9 @@ public class GamePane extends Pane {
             }
         }
         return playerBulletCount;
+    }
+
+    public void disabledInput(boolean value) {
+        this.disabledInputValue = value;
     }
 }
