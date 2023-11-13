@@ -2,7 +2,7 @@ package model;
 
 public class Invader extends Entity {
 
-    private static final float BULLET_SPEED = 4f;
+    private static final float BULLET_SPEED = 2f;
     private InvaderType invaderType;
 
     public Invader(float positionX, float positionY, float sizeX, float sizeY, float speed) {

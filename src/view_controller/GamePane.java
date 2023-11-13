@@ -43,7 +43,7 @@ public class GamePane extends StackPane {
         this.timer = new Timer();
         addButtonHandlers();
         this.getChildren().add(graphics);
-        game.startNewGame();
+        game.startNewRound();
         unpauseGame();
     }
 
@@ -141,6 +141,25 @@ public class GamePane extends StackPane {
             }
             System.out.println("Player has been hit, the game has been paused"
                     + ", press space to override.");
+        } else if (game.hasWon()) {
+            pauseGame();
+            Thread thread = new Thread(() -> {
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (isPaused) {
+                    game.increaseDifficulty();
+                    game.startNewRound();
+                    game.startPlayerLife();
+                    if (disabledInputValue == false) {
+                        unpauseGame();
+                    }
+                }
+            });
+            thread.start();
+            System.out.println("The player has won this round!");
         }
     }
 

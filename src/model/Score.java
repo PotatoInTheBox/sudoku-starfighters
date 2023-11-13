@@ -19,6 +19,10 @@ public class Score {
 		return lives;
 	}
 
+	public void setLives(int lives) {
+		this.lives = lives;
+	}
+
 	public String getUsername() {
 		return username;
 	}

@@ -2,7 +2,7 @@ package model;
 
 public class Player extends Entity {
 	protected float speed;
-	private static final float BULLET_SPEED = 4f;
+	private static final float BULLET_SPEED = 3f;
 
 	public Player(float x, float y, float width, float height, float speed) {
 		super(x, y, width, height);

@@ -97,7 +97,7 @@ public class GameTest {
     @Test
     void testStartNewGame() {
         Game game = new Game();
-        game.startNewGame();
+        game.startNewRound();
         assertNotNull(game.getPlayer());
         assertTrue(game.getInvaders().size() >= 1); // at least 1 invader exist
     }

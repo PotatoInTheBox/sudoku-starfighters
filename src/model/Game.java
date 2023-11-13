@@ -14,8 +14,24 @@ public class Game {
     private boolean isPlayerHit = false;
 
     private float invaderDirection = -1f;
-    private float invaderSpeed = 1f;
     private float invaderEncroachAmount = 20f;
+    private float playerSpeed = 3f;
+
+    private float difficultyLevel = 1f;
+
+    private float invaderBaseSpeed = 0.6f;
+    private float invaderSpeed = invaderBaseSpeed;
+    private float invaderDifficultyScalingSpeed = 0.1f;
+
+    private float invaderMaxBaseSpeed = 1f;
+    private float invaderMaxSpeed = invaderMaxBaseSpeed;
+    private float invaderMaxDifficultyScalingSpeed = 0.2f;
+
+    private float baseInvaderBulletCount = 4f;
+    private float invaderBulletCount = baseInvaderBulletCount;
+    private float invaderDifficultyScalingBulletCount = 1f;
+
+    private float startInvadersCount;
 
     private float width;
     private float height;
@@ -31,11 +47,12 @@ public class Game {
         this.height = height;
     }
 
-    public void startNewGame() {
+    public void startNewRound() {
         spawnPlayer(width - 20, height - 20, 40, 40);
-        final float xInvadersPadding = width / 8;
+        final float xInvadersPadding = width / 2.5f;
         final float yInvadersHeight = height / 3;
-        spawnAllInvaders(xInvadersPadding, 20, width - xInvadersPadding, yInvadersHeight, 8, 5);
+        startInvadersCount = 0;
+        spawnAllInvaders(xInvadersPadding, 20, width - xInvadersPadding, yInvadersHeight, 7, 5);
         applyInvaderMotion();
         startPlayerLife();
     }
@@ -63,12 +80,13 @@ public class Game {
             }
         }
 
-        if (invaders.isEmpty()) {
-            final float xInvadersPadding = width / 8;
-            final float yInvadersHeight = height / 3;
-            spawnAllInvaders(xInvadersPadding, 20, width - xInvadersPadding, yInvadersHeight, 8, 5);
-            applyInvaderMotion();
-        }
+        // if (invaders.isEmpty()) {
+        // final float xInvadersPadding = width / 8;
+        // final float yInvadersHeight = height / 3;
+        // spawnAllInvaders(xInvadersPadding, 20, width - xInvadersPadding,
+        // yInvadersHeight, 8, 5);
+        // applyInvaderMotion();
+        // }
 
         markedForRemoval.clear();
 
@@ -93,7 +111,13 @@ public class Game {
         // bullet collision detection
         processBulletCollisions();
 
+        // check invader -> player collision
+        processInvaderPlayerCollision();
+
         tryInvaderShootBullet(5 + (78 - invaders.size()));
+
+        // update invader's speed based on missing invaders
+        updateInvadersSpeed();
     }
 
     private void spawnAllInvaders(float startX, float startY, float width, float height, int xCount, int yCount) {
@@ -120,12 +144,13 @@ public class Game {
                 float spawnX = x * width / xCount + startX;
                 float spawnY = y * height / yCount + startY;
                 spawnInvader(spawnX, spawnY, 35, 35, invaderType);
+                startInvadersCount++;
             }
         }
     }
 
     public void spawnPlayer(float x, float y, float width, float height) {
-        Player player = new Player(x, y, width, height, 10f);
+        Player player = new Player(x, y, width, height, playerSpeed);
         this.player = player;
     }
 
@@ -157,7 +182,11 @@ public class Game {
 
         Invader toShoot = invaders.get(r.nextInt(Integer.MAX_VALUE) % invaders.size());
 
-        if (r.nextInt(1000) < threshhold) {
+        float overLimitInvaders = Math.max(invaderBulletCount() - invaderBulletCount, 0);
+
+        float reducedPercentModifier = 1 / (1 + overLimitInvaders);
+
+        if (r.nextInt(1000) < threshhold * reducedPercentModifier) {
             shootInvaderBullet(toShoot);
         }
     }
@@ -172,6 +201,33 @@ public class Game {
 
     public float getHeight() {
         return height;
+    }
+
+    private void processInvaderPlayerCollision() {
+        for (Invader invader : invaders) {
+            if (invader.hasCollidedWith(player)) {
+                isPlayerHit = true;
+                score.setLives(0);
+            }
+        }
+    }
+
+    private void updateInvadersSpeed() {
+        float newSpeed = invaderSpeed
+                + (invaderMaxSpeed - invaderSpeed) * (float)(1 - Math.pow(invaders.size() / startInvadersCount, 2));
+        for (Invader invader : invaders) {
+            float sign = Math.signum(invader.getDx());
+            invader.setDx(newSpeed * sign);
+        }
+    }
+
+    private int invaderBulletCount() {
+        int count = 0;
+        for (Bullet bullet : bullets) {
+            if (bullet.getTeam() == Team.INVADERS)
+                count++;
+        }
+        return count;
     }
 
     private void processBulletCollisions() {
@@ -320,5 +376,19 @@ public class Game {
 
     public int getLives() {
         return score.getLives();
+    }
+
+    public boolean hasWon() {
+        return invaders.size() == 0;
+    }
+
+    public void increaseDifficulty() {
+        difficultyLevel += 1f;
+        // modify values of the game to increase difficulty
+        invaderSpeed = invaderBaseSpeed + invaderBaseSpeed * invaderDifficultyScalingSpeed * difficultyLevel;
+        invaderMaxSpeed = invaderMaxSpeed + invaderMaxBaseSpeed *
+                invaderMaxDifficultyScalingSpeed * difficultyLevel;
+        invaderBulletCount = baseInvaderBulletCount + baseInvaderBulletCount *
+                invaderDifficultyScalingBulletCount * difficultyLevel;
     }
 }
