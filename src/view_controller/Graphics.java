@@ -6,6 +6,7 @@ import java.io.InputStream;
 
 import javafx.animation.AnimationTimer;
 import javafx.beans.value.ChangeListener;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -16,7 +17,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import model.Bullet;
@@ -27,7 +33,7 @@ import model.InvaderType;
 import model.Score;
 import view_controller.options.OptionsPane;
 
-public class Graphics extends Pane {
+public class Graphics extends VBox {
 
     private GamePane gamePane;
     private Game game;
@@ -43,22 +49,32 @@ public class Graphics extends Pane {
     Image[] invaderSprites;
     Image bulletSprite;
 
-    public Graphics(GamePane gamePane, OptionsPane optionsPane, double width, double height) {
+    public Graphics(GamePane gamePane, double width, double height) {
         this.gamePane = gamePane;
         this.game = gamePane.game;
-        this.optionsPane = optionsPane;
+        this.optionsPane = gamePane.optionsPane;
         canvas = new Canvas(width, height);
         gc = canvas.getGraphicsContext2D();
         gc.setImageSmoothing(false);
-        getChildren().add(canvas);
+
+        Pane dummyResizePane = new Pane(canvas);
+        setVgrow(dummyResizePane, Priority.ALWAYS);
+        setAlignment(Pos.CENTER);
+        this.getChildren().add(dummyResizePane);
+
         loadSprites();
+
+        // add event for resizing
         ChangeListener<Number> stageSizeListener = (observable, oldValue, newValue) -> {
-            System.out.println("Height: " + gamePane.getHeight() + " Width: " + gamePane.getWidth());
-            canvas.setWidth(gamePane.getWidth());
-            canvas.setHeight(gamePane.getHeight());
+            // restrict the game to 1:1 screen ratio
+            double smallestLen = Math.min(this.getWidth(), this.getHeight());
+            canvas.setTranslateX(Math.max((this.getWidth() - this.getHeight()) / 2, 0));
+            canvas.setTranslateY(Math.max((this.getHeight() - this.getWidth()) / 2, 0));
+            canvas.setWidth(smallestLen);
+            canvas.setHeight(smallestLen);
         };
-        gamePane.widthProperty().addListener(stageSizeListener);
-        gamePane.heightProperty().addListener(stageSizeListener);
+        this.widthProperty().addListener(stageSizeListener);
+        this.heightProperty().addListener(stageSizeListener);
     }
 
     public void update() {

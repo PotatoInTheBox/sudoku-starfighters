@@ -14,6 +14,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -39,6 +40,7 @@ public class KeyBindingsPane extends BorderPane {
         this.input = input;
 
         gridList = new GridPane();
+        gridList.setAlignment(Pos.CENTER);
         gridList.setPadding(new Insets(10, 10, 10, 10));
         gridList.setVgap(5);
         gridList.setHgap(5);

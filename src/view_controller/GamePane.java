@@ -6,20 +6,24 @@ import java.util.List;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import model.Bullet;
 import model.Game;
 import model.Team;
 import view_controller.options.KeyBinding;
 import view_controller.options.OptionsPane;
 
-public class GamePane extends Pane {
+public class GamePane extends StackPane {
 
     private Input input;
     public Game game;
-    private OptionsPane optionsPane;
+    public OptionsPane optionsPane;
     private Scene scene;
     private Graphics graphics;
     private Timer timer;
@@ -35,11 +39,10 @@ public class GamePane extends Pane {
         this.input = input;
         this.optionsPane = optionsPane;
         this.game = new Game((float) width, (float) height);
-        this.graphics = new Graphics(this, optionsPane, width, height);
+        this.graphics = new Graphics(this, width, height);
         this.timer = new Timer();
         addButtonHandlers();
-        
-        getChildren().add(graphics);
+        this.getChildren().add(graphics);
         game.startNewGame();
         unpauseGame();
     }

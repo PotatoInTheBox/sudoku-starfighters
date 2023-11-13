@@ -2,8 +2,10 @@ package view_controller;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -35,6 +37,7 @@ public class MainGUI extends Application {
 		keyBindingsPane = new KeyBindingsPane(input);
 		keyBindingsPane.addKeyBindFields(input.getKeyBindings());
 		keyBindingsPane.displayKeyBindFields();
+		primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 		primaryStage.setScene(scene);
 		loadCssStyleFile(scene);
 
@@ -63,6 +66,9 @@ public class MainGUI extends Application {
 						popAndExitPane();
 					}
 				}
+			}
+			if(e.getCode().equals(KeyCode.F11)){
+				primaryStage.setFullScreen(!primaryStage.isFullScreen());
 			}
 		});
 
