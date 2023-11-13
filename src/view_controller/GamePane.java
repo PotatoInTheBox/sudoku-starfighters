@@ -49,16 +49,16 @@ public class GamePane extends StackPane {
 
     private void addButtonHandlers() {
         input.onKeyDown(e -> {
-            if (disabledInputValue){ // do not accept ANY inputs below
+            if (disabledInputValue) { // do not accept ANY inputs below
                 return;
             }
             if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.FORCE_UNPAUSE))) {
                 if (game.getLives() > 0) {
-                    game.setPlayerHit(false);
+                    game.startPlayerLife();
                     unpauseGame(); // force continue game
                 }
             }
-            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.WIREFRAME))){
+            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.WIREFRAME))) {
                 optionsPane.setWireframeEnabled(!optionsPane.isWireframeEnabled());
             }
             if (isPaused) { // do game inputs below
@@ -72,7 +72,7 @@ public class GamePane extends StackPane {
             if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.RAPID_FIRE))) {
                 game.shootPlayerBullet(); // force bullet shoot anyways
             }
-            
+
         });
     }
 
@@ -123,6 +123,22 @@ public class GamePane extends StackPane {
 
         if (game.isPlayerHit()) {
             pauseGame();
+            if (game.getLives() > 0) {
+                Thread thread = new Thread(() -> {
+                    try {
+                        Thread.sleep(1500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (isPaused) {
+                        game.startPlayerLife();
+                        if (disabledInputValue == false) {
+                            unpauseGame();
+                        }
+                    }
+                });
+                thread.start();
+            }
             System.out.println("Player has been hit, the game has been paused"
                     + ", press space to override.");
         }

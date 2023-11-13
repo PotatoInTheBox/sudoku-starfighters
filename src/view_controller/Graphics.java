@@ -101,11 +101,13 @@ public class Graphics extends VBox {
             drawText("ENTER NAME FOR LEADERBOARD", 200, 325);
             TextArea inputBox = new TextArea();
             Button submitButton = new Button("SUBMIT");
+            centeringContainer = new VBox();
             centeringContainer.setAlignment(Pos.CENTER);
             centeringContainer.setPadding(new Insets(350, 10, 10, 190));
             centeringContainer.setSpacing(10);
             inputBox.setPrefSize(200, 20);
             centeringContainer.getChildren().addAll(inputBox, submitButton);
+            gamePane.getChildren().remove(centeringContainer);
             gamePane.getChildren().add(centeringContainer);
             submitButton.setOnAction(event -> {
                 if (!inputBox.getText().isBlank()) {

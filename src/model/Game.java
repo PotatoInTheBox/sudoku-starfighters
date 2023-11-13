@@ -37,6 +37,14 @@ public class Game {
         final float yInvadersHeight = height / 3;
         spawnAllInvaders(xInvadersPadding, 20, width - xInvadersPadding, yInvadersHeight, 8, 5);
         applyInvaderMotion();
+        startPlayerLife();
+    }
+
+    public void startPlayerLife() {
+        bullets.clear();
+        player.setCenterX(width / 2);
+        player.setCenterY(height - player.getHeight() * 1.5f);
+        isPlayerHit = false;
     }
 
     // Game logic here, this will run at a constant rate.
@@ -178,8 +186,6 @@ public class Game {
                 } else if (hitEntity.getTeam() == Team.PLAYER) {
                     playerHit();
                     markedForRemoval.add(bullet);
-                    bullets.clear();
-                    break;
                 }
 
             } else if (bullet.isOutOfBounds(0, 0, width, height)) {
