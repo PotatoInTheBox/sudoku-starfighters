@@ -43,11 +43,10 @@ public class GamePane extends Pane {
                 game.shootPlayerBullet(); // force bullet shoot anyways
             }
             if (e.getCode().equals(KeyCode.SPACE)) {
-            	if (game.getLives() > 0)
-            	{
-            		game.setPlayerHit(false);
-            		unpauseGame(); // force continue game
-            	}
+                if (game.getLives() > 0) {
+                    game.setPlayerHit(false);
+                    unpauseGame(); // force continue game
+                }
             }
         });
         getChildren().add(graphics);
@@ -61,7 +60,7 @@ public class GamePane extends Pane {
     }
 
     public void unpauseGame() {
-        if (game.isPlayerHit()){
+        if (game.isPlayerHit()) {
             return; // cannot unpause while the player is hit
         }
         lastTime = System.nanoTime();
@@ -69,7 +68,7 @@ public class GamePane extends Pane {
         timer.start();
     }
 
-    public boolean isPaused(){
+    public boolean isPaused() {
         return isPaused;
     }
 
@@ -114,10 +113,10 @@ public class GamePane extends Pane {
         }
     }
 
-    private int getActivePlayerBulletCount(){
+    private int getActivePlayerBulletCount() {
         int playerBulletCount = 0;
         for (Bullet bullet : game.getBullets()) {
-            if (bullet.getTeam() == Team.PLAYER){
+            if (bullet.getTeam() == Team.PLAYER) {
                 playerBulletCount += 1;
             }
         }

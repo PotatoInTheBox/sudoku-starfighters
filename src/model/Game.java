@@ -178,8 +178,8 @@ public class Game {
                 } else if (hitEntity.getTeam() == Team.PLAYER) {
                     playerHit();
                     markedForRemoval.add(bullet);
-                	bullets.clear();
-                	break;
+                    bullets.clear();
+                    break;
                 }
 
             } else if (bullet.isOutOfBounds(0, 0, width, height)) {

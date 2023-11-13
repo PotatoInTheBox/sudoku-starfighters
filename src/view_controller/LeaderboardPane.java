@@ -59,7 +59,7 @@ public class LeaderboardPane extends GridPane {
 				return Integer.compare(score2.getScore(), score1.getScore());
 			}
 		});
-		if(topScores.isEmpty()) {
+		if (topScores.isEmpty()) {
 			Label cur = new Label("No Scores on Leaderboard");
 			pane.getChildren().add(cur);
 		}

@@ -1,6 +1,5 @@
 package model;
 
-public class InvadersGroup
-{
+public class InvadersGroup {
 
 }

@@ -20,22 +20,21 @@ public class Invader extends Entity {
         this.invaderType = invaderType;
     }
 
-    public InvaderType getInvaderType(){
+    public InvaderType getInvaderType() {
         return invaderType;
     }
-    
-    public int getScoreChange()
-    {
-    	switch (invaderType){
-    		case ONION:
-    			return 10;
-    		case SPIDER:
-    			return 15;
-    		case MUSHROOM:
-    			return 20;
-    		default:
-    			return 0;
-    	}
+
+    public int getScoreChange() {
+        switch (invaderType) {
+            case ONION:
+                return 10;
+            case SPIDER:
+                return 15;
+            case MUSHROOM:
+                return 20;
+            default:
+                return 0;
+        }
     }
 
 }

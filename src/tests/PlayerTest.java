@@ -33,8 +33,7 @@ public class PlayerTest {
         assertEquals(5, player.getX());
         assertEquals(-5, player.getY());
     }
-    
-    
+
     @Test
     void testShootBullet() {
         Player player = new Player(0, 0, 10, 10, 10);
@@ -45,11 +44,10 @@ public class PlayerTest {
         // after the bullet has moved it should always be in front of the
         // character (even if by a single pixel)
         bullet.move();
-        assertTrue(bullet.getY() < player.getY() + player.getHeight()/2);
+        assertTrue(bullet.getY() < player.getY() + player.getHeight() / 2);
 
         // no assumptions can be made about the speed and exact position
         // of the spawned bullet.
     }
 
-    
 }

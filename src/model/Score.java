@@ -30,11 +30,11 @@ public class Score {
 	public void changeScore(int change) {
 		score = score + change;
 	}
-	
+
 	public void changeScore(Invader invader) {
 		score = score + invader.getScoreChange();
 	}
-	
+
 	public void changeLives() {
 		lives -= 1;
 	}
