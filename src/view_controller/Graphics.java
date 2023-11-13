@@ -5,7 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import javafx.animation.AnimationTimer;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -30,7 +32,7 @@ public class Graphics extends Pane {
     private Game game;
     private Canvas canvas;
     private GraphicsContext gc;
-    
+
     private VBox centeringContainer = new VBox();
 
     private FrameRateTracker frameRateTracker = new FrameRateTracker(200);
@@ -47,6 +49,13 @@ public class Graphics extends Pane {
         gc.setImageSmoothing(false);
         getChildren().add(canvas);
         loadSprites();
+        ChangeListener<Number> stageSizeListener = (observable, oldValue, newValue) -> {
+            System.out.println("Height: " + gamePane.getHeight() + " Width: " + gamePane.getWidth());
+            canvas.setWidth(gamePane.getWidth());
+            canvas.setHeight(gamePane.getHeight());
+        };
+        gamePane.widthProperty().addListener(stageSizeListener);
+        gamePane.heightProperty().addListener(stageSizeListener);
     }
 
     public void update() {
@@ -116,8 +125,8 @@ public class Graphics extends Pane {
     }
 
     private void drawAllSprites(int animFrame) {
-        gc.drawImage(playerSprite, game.getPlayer().getX(), game.getPlayer().getY(), game.getPlayer().getWidth(),
-                game.getPlayer().getHeight());
+        drawSprite(playerSprite, new Point2D(game.getPlayer().getX(), game.getPlayer().getY()),
+                new Point2D(game.getPlayer().getWidth(), game.getPlayer().getHeight()));
         for (Invader invader : game.getInvaders()) {
             Image invaderSprite = null;
             if (invader.getInvaderType() == InvaderType.ONION)
@@ -126,17 +135,27 @@ public class Graphics extends Pane {
                 invaderSprite = invaderSprites[2 + animFrame];
             else
                 invaderSprite = invaderSprites[4 + animFrame]; // == InvaderType.MUSHROOM
-            gc.drawImage(invaderSprite, invader.getX(), invader.getY(), invader.getWidth(), invader.getHeight());
+            drawSprite(invaderSprite, new Point2D(invader.getX(), invader.getY()),
+                    new Point2D(invader.getWidth(), invader.getHeight()));
         }
         for (Bullet bullet : game.getBullets()) {
             // reverse the bullet sprite if it is going down
             if (bullet.getDy() > 0f) {
-                gc.drawImage(bulletSprite, bullet.getX(), bullet.getY() + bullet.getHeight(), bullet.getWidth(), -bullet.getHeight());
+                drawSprite(bulletSprite, new Point2D(bullet.getX(), bullet.getY() + bullet.getHeight()),
+                        new Point2D(bullet.getWidth(), -bullet.getHeight()));
             } else {
-                gc.drawImage(bulletSprite, bullet.getX(), bullet.getY(), bullet.getWidth(), bullet.getHeight());
+                drawSprite(bulletSprite, new Point2D(bullet.getX(), bullet.getY()),
+                        new Point2D(bullet.getWidth(), bullet.getHeight()));
             }
 
         }
+    }
+
+    private void drawSprite(Image image, Point2D startPoint, Point2D endPoint) {
+        Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);
+        Point2D mappedEndPoint = mapGamePointOntoGraphics(endPoint);
+        gc.drawImage(image, mappedStartPoint.getX(), mappedStartPoint.getY(),
+                mappedEndPoint.getX(), mappedEndPoint.getY());
     }
 
     private void drawAllWireFrames() {
@@ -156,11 +175,17 @@ public class Graphics extends Pane {
     }
 
     private void drawWireFrame(Entity entity, Color color) {
-        drawWireframe(entity.getX(), entity.getY(),
-                entity.getWidth(), entity.getHeight(), color);
+        drawWireframe(new Point2D(entity.getX(), entity.getY()),
+                new Point2D(entity.getWidth(), entity.getHeight()), color);
     }
 
-    private void drawWireframe(float x, float y, float w, float h, Color color) {
+    private void drawWireframe(Point2D startPoint, Point2D endPoint, Color color) {
+        Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);
+        Point2D mappedEndPoint = mapGamePointOntoGraphics(endPoint);
+        double x = mappedStartPoint.getX();
+        double y = mappedStartPoint.getY();
+        double w = mappedEndPoint.getX();
+        double h = mappedEndPoint.getY();
         gc.setStroke(color);
         gc.setLineWidth(2);
         gc.strokeLine(x, y, x, y + h); // left
@@ -172,6 +197,18 @@ public class Graphics extends Pane {
     private void drawRectangle(double x, double y, double width, double height, Color color) {
         gc.setFill(color);
         gc.fillRect(x, y, width, height);
+    }
+
+    private Point2D mapGamePointOntoGraphics(Point2D point) {
+        double graphicsWidth = canvas.getWidth();
+        double graphicsHeight = canvas.getHeight();
+        double gameWidth = game.getWidth();
+        double gameHeight = game.getHeight();
+
+        double scaleX = graphicsWidth / gameWidth;
+        double scaleY = graphicsHeight / gameHeight;
+
+        return new Point2D(point.getX() * scaleX, point.getY() * scaleY);
     }
 
     private void clearCanvas() {

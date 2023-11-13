@@ -19,7 +19,7 @@ public class Game {
 
     private float width;
     private float height;
-    
+
     private Score score = new Score();
 
     public Game() {
@@ -54,14 +54,14 @@ public class Game {
                 throw new RuntimeException("Cannot delete entity that is marked for deletion! " + entity);
             }
         }
-        
-        if(invaders.isEmpty()) {
+
+        if (invaders.isEmpty()) {
             final float xInvadersPadding = width / 8;
             final float yInvadersHeight = height / 3;
             spawnAllInvaders(xInvadersPadding, 20, width - xInvadersPadding, yInvadersHeight, 8, 5);
             applyInvaderMotion();
         }
-        
+
         markedForRemoval.clear();
 
         // move bullets
@@ -156,6 +156,14 @@ public class Game {
 
     public void addBullet(Bullet bullet) {
         bullets.add(bullet);
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
     }
 
     private void processBulletCollisions() {
@@ -295,16 +303,16 @@ public class Game {
     public void setPlayerHit(boolean isPlayerHit) {
         this.isPlayerHit = isPlayerHit;
     }
-    
+
     public int getScore() {
-    	return score.getScore();
+        return score.getScore();
     }
-    
+
     public Score getUser() {
-    	return score;
+        return score;
     }
-    
+
     public int getLives() {
-    	return score.getLives();
+        return score.getLives();
     }
 }
