@@ -103,9 +103,9 @@ public class Graphics extends VBox {
             Button submitButton = new Button("SUBMIT");
             centeringContainer = new VBox();
             centeringContainer.setAlignment(Pos.CENTER);
-            centeringContainer.setPadding(new Insets(350, 10, 10, 190));
+            centeringContainer.setPadding(new Insets(200, 10, 10, 100));
             centeringContainer.setSpacing(10);
-            inputBox.setPrefSize(200, 20);
+            inputBox.setPrefSize(100, 10);
             centeringContainer.getChildren().addAll(inputBox, submitButton);
             gamePane.getChildren().remove(centeringContainer);
             gamePane.getChildren().add(centeringContainer);
