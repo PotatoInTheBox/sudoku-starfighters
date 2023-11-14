@@ -19,6 +19,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import view_controller.SoundPlayer;
 
 // NOTE: Pane won't resize the child panes, BorderPane will.
 public class OptionsPane extends BorderPane {
@@ -28,10 +29,13 @@ public class OptionsPane extends BorderPane {
 
     private CheckBox checkBox;
     private Button keyBindingsButton;
+    private Slider volumeSlider;
 
     public OptionsPane() {
-        Slider slider1 = new Slider(0, 100, 50);
+        volumeSlider = new Slider(0, 1, 0.4d);
         Slider slider2 = new Slider(0, 100, 50);
+
+        SoundPlayer.setVolume(volumeSlider.valueProperty());
 
         checkBox = new CheckBox();
 
@@ -44,7 +48,7 @@ public class OptionsPane extends BorderPane {
         gridList.setHgap(5);
 
         // Add components to the layout
-        addSettingsItem(new Label("Slider 1:"), slider1);
+        addSettingsItem(new Label("Volume:"), volumeSlider);
         addSettingsItem(new Label("Slider 2:"), slider2);
         addSettingsItem(new Label("Wireframes:"), checkBox);
         gridList.addColumn(0, keyBindingsButton);
