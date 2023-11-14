@@ -157,6 +157,7 @@ public class GamePane extends StackPane {
         game.update();
 
         if (game.isPlayerHit()) {
+            SoundPlayer.playSound("player_death.wav");
             pauseGame();
             if (game.getLives() > 0) {
                 Thread thread = new Thread(() -> {
