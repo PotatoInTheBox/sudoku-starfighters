@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -117,8 +118,8 @@ public class GamePane extends StackPane {
         gameOverPane.showGameOver();
         this.getChildren().add(gameOverPane);
         gameOverPane.setOnSubmitButtonAction(event -> {
-            if (!((Button)event.getSource()).getText().isBlank()) {
-                game.getUser().setUsername(((Button)event.getSource()).getText());
+            if (!((TextField)event.getTarget()).getText().isBlank()) {
+                game.getUser().setUsername(((TextField)event.getTarget()).getText());
                 LeaderboardPane.topScores.add(game.getUser());
                 gameOverPane.showSubmitted();
             }

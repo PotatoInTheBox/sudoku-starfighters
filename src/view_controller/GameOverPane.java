@@ -6,7 +6,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
@@ -14,11 +14,12 @@ public class GameOverPane extends BorderPane {
     VBox enterScorePane;
     VBox submittedPane;
     Button submitButton;
+    TextField inputBox;
 
     public GameOverPane() {
         Label gameOverLabel = new Label("GAME OVER");
         Label enterNameLabel = new Label("ENTER NAME FOR LEADERBOARD");
-        TextArea inputBox = new TextArea();
+        inputBox = new TextField();
         inputBox.setPrefSize(100, 10);
         inputBox.setMaxSize(300, 20);
         submitButton = new Button("SUBMIT");
@@ -46,6 +47,8 @@ public class GameOverPane extends BorderPane {
     }
 
     public void setOnSubmitButtonAction(EventHandler<ActionEvent> event){
-        submitButton.setOnAction(event);
+        submitButton.setOnAction(e -> {
+            event.handle(new ActionEvent(submitButton, inputBox));
+        });
     }
 }
