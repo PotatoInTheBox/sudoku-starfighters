@@ -16,6 +16,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -40,8 +43,6 @@ public class Graphics extends VBox {
     private OptionsPane optionsPane;
     private Canvas canvas;
     private GraphicsContext gc;
-
-    private VBox centeringContainer = new VBox();
 
     private FrameRateTracker frameRateTracker = new FrameRateTracker(200);
 
@@ -103,11 +104,61 @@ public class Graphics extends VBox {
         invaderSprites = new Image[6];
         invaderSprites[0] = getSpriteFromFile("./resources/images/enemy1_frame1.png");
         invaderSprites[1] = getSpriteFromFile("./resources/images/enemy1_frame2.png");
+        invaderSprites[0] = debugTempReColor(invaderSprites[0], Color.WHITE, Color.web("#ffff73"));
+        invaderSprites[1] = debugTempReColor(invaderSprites[1], Color.WHITE, Color.web("#ffff73"));
         invaderSprites[2] = getSpriteFromFile("./resources/images/enemy2_frame1.png");
         invaderSprites[3] = getSpriteFromFile("./resources/images/enemy2_frame2.png");
+        invaderSprites[2] = debugTempReColor(invaderSprites[2], Color.WHITE, Color.web("#da73ff"));
+        invaderSprites[3] = debugTempReColor(invaderSprites[3], Color.WHITE, Color.web("#da73ff"));
         invaderSprites[4] = getSpriteFromFile("./resources/images/enemy3_frame1.png");
         invaderSprites[5] = getSpriteFromFile("./resources/images/enemy3_frame2.png");
+        invaderSprites[4] = debugTempReColor(invaderSprites[4], Color.WHITE, Color.web("#ff7373"));
+        invaderSprites[5] = debugTempReColor(invaderSprites[5], Color.WHITE, Color.web("#ff7373"));
         bulletSprite = getSpriteFromFile("./resources/images/bullet.png");
+    }
+
+    /**
+     * reColor the given InputImage to the given color
+     * inspired by https://stackoverflow.com/a/12945629/1497139
+     * 
+     * @author Wolfgang Fahl https://stackoverflow.com/a/51726678
+     * 
+     * @param inputImage
+     * @param oldColor
+     * @param newColor
+     * @return reColored Image
+     * 
+     */
+    public static Image debugTempReColor(Image inputImage, Color oldColor, Color newColor) {
+        int W = (int) inputImage.getWidth();
+        int H = (int) inputImage.getHeight();
+        WritableImage outputImage = new WritableImage(W, H);
+        PixelReader reader = inputImage.getPixelReader();
+        PixelWriter writer = outputImage.getPixelWriter();
+        int ob = (int) (oldColor.getBlue() * 255);
+        int or = (int) (oldColor.getRed() * 255);
+        int og = (int) (oldColor.getGreen() * 255);
+        int nb = (int) (newColor.getBlue() * 255);
+        int nr = (int) (newColor.getRed() * 255);
+        int ng = (int) (newColor.getGreen() * 255);
+        for (int y = 0; y < H; y++) {
+            for (int x = 0; x < W; x++) {
+                int argb = reader.getArgb(x, y);
+                int a = (argb >> 24) & 0xFF;
+                int r = (argb >> 16) & 0xFF;
+                int g = (argb >> 8) & 0xFF;
+                int b = argb & 0xFF;
+                if (g == og && r == or && b == ob) {
+                    r = nr;
+                    g = ng;
+                    b = nb;
+                }
+
+                argb = (a << 24) | (r << 16) | (g << 8) | b;
+                writer.setArgb(x, y, argb);
+            }
+        }
+        return outputImage;
     }
 
     private Image getSpriteFromFile(String path) {
@@ -145,7 +196,6 @@ public class Graphics extends VBox {
                 drawSprite(bulletSprite, new Point2D(bullet.getX(), bullet.getY()),
                         new Point2D(bullet.getWidth(), bullet.getHeight()));
             }
-
         }
     }
 
