@@ -6,13 +6,18 @@ import java.util.List;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import model.Bullet;
 import model.Game;
 import model.Team;
@@ -24,15 +29,17 @@ public class GamePane extends StackPane {
     private Input input;
     public Game game;
     public OptionsPane optionsPane;
+    private GameOverPane gameOverPane;
     private Scene scene;
     private Graphics graphics;
     private Timer timer;
-    private boolean isPaused;
+    private boolean isGamePaused = true;
     private long lastTime = 0l;
     private long unprocessedTime = 0l;
     private final long TARGET_NANO_TIME = 16_666_666L; // (1/60)
     public FrameRateTracker frameRateTracker = new FrameRateTracker(200);
     private boolean disabledInputValue = false;
+    private boolean isRenderPaused = true;
 
     public GamePane(Scene scene, Input input, OptionsPane optionsPane, double width, double height) {
         this.scene = scene;
@@ -40,11 +47,13 @@ public class GamePane extends StackPane {
         this.optionsPane = optionsPane;
         this.game = new Game((float) width, (float) height);
         this.graphics = new Graphics(this, width, height);
+        this.gameOverPane = new GameOverPane();
         this.timer = new Timer();
         addButtonHandlers();
         SoundPlayer.loadAllSongs();
         this.getChildren().add(graphics);
         game.startNewRound();
+        timer.start();
         unpauseGame();
     }
 
@@ -62,7 +71,7 @@ public class GamePane extends StackPane {
             if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.WIREFRAME))) {
                 optionsPane.setWireframeEnabled(!optionsPane.isWireframeEnabled());
             }
-            if (isPaused) { // do game inputs below
+            if (isGamePaused) { // do game inputs below
                 return;
             }
             if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.FIRE))) {
@@ -78,8 +87,8 @@ public class GamePane extends StackPane {
     }
 
     public void pauseGame() {
-        timer.stop();
-        isPaused = true;
+        // timer.stop();
+        isGamePaused = true;
     }
 
     public void unpauseGame() {
@@ -87,31 +96,55 @@ public class GamePane extends StackPane {
             return; // cannot unpause while the player is hit
         }
         lastTime = System.nanoTime();
-        isPaused = false;
-        timer.start();
+        isGamePaused = false;
+        // timer.start();
     }
 
-    public boolean isPaused() {
-        return isPaused;
+    public void pauseRender() {
+        isRenderPaused = true;
+    }
+
+    public void unpauseRender() {
+        isRenderPaused = false;
+    }
+
+    public boolean isGamePaused() {
+        return isGamePaused;
+    }
+
+    public void promptGameOver() {
+        this.getChildren().remove(gameOverPane);
+        gameOverPane.showGameOver();
+        this.getChildren().add(gameOverPane);
+        gameOverPane.setOnSubmitButtonAction(event -> {
+            if (!((Button)event.getSource()).getText().isBlank()) {
+                game.getUser().setUsername(((Button)event.getSource()).getText());
+                LeaderboardPane.topScores.add(game.getUser());
+                gameOverPane.showSubmitted();
+            }
+        });
     }
 
     // update() is called every time javafx wants a new frame drawn
     private void update() {
-        long currentTime = System.nanoTime();
-        boolean hasUpdatedLogic = false;
+        if (isGamePaused == false) {
+            long currentTime = System.nanoTime();
+            boolean hasUpdatedLogic = false;
 
-        long deltaTime = currentTime - lastTime;
-        lastTime = currentTime;
-        unprocessedTime += deltaTime;
+            long deltaTime = currentTime - lastTime;
+            lastTime = currentTime;
+            unprocessedTime += deltaTime;
 
-        while (unprocessedTime >= TARGET_NANO_TIME) {
-            logicUpdate();
-            frameRateTracker.logFrameUpdate();
-            hasUpdatedLogic = true;
-            unprocessedTime -= TARGET_NANO_TIME;
+            while (unprocessedTime >= TARGET_NANO_TIME) {
+                logicUpdate();
+                frameRateTracker.logFrameUpdate();
+                hasUpdatedLogic = true;
+                unprocessedTime -= TARGET_NANO_TIME;
+            }
         }
-        if (hasUpdatedLogic)
-            frameUpdate(); // CAP FPS TO GAME LOGIC UPDATE (below 60hz is ok but not above it)
+
+        if (true)
+            frameUpdate();
     }
 
     private void frameUpdate() {
@@ -131,7 +164,7 @@ public class GamePane extends StackPane {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if (isPaused) {
+                    if (isGamePaused) {
                         game.startPlayerLife();
                         if (disabledInputValue == false) {
                             unpauseGame();
@@ -140,7 +173,8 @@ public class GamePane extends StackPane {
                 });
                 thread.start();
             } else {
-            	SoundPlayer.playSound("game_over.mp3");
+                SoundPlayer.playSound("game_over.mp3");
+                promptGameOver();
             }
             System.out.println("Player has been hit, the game has been paused"
                     + ", press space to override.");
