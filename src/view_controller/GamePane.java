@@ -42,6 +42,7 @@ public class GamePane extends StackPane {
         this.graphics = new Graphics(this, width, height);
         this.timer = new Timer();
         addButtonHandlers();
+        SoundPlayer.loadAllSongs();
         this.getChildren().add(graphics);
         game.startNewRound();
         unpauseGame();
@@ -138,6 +139,8 @@ public class GamePane extends StackPane {
                     }
                 });
                 thread.start();
+            } else {
+            	SoundPlayer.playSound("game_over.mp3");
             }
             System.out.println("Player has been hit, the game has been paused"
                     + ", press space to override.");

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import view_controller.SoundPlayer;
+
 public class Game {
 
     public Player player;
@@ -167,10 +169,12 @@ public class Game {
 
     public void shootPlayerBullet() {
         bullets.add(player.shootBullet());
+        SoundPlayer.playSound("player_shoot.wav");
     }
 
     public void shootInvaderBullet(Invader entity) {
         bullets.add(entity.shootBullet());
+        SoundPlayer.playSound("enemy_shoot.wav");
     }
 
     private void tryInvaderShootBullet(int threshhold) {
@@ -239,6 +243,7 @@ public class Game {
                     markedForRemoval.add(hitEntity);
                     Invader invader = (Invader) hitEntity;
                     score.changeScore(invader);
+                    invaderHitSound();
                 } else if (hitEntity.getTeam() == Team.PLAYER) {
                     playerHit();
                     markedForRemoval.add(bullet);
@@ -253,6 +258,15 @@ public class Game {
     private void playerHit() {
         isPlayerHit = true;
         score.changeLives();
+    }
+    
+    private void invaderHitSound() {
+    	Random r = new Random();
+    	if (r.nextBoolean()) {
+    		SoundPlayer.playSound("enemy_death_2.wav");
+    	} else {
+    		SoundPlayer.playSound("enemy_death.wav");
+    	}
     }
 
     private void bindPlayerToCanvas() {
