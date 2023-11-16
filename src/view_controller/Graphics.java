@@ -3,6 +3,7 @@ package view_controller;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import javafx.animation.AnimationTimer;
 import javafx.beans.value.ChangeListener;
@@ -45,6 +46,8 @@ public class Graphics extends VBox {
     private GraphicsContext gc;
 
     private FrameRateTracker frameRateTracker = new FrameRateTracker(200);
+    
+    private ArrayList<DestructionEntity> destructionEntities = new ArrayList<>();
 
     Image playerSprite;
     Image[] invaderSprites;
@@ -200,8 +203,22 @@ public class Graphics extends VBox {
             }
         }
         for(Entity e : game.markedForRemoval) {
-            drawSprite(destructionSprite, new Point2D(e.getX(), e.getY()),
-                    new Point2D(e.getWidth(), e.getHeight()));
+            destructionEntities.add(new DestructionEntity(new Point2D(e.getX(), e.getY()), 
+            		new Point2D(e.getWidth(), e.getHeight())));
+        }
+        
+        ArrayList<DestructionEntity> toRemove = new ArrayList<>();
+        
+        for (DestructionEntity e : destructionEntities) {
+        	drawSprite(destructionSprite, e.getOriginalPos(),
+                    e.getEndPos());
+        	if (e.update()) {
+        		toRemove.add(e);
+        	};
+        }
+        
+        for (DestructionEntity e : toRemove) {
+        	destructionEntities.remove(e);
         }
     }
 
@@ -268,4 +285,35 @@ public class Graphics extends VBox {
     private void clearCanvas() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
+    
 }
+
+class DestructionEntity {
+	private Point2D originalPos;
+	private Point2D endPos;
+	private int framesActive = 20;
+	
+	public DestructionEntity(Point2D originalPos, Point2D endPos) {
+		this.originalPos = originalPos;
+		this.endPos = endPos;
+	}
+	
+	public Point2D getOriginalPos() {
+		return originalPos;
+	}
+	
+	public Point2D getEndPos() {
+		return endPos;
+	}
+	
+	public boolean update() {
+		if (framesActive == 0) {
+			return true;
+		}
+		
+		framesActive--;
+		return false;
+	}
+	
+}
+
