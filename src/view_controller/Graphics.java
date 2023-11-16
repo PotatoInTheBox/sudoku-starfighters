@@ -49,6 +49,7 @@ public class Graphics extends VBox {
     Image playerSprite;
     Image[] invaderSprites;
     Image bulletSprite;
+    Image destructionSprite;
 
     public Graphics(GamePane gamePane, double width, double height) {
         this.gamePane = gamePane;
@@ -115,6 +116,7 @@ public class Graphics extends VBox {
         invaderSprites[4] = debugTempReColor(invaderSprites[4], Color.WHITE, Color.web("#ff7373"));
         invaderSprites[5] = debugTempReColor(invaderSprites[5], Color.WHITE, Color.web("#ff7373"));
         bulletSprite = getSpriteFromFile("./resources/images/bullet.png");
+        destructionSprite = getSpriteFromFile("./resources/images/destruction_frame.png");
     }
 
     /**
@@ -196,6 +198,10 @@ public class Graphics extends VBox {
                 drawSprite(bulletSprite, new Point2D(bullet.getX(), bullet.getY()),
                         new Point2D(bullet.getWidth(), bullet.getHeight()));
             }
+        }
+        for(Entity e : game.markedForRemoval) {
+            drawSprite(destructionSprite, new Point2D(e.getX(), e.getY()),
+                    new Point2D(e.getWidth(), e.getHeight()));
         }
     }
 
