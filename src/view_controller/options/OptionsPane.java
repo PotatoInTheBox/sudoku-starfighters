@@ -33,7 +33,6 @@ public class OptionsPane extends BorderPane {
 
     public OptionsPane() {
         volumeSlider = new Slider(0, 1, 0.4d);
-        Slider slider2 = new Slider(0, 100, 50);
 
         SoundPlayer.setVolume(volumeSlider.valueProperty());
 
@@ -49,7 +48,6 @@ public class OptionsPane extends BorderPane {
 
         // Add components to the layout
         addSettingsItem(new Label("Volume:"), volumeSlider);
-        addSettingsItem(new Label("Slider 2:"), slider2);
         addSettingsItem(new Label("Wireframes:"), checkBox);
         gridList.addColumn(0, keyBindingsButton);
 
