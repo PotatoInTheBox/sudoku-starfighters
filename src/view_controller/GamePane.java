@@ -121,6 +121,7 @@ public class GamePane extends StackPane {
             if (!((TextField)event.getTarget()).getText().isBlank()) {
                 game.getUser().setUsername(((TextField)event.getTarget()).getText());
                 LeaderboardPane.topScores.add(game.getUser());
+        		LeaderboardPane.saveLeaderboard("saved_scores");
                 gameOverPane.showSubmitted();
             }
         });

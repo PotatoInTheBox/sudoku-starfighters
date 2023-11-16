@@ -1,8 +1,14 @@
 package view_controller;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javafx.event.ActionEvent;
@@ -72,5 +78,30 @@ public class LeaderboardPane extends GridPane {
 			i++;
 		}
 		addColumn(0, pane, backButton);
+	}
+	
+	public static void saveLeaderboard(String fileName) {
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+			LinkedList<Score> list = new LinkedList<Score>();
+			for (Score s : topScores) {
+				list.add(s);
+			}
+			oos.writeObject(list);
+		} catch (IOException e) {
+			System.out.println(e.toString());
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void loadLeaderboard(String fileName) {
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
+			LinkedList<Score> savedList = (LinkedList<Score>) ois.readObject();
+			topScores = new ArrayList<Score>();
+			for (Score s : savedList) {
+				topScores.add(s);
+			}
+		} catch (IOException | ClassNotFoundException e) {
+			System.out.println(e.toString());
+		}
 	}
 }

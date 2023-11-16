@@ -45,6 +45,7 @@ public class MainGUI extends Application {
 
 		menuPane = new MenuPane();
 		leaderboardPane = new LeaderboardPane();
+		LeaderboardPane.loadLeaderboard("saved_scores");
 		optionsPane = new OptionsPane();
 
 		addButtonHandlers(scene);
