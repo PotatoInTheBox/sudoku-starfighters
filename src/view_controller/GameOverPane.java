@@ -50,5 +50,8 @@ public class GameOverPane extends BorderPane {
         submitButton.setOnAction(e -> {
             event.handle(new ActionEvent(submitButton, inputBox));
         });
+        inputBox.setOnAction(e -> {
+            event.handle(new ActionEvent(submitButton, inputBox));
+        });
     }
 }
