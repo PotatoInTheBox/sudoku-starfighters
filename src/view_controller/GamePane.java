@@ -129,9 +129,9 @@ public class GamePane extends StackPane {
 
     // update() is called every time javafx wants a new frame drawn
     private void update() {
+        boolean hasUpdatedLogic = false;
         if (isGamePaused == false) {
             long currentTime = System.nanoTime();
-            boolean hasUpdatedLogic = false;
 
             long deltaTime = currentTime - lastTime;
             lastTime = currentTime;
@@ -145,7 +145,11 @@ public class GamePane extends StackPane {
             }
         }
 
-        if (true)
+        boolean doNewFrame = true;
+        if (!hasUpdatedLogic && optionsPane.isCapFpsEnabled())
+            doNewFrame = false;
+        
+        if(doNewFrame)
             frameUpdate();
     }
 

@@ -27,7 +27,8 @@ public class OptionsPane extends BorderPane {
 
     private List<EventHandler<ActionEvent>> keyBindingHandlers = new ArrayList<>();
 
-    private CheckBox checkBox;
+    private CheckBox wireframeCheckBox;
+    private CheckBox capFpsCheckBox;
     private Button keyBindingsButton;
     private Slider volumeSlider;
 
@@ -36,7 +37,8 @@ public class OptionsPane extends BorderPane {
 
         SoundPlayer.setVolume(volumeSlider.valueProperty());
 
-        checkBox = new CheckBox();
+        wireframeCheckBox = new CheckBox();
+        capFpsCheckBox = new CheckBox();
 
         keyBindingsButton = new Button("Keybinds");
 
@@ -48,7 +50,8 @@ public class OptionsPane extends BorderPane {
 
         // Add components to the layout
         addSettingsItem(new Label("Volume:"), volumeSlider);
-        addSettingsItem(new Label("Wireframes:"), checkBox);
+        addSettingsItem(new Label("Wireframes:"), wireframeCheckBox);
+        addSettingsItem(new Label("Limit fps to game update:"), capFpsCheckBox);
         gridList.addColumn(0, keyBindingsButton);
 
         // add scroll pane
@@ -64,11 +67,15 @@ public class OptionsPane extends BorderPane {
     }
 
     public boolean isWireframeEnabled() {
-        return checkBox.isSelected();
+        return wireframeCheckBox.isSelected();
+    }
+
+    public boolean isCapFpsEnabled() {
+        return capFpsCheckBox.isSelected();
     }
 
     public void setWireframeEnabled(boolean newValue) {
-        checkBox.setSelected(newValue);
+        wireframeCheckBox.setSelected(newValue);
     }
 
     public void onKeyBindingsButton(EventHandler<ActionEvent> eventHandler) {
