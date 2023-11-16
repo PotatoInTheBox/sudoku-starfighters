@@ -104,11 +104,11 @@ public class Game {
 
         // player is moved elsewhere...
 
-        // bound player to map
+        // bind player to map
         bindPlayerToCanvas();
 
-        // bound invaders to map
-        boundInvadersToCanvas();
+        // bind invaders to map
+        bindInvadersToCanvas();
 
         // bullet collision detection
         processBulletCollisions();
@@ -120,6 +120,10 @@ public class Game {
 
         // update invader's speed based on missing invaders
         updateInvadersSpeed();
+
+        // lose all lives if invaders reach bottom of screen
+        if (invadersReachedEnd())
+            loseGame();
     }
 
     private void spawnAllInvaders(float startX, float startY, float width, float height, int xCount, int yCount) {
@@ -210,10 +214,25 @@ public class Game {
     private void processInvaderPlayerCollision() {
         for (Invader invader : invaders) {
             if (invader.hasCollidedWith(player)) {
-                isPlayerHit = true;
-                score.setLives(0);
+                loseGame();
             }
         }
+    }
+
+    private boolean invadersReachedEnd() {
+        for (Entity invader : invaders) {
+            if (invader.isOutOfBounds(0, 0, width, height)) {
+                if (invader.getY() + invader.getHeight() > height) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void loseGame() {
+        isPlayerHit = true;
+        score.setLives(0);
     }
 
     private void updateInvadersSpeed() {
@@ -286,7 +305,7 @@ public class Game {
         }
     }
 
-    private void boundInvadersToCanvas() {
+    private void bindInvadersToCanvas() {
         boolean invaderOutofBounds = isAnyInvaderOutOfBounds();
         if (invaderOutofBounds) {
             flipInvaderDirection();
