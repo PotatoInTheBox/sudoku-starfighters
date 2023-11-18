@@ -50,6 +50,7 @@ public class Game {
     }
 
     public void startNewRound() {
+        clearAllEntities();
         spawnPlayer(width - 20, height - 20, 40, 40);
         final float xInvadersPadding = width / 2.5f;
         final float yInvadersHeight = height / 3;
@@ -124,6 +125,12 @@ public class Game {
         // lose all lives if invaders reach bottom of screen
         if (invadersReachedEnd())
             loseGame();
+    }
+
+    private void clearAllEntities() {
+        invaders.clear();
+        bullets.clear();
+        markedForRemoval.clear();
     }
 
     private void spawnAllInvaders(float startX, float startY, float width, float height, int xCount, int yCount) {
@@ -237,7 +244,7 @@ public class Game {
 
     private void updateInvadersSpeed() {
         float newSpeed = invaderSpeed
-                + (invaderMaxSpeed - invaderSpeed) * (float)(1 - Math.pow(invaders.size() / startInvadersCount, 2));
+                + (invaderMaxSpeed - invaderSpeed) * (float) (1 - Math.pow(invaders.size() / startInvadersCount, 2));
         for (Invader invader : invaders) {
             float sign = Math.signum(invader.getDx());
             invader.setDx(newSpeed * sign);
@@ -278,14 +285,14 @@ public class Game {
         isPlayerHit = true;
         score.changeLives();
     }
-    
+
     private void invaderHitSound() {
-    	Random r = new Random();
-    	if (r.nextBoolean()) {
-    		SoundPlayer.playSound("enemy_death_2.wav");
-    	} else {
-    		SoundPlayer.playSound("enemy_death.wav");
-    	}
+        Random r = new Random();
+        if (r.nextBoolean()) {
+            SoundPlayer.playSound("enemy_death_2.wav");
+        } else {
+            SoundPlayer.playSound("enemy_death.wav");
+        }
     }
 
     private void bindPlayerToCanvas() {
@@ -413,6 +420,10 @@ public class Game {
 
     public boolean hasWon() {
         return invaders.size() == 0;
+    }
+
+    public boolean isGameOver() {
+        return score.getLives() <= 0;
     }
 
     public void increaseDifficulty() {

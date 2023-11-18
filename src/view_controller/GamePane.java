@@ -41,6 +41,7 @@ public class GamePane extends StackPane {
     public FrameRateTracker frameRateTracker = new FrameRateTracker(200);
     private boolean disabledInputValue = false;
     private boolean isRenderPaused = true;
+    private boolean eventBlockedPause = false;
 
     public GamePane(Scene scene, Input input, OptionsPane optionsPane, double width, double height) {
         this.scene = scene;
@@ -65,7 +66,6 @@ public class GamePane extends StackPane {
             }
             if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.FORCE_UNPAUSE))) {
                 if (game.getLives() > 0) {
-                    game.startPlayerLife();
                     unpauseGame(); // force continue game
                 }
             }
@@ -88,17 +88,17 @@ public class GamePane extends StackPane {
     }
 
     public void pauseGame() {
-        // timer.stop();
         isGamePaused = true;
     }
 
     public void unpauseGame() {
-        if (game.isPlayerHit()) {
-            return; // cannot unpause while the player is hit
+        // cannot unpause while the player is hit
+        // cannot unpause if an event is blocking it
+        if (!isGamePaused || eventBlockedPause || game.isPlayerHit()) {
+            return; 
         }
         lastTime = System.nanoTime();
         isGamePaused = false;
-        // timer.start();
     }
 
     public void pauseRender() {
@@ -118,10 +118,10 @@ public class GamePane extends StackPane {
         gameOverPane.showGameOver();
         this.getChildren().add(gameOverPane);
         gameOverPane.setOnSubmitButtonAction(event -> {
-            if (!((TextField)event.getTarget()).getText().isBlank()) {
-                game.getUser().setUsername(((TextField)event.getTarget()).getText());
+            if (!((TextField) event.getTarget()).getText().isBlank()) {
+                game.getUser().setUsername(((TextField) event.getTarget()).getText());
                 LeaderboardPane.topScores.add(game.getUser());
-        		LeaderboardPane.saveLeaderboard("saved_scores");
+                LeaderboardPane.saveLeaderboard("saved_scores");
                 gameOverPane.showSubmitted();
             }
         });
@@ -148,8 +148,8 @@ public class GamePane extends StackPane {
         boolean doNewFrame = true;
         if (!hasUpdatedLogic && optionsPane.isCapFpsEnabled())
             doNewFrame = false;
-        
-        if(doNewFrame)
+
+        if (doNewFrame)
             frameUpdate();
     }
 
@@ -161,48 +161,60 @@ public class GamePane extends StackPane {
         game.movePlayer(input.getJoystickX(), input.getJoystickY());
         game.update();
 
-        if (game.isPlayerHit()) {
-            SoundPlayer.playSound("player_death.wav");
+        if (game.hasWon()) {
             pauseGame();
-            if (game.getLives() > 0) {
-                Thread thread = new Thread(() -> {
-                    try {
-                        Thread.sleep(1500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (isGamePaused) {
-                        game.startPlayerLife();
-                        if (disabledInputValue == false) {
-                            unpauseGame();
-                        }
-                    }
-                });
-                thread.start();
-            } else {
-                SoundPlayer.playSound("game_over.mp3");
-                promptGameOver();
-            }
-            System.out.println("Player has been hit, the game has been paused"
-                    + ", press space to override.");
-        } else if (game.hasWon()) {
+            winRound();
+        } else if (game.isGameOver()) {
             pauseGame();
-            Thread thread = new Thread(() -> {
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                game.increaseDifficulty();
-                game.startNewRound();
-                game.startPlayerLife();
-                if (disabledInputValue == false) {
-                    unpauseGame();
-                }
-            });
-            thread.start();
-            System.out.println("The player has won this round!");
+            loseGame();
+        } else if (game.isPlayerHit()) {
+            pauseGame();
+            loseLife();
         }
+    }
+
+    private void loseGame() {
+        // SoundPlayer.playSound("player_death.wav");
+        SoundPlayer.playSound("game_over.mp3");
+        //eventBlockedPause = true;
+        promptGameOver();
+    }
+
+    private void loseLife() {
+        SoundPlayer.playSound("player_death.wav");
+        Thread thread = new Thread(() -> {
+            eventBlockedPause = true;
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            game.startPlayerLife();
+            eventBlockedPause = false;
+            if (disabledInputValue == false) {
+                unpauseGame();
+            }
+        });
+        thread.start();
+    }
+
+    private void winRound() {
+        Thread thread = new Thread(() -> {
+            eventBlockedPause = true;
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            game.increaseDifficulty();
+            game.startNewRound();
+            game.startPlayerLife();
+            eventBlockedPause = false;
+            if (disabledInputValue == false) {
+                unpauseGame();
+            }
+        });
+        thread.start();
     }
 
     private class Timer extends AnimationTimer {
