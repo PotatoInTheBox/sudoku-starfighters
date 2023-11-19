@@ -10,4 +10,3 @@ be working on creating Space Invaders in Java
 | Steven Truong     |
 | Thomas Obrenovich |
 | Ivan Gusachenko   |
-| Ezra Panneck      |
