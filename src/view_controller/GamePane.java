@@ -59,6 +59,9 @@ public class GamePane extends StackPane {
         unpauseGame();
     }
 
+    /**
+     * Adds key handlers for controls and button presses
+     */
     private void addButtonHandlers() {
         input.onKeyDown(e -> {
             if (disabledInputValue) { // do not accept ANY inputs below
@@ -87,10 +90,16 @@ public class GamePane extends StackPane {
         });
     }
 
+    /**
+     * Pauses the game
+     */
     public void pauseGame() {
         isGamePaused = true;
     }
 
+    /**
+     * Resumes the Game
+     */
     public void unpauseGame() {
         // cannot unpause while the player is hit
         // cannot unpause if an event is blocking it
@@ -101,18 +110,31 @@ public class GamePane extends StackPane {
         isGamePaused = false;
     }
 
+    /**
+     * Pauses Rendering
+     */
     public void pauseRender() {
         isRenderPaused = true;
     }
 
+    /**
+     * Resumes rendering
+     */
     public void unpauseRender() {
         isRenderPaused = false;
     }
 
+    /**
+     * Specifies if the game is paused
+     * @return True if game is paused
+     */
     public boolean isGamePaused() {
         return isGamePaused;
     }
 
+    /**
+     * Prompt for game over
+     */
     public void promptGameOver() {
         this.getChildren().remove(gameOverPane);
         gameOverPane.showGameOver();
@@ -127,7 +149,9 @@ public class GamePane extends StackPane {
         });
     }
 
-    // update() is called every time javafx wants a new frame drawn
+    /**
+     * Called every time there is a new frame drawn
+     */
     private void update() {
         boolean hasUpdatedLogic = false;
         if (isGamePaused == false) {
@@ -153,10 +177,16 @@ public class GamePane extends StackPane {
             frameUpdate();
     }
 
+    /**
+     * Calls graphics update
+     */
     private void frameUpdate() {
         graphics.update();
     }
 
+    /**
+     * Calls logic update
+     */
     private void logicUpdate() {
         game.movePlayer(input.getJoystickX(), input.getJoystickY());
         game.update();
@@ -173,6 +203,9 @@ public class GamePane extends StackPane {
         }
     }
 
+    /**
+     * Activates when game is lost
+     */
     private void loseGame() {
         // SoundPlayer.playSound("player_death.wav");
         SoundPlayer.playSound("game_over.mp3");
@@ -180,6 +213,9 @@ public class GamePane extends StackPane {
         promptGameOver();
     }
 
+    /**
+     * Activates when a life is lost
+     */
     private void loseLife() {
         SoundPlayer.playSound("player_death.wav");
         Thread thread = new Thread(() -> {
@@ -198,6 +234,9 @@ public class GamePane extends StackPane {
         thread.start();
     }
 
+    /**
+     * Activates when the round is won
+     */
     private void winRound() {
         Thread thread = new Thread(() -> {
             eventBlockedPause = true;
@@ -224,6 +263,10 @@ public class GamePane extends StackPane {
         }
     }
 
+    /**
+     * Gets the active player bullets
+     * @return The number of player bullets
+     */
     private int getActivePlayerBulletCount() {
         int playerBulletCount = 0;
         for (Bullet bullet : game.getBullets()) {
@@ -234,6 +277,10 @@ public class GamePane extends StackPane {
         return playerBulletCount;
     }
 
+    /**
+     * Disables player input
+     * @param value True if input is to be disabled
+     */
     public void disabledInput(boolean value) {
         this.disabledInputValue = value;
     }

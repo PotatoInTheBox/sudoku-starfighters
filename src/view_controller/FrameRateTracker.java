@@ -8,11 +8,18 @@ public class FrameRateTracker {
     private long[] fpsRecord;
     private boolean isStarting = true;
 
+    /**
+     * Tracks the frame rate
+     * @param frameCounterBufferSize Adjusts the buffer
+     */
     public FrameRateTracker(int frameCounterBufferSize) {
         bufferSize = frameCounterBufferSize;
         fpsRecord = new long[bufferSize];
     }
 
+    /**
+     * Performs a log frame update
+     */
     public void logFrameUpdate() {
         long thisTime = System.nanoTime();
         // don't record if a frame took longer than one second
@@ -28,6 +35,10 @@ public class FrameRateTracker {
         }
     }
 
+    /**
+     * Gets the average duration for an update method call
+     * @return The average duration
+     */
     public double getAverageUpdate() {
         if (isStarting && fpsCounter == 0) {
             return 0;

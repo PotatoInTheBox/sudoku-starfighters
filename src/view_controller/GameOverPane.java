@@ -16,6 +16,9 @@ public class GameOverPane extends BorderPane {
     Button submitButton;
     TextField inputBox;
 
+    /**
+     * Sets up the game over pane
+     */
     public GameOverPane() {
         Label gameOverLabel = new Label("GAME OVER");
         Label enterNameLabel = new Label("ENTER NAME FOR LEADERBOARD");
@@ -38,14 +41,24 @@ public class GameOverPane extends BorderPane {
         submittedPane.setSpacing(10);
     }
 
+    /**
+     * Shows the game over pane
+     */
     public void showGameOver() {
         this.setCenter(enterScorePane);
     }
 
+    /**
+     * Shows that the score has been submitted to the leader board
+     */
     public void showSubmitted(){
         this.setCenter(submittedPane);
     }
 
+    /**
+     * Sets the button to submit score
+     * @param event Handles the score submit
+     */
     public void setOnSubmitButtonAction(EventHandler<ActionEvent> event){
         submitButton.setOnAction(e -> {
             event.handle(new ActionEvent(submitButton, inputBox));
