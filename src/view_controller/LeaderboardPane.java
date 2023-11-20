@@ -18,6 +18,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import model.Score;
@@ -43,6 +46,8 @@ public class LeaderboardPane extends GridPane {
 			for (EventHandler<ActionEvent> event : backHandlers)
 				event.handle(e);
 		});
+		
+        setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
 
 		updateScores();
 	}
