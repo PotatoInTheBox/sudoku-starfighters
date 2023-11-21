@@ -56,7 +56,9 @@ public class KeyBinding {
 		MOVE_DOWN("Debug move down"),
 		RAPID_FIRE("Debug fire"),
 		WIREFRAME("Debug toggle wireframe"),
-        FORCE_UNPAUSE("Debug force unpause");
+        FORCE_UNPAUSE("Debug force unpause"),
+        GHOST("Can't be hit or hit others"),
+        WIN_GAME("Win the round instantly");
 
 		public final String name;
 

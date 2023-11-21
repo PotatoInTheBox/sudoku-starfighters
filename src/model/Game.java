@@ -13,6 +13,9 @@ public class Game {
     public ArrayList<Bullet> bullets = new ArrayList<>();
     public List<Entity> markedForRemoval = new ArrayList<>();
 
+    private List<EntityEvent> entitySpawnListeners = new ArrayList<>();
+    private List<EntityEvent> entityDestroyListeners = new ArrayList<>();
+
     private boolean isPlayerHit = false;
 
     private float invaderDirection = -1f;
@@ -51,7 +54,7 @@ public class Game {
 
     public void startNewRound() {
         clearAllEntities();
-        spawnPlayer(width - 20, height - 20, 40, 40);
+        spawnPlayer(width - 20, height - 20, 20, 30);
         final float xInvadersPadding = width / 2.5f;
         final float yInvadersHeight = height / 3;
         startInvadersCount = 0;
@@ -180,12 +183,12 @@ public class Game {
 
     public void shootPlayerBullet() {
         bullets.add(player.shootBullet());
-        SoundPlayer.playSound("player_shoot.wav");
+        SoundPlayer.playSound("player_shoot.wav", false);
     }
 
     public void shootInvaderBullet(Invader entity) {
         bullets.add(entity.shootBullet());
-        SoundPlayer.playSound("enemy_shoot.wav");
+        SoundPlayer.playSound("enemy_shoot.wav", false);
     }
 
     private void tryInvaderShootBullet(int threshhold) {
@@ -223,7 +226,7 @@ public class Game {
             if (invader.getY() + invader.getHeight() > height) {
                 loseGame();
             }
-            if (invader.hasCollidedWith(player)) {
+            if (invader.hasCollidedWith(player) && player.getTeam() == Team.PLAYER) {
                 isPlayerHit = true;
             }
         }
@@ -293,9 +296,9 @@ public class Game {
     private void invaderHitSound() {
         Random r = new Random();
         if (r.nextBoolean()) {
-            SoundPlayer.playSound("enemy_death_2.wav");
+            SoundPlayer.playSound("enemy_death_2.wav", false);
         } else {
-            SoundPlayer.playSound("enemy_death.wav");
+            SoundPlayer.playSound("enemy_death.wav", false);
         }
     }
 
@@ -439,4 +442,33 @@ public class Game {
         invaderBulletCount = baseInvaderBulletCount + baseInvaderBulletCount *
                 invaderDifficultyScalingBulletCount * difficultyLevel;
     }
+
+    public void onEntitySpawned(EntityEvent event) {
+        entitySpawnListeners.add(event);
+    }
+
+    public boolean removeOnEntitySpawned(EntityEvent event) {
+        return entityDestroyListeners.remove(event);
+    }
+
+    public void onEntityDestroyed(EntityEvent event) {
+        entitySpawnListeners.add(event);
+    }
+
+    public boolean removeOnEntityDestroyed(EntityEvent event) {
+        return entityDestroyListeners.remove(event);
+    }
+
+    private void triggerAllSpawnListeners(Entity entity) {
+        for (EntityEvent event : entitySpawnListeners) {
+            event.run(entity);
+        }
+    }
+
+    private void triggerAllDestroyListeners(Entity entity) {
+        for (EntityEvent event : entityDestroyListeners) {
+            event.run(entity);
+        }
+    }
+
 }

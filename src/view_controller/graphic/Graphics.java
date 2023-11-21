@@ -47,13 +47,16 @@ public class Graphics extends VBox {
     private Canvas canvas;
     private GraphicsContext gc;
 
+    private int bulletAnimationCounter = 0;
+    private boolean bulletTickedThisFrame = false;
+
     private FrameRateTracker frameRateTracker = new FrameRateTracker(200);
 
     private ArrayList<DestructionEntity> destructionEntities = new ArrayList<>();
 
     Image playerSprite;
     Image[] invaderSprites;
-    Image bulletSprite;
+    Image[] bulletSprites;
     Image destructionSprite;
 
     public Graphics(GamePane gamePane, double width, double height) {
@@ -90,6 +93,14 @@ public class Graphics extends VBox {
         long currentTime = System.currentTimeMillis();
         long truncatedTime = currentTime / 1000;
         int valueToPass = (truncatedTime % 2 == 0) ? 1 : 0;
+        if ((currentTime / 16) % 2 == 0) {
+            if (bulletTickedThisFrame == false) {
+                bulletAnimationCounter += 1;
+                bulletTickedThisFrame = true;
+            }
+        } else {
+            bulletTickedThisFrame = false;
+        }
         drawAllSprites(valueToPass);
 
         if (optionsPane.isWireframeEnabled())
@@ -120,8 +131,30 @@ public class Graphics extends VBox {
         invaderSprites[5] = getSpriteFromFile("./resources/images/enemy3_frame2.png");
         invaderSprites[4] = debugTempReColor(invaderSprites[4], Color.WHITE, Color.web("#ff7373"));
         invaderSprites[5] = debugTempReColor(invaderSprites[5], Color.WHITE, Color.web("#ff7373"));
-        bulletSprite = getSpriteFromFile("./resources/images/bullet.png");
+        Image bulletSprite = getSpriteFromFile("./resources/images/bullet4.png");
+        bulletSprites = generateBulletAnimation(bulletSprite);
         destructionSprite = getSpriteFromFile("./resources/images/destruction_frame.png");
+    }
+
+    public static Image[] generateBulletAnimation(Image inputImage) {
+        int W = (int) inputImage.getWidth();
+        int H = (int) inputImage.getHeight();
+        final int FRAME_COUNT = H;
+        Image[] bulletSprites = new Image[FRAME_COUNT];
+        bulletSprites[0] = inputImage;
+        PixelReader reader = inputImage.getPixelReader();
+        for (int i = 1; i < FRAME_COUNT; i++) {
+            WritableImage outputImage = new WritableImage(W, H);
+            PixelWriter writer = outputImage.getPixelWriter();
+            for (int y = 0; y < H; y++) {
+                for (int x = 0; x < W; x++) {
+                    int argb = reader.getArgb(x, (y + i) % H);
+                    writer.setArgb(x, y, argb);
+                }
+            }
+            bulletSprites[i] = outputImage;
+        }
+        return bulletSprites;
     }
 
     /**
@@ -181,8 +214,8 @@ public class Graphics extends VBox {
     }
 
     private void drawAllSprites(int animFrame) {
-        drawSprite(playerSprite, new Point2D(game.getPlayer().getX(), game.getPlayer().getY()),
-                new Point2D(game.getPlayer().getWidth(), game.getPlayer().getHeight()));
+        
+        drawPlayer();
         drawInvaders(animFrame);
         drawBullets();
         drawDestroyed();
@@ -209,15 +242,37 @@ public class Graphics extends VBox {
         }
     }
 
+    private void drawPlayer() {
+        double targetWidth = 40;
+        double targetHeight = 40;
+        double widthMult = targetWidth / game.getPlayer().getWidth();
+        double heightMult = targetHeight / game.getPlayer().getHeight();
+        double x = game.getPlayer().getX() - game.getPlayer().getWidth() * (widthMult - 1) / 2;
+        double y = game.getPlayer().getY() - game.getPlayer().getHeight() * (heightMult - 1) / 2;
+        double w = game.getPlayer().getWidth() * widthMult;
+        double h = game.getPlayer().getHeight() * heightMult;
+
+        drawSprite(playerSprite, new Point2D(x, y), new Point2D(w, h));
+    }
+
     private void drawBullets() {
+        int bulletSpriteIndex = Integer.remainderUnsigned(bulletAnimationCounter, bulletSprites.length);
+        double widthMult = 1.4;
+        double heightMult = 1.4;
         for (Bullet bullet : game.getBullets()) {
+            double x = bullet.getX() - bullet.getWidth() * (widthMult - 1) / 2;
+            double y = bullet.getY() - bullet.getHeight() * (heightMult - 1) / 2;
+            double w = bullet.getWidth() * widthMult;
+            double h = bullet.getHeight() * heightMult;
             // reverse the bullet sprite if it is going down
             if (bullet.getDy() > 0f) {
-                drawSprite(bulletSprite, new Point2D(bullet.getX(), bullet.getY() + bullet.getHeight()),
-                        new Point2D(bullet.getWidth(), -bullet.getHeight()));
+                drawSprite(bulletSprites[bulletSpriteIndex],
+                        new Point2D(x, y + h),
+                        new Point2D(w, -h));
             } else {
-                drawSprite(bulletSprite, new Point2D(bullet.getX(), bullet.getY()),
-                        new Point2D(bullet.getWidth(), bullet.getHeight()));
+                drawSprite(bulletSprites[bulletSpriteIndex],
+                        new Point2D(x, y),
+                        new Point2D(w, h));
             }
         }
     }

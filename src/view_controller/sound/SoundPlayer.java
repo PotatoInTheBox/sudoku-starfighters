@@ -52,7 +52,7 @@ public class SoundPlayer {
 			// System.err.println("Cannot play theme music, already playing theme music!");
 			return;
 		}
-		currentThemeMusic = playSound("theme_song.mp3");
+		currentThemeMusic = playSound("theme_song.mp3", true);
 		currentThemeMusic.setOnEndOfMedia(() -> {
 			currentThemeMusic.seek(Duration.ZERO);
 		});
@@ -66,7 +66,7 @@ public class SoundPlayer {
 		}
 	}
 
-	public static MediaPlayer playSound(String fileName) {
+	public static MediaPlayer playSound(String fileName, boolean isMusic) {
 		Media media = null;
 
 		if (songs.containsKey(fileName)) {
@@ -100,14 +100,17 @@ public class SoundPlayer {
 			// System.out.println("media started");
 			if (currentlyPlayingMedia.contains(mediaPlayer) == false)
 				currentlyPlayingMedia.add(mediaPlayer);
-			updateMediaPreferences(mediaPlayer);
+			if (isMusic)
+				mediaPlayer.setVolume(musicVolume * volume);
+			else
+				mediaPlayer.setVolume(sfxVolume * volume);
 		});
+		if (isMusic)
+			mediaPlayer.setVolume(musicVolume * volume);
+		else
+			mediaPlayer.setVolume(sfxVolume * volume);
 		mediaPlayer.play();
 		return mediaPlayer;
-	}
-
-	private static void updateMediaPreferences(MediaPlayer mediaPlayer) {
-		mediaPlayer.setVolume(volume);
 	}
 
 	private static void createMedia() {

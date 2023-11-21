@@ -20,6 +20,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import model.Bullet;
+import model.Entity;
 import model.Game;
 import model.Team;
 import view_controller.graphic.Graphics;
@@ -43,7 +44,7 @@ public class GamePane extends StackPane {
     private final long TARGET_NANO_TIME = 16_666_666L; // (1/60)
     public FrameRateTracker frameRateTracker = new FrameRateTracker(200);
     private boolean disabledInputValue = false;
-    private boolean isRenderPaused = true;
+    private boolean isRenderPaused = false;
     private boolean eventBlockedPause = false;
 
     public GamePane(Scene scene, Input input, OptionsPane optionsPane, double width, double height) {
@@ -89,6 +90,21 @@ public class GamePane extends StackPane {
             if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.RAPID_FIRE))) {
                 game.shootPlayerBullet(); // force bullet shoot anyways
             }
+            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.GHOST))) {
+                if (game.player.getTeam() == Team.PLAYER) {
+                    game.player.setTeam(Team.NEUTRAL);
+                } else {
+                    game.player.setTeam(Team.PLAYER);
+                }
+
+            }
+            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.WIN_GAME))) {
+                for (int i = 0; i < 50; i++) {
+                    game.addBullet(
+                            new Bullet(game.player.getX() - 25 * 4 + i * 4, game.player.getY() - 30, -5f, Team.PLAYER));
+                }
+
+            }
 
         });
     }
@@ -107,7 +123,7 @@ public class GamePane extends StackPane {
         // cannot unpause while the player is hit
         // cannot unpause if an event is blocking it
         if (!isGamePaused || eventBlockedPause || game.isPlayerHit()) {
-            return; 
+            return;
         }
         lastTime = System.nanoTime();
         isGamePaused = false;
@@ -129,6 +145,7 @@ public class GamePane extends StackPane {
 
     /**
      * Specifies if the game is paused
+     * 
      * @return True if game is paused
      */
     public boolean isGamePaused() {
@@ -156,27 +173,35 @@ public class GamePane extends StackPane {
      * Called every time there is a new frame drawn
      */
     private void update() {
-        boolean hasUpdatedLogic = false;
-        if (isGamePaused == false) {
-            long currentTime = System.nanoTime();
+        // boolean hasUpdatedLogic = false;
+        long currentTime = System.nanoTime();
 
-            long deltaTime = currentTime - lastTime;
-            lastTime = currentTime;
-            unprocessedTime += deltaTime;
+        long deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+        unprocessedTime += deltaTime;
 
-            while (unprocessedTime >= TARGET_NANO_TIME) {
-                logicUpdate();
-                frameRateTracker.logFrameUpdate();
-                hasUpdatedLogic = true;
-                unprocessedTime -= TARGET_NANO_TIME;
-            }
+        // if we are behind by >6 frames, start dropping them
+        if (unprocessedTime > 100_000_000) {
+            unprocessedTime = 100_000_000;
         }
 
-        boolean doNewFrame = true;
-        if (!hasUpdatedLogic && optionsPane.isCapFpsEnabled())
-            doNewFrame = false;
+        while (unprocessedTime >= TARGET_NANO_TIME) {
+            if (isGamePaused == false) {
+                logicUpdate();
+                frameRateTracker.logFrameUpdate();
+            }
+            // hasUpdatedLogic = true;
+            
+            if (!isRenderPaused && optionsPane.isCapFpsEnabled())
+                frameUpdate();
+            unprocessedTime -= TARGET_NANO_TIME;
+        }
 
-        if (doNewFrame)
+        // boolean doNewFrame = true;
+        // if (!hasUpdatedLogic && optionsPane.isCapFpsEnabled())
+        // doNewFrame = false;
+
+        if (optionsPane.isCapFpsEnabled() == false)
             frameUpdate();
     }
 
@@ -192,6 +217,7 @@ public class GamePane extends StackPane {
      */
     private void logicUpdate() {
         game.movePlayer(input.getJoystickX(), input.getJoystickY());
+
         game.update();
 
         if (game.hasWon()) {
@@ -211,8 +237,8 @@ public class GamePane extends StackPane {
      */
     private void loseGame() {
         // SoundPlayer.playSound("player_death.wav");
-        SoundPlayer.playSound("game_over.mp3");
-        //eventBlockedPause = true;
+        SoundPlayer.playSound("game_over.mp3", false);
+        // eventBlockedPause = true;
         promptGameOver();
     }
 
@@ -220,7 +246,7 @@ public class GamePane extends StackPane {
      * Activates when a life is lost
      */
     private void loseLife() {
-        SoundPlayer.playSound("player_death.wav");
+        SoundPlayer.playSound("player_death.wav", false);
         Thread thread = new Thread(() -> {
             eventBlockedPause = true;
             try {
@@ -268,6 +294,7 @@ public class GamePane extends StackPane {
 
     /**
      * Gets the active player bullets
+     * 
      * @return The number of player bullets
      */
     private int getActivePlayerBulletCount() {
@@ -282,6 +309,7 @@ public class GamePane extends StackPane {
 
     /**
      * Disables player input
+     * 
      * @param value True if input is to be disabled
      */
     public void disabledInput(boolean value) {
