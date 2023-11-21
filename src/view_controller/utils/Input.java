@@ -45,7 +45,7 @@ public class Input {
 		putKeyBind(KeyCode.V, KeyBinding.Type.WIREFRAME);
 		putKeyBind(KeyCode.SPACE, KeyBinding.Type.FORCE_UNPAUSE);
 		putKeyBind(KeyCode.G, KeyBinding.Type.GHOST);
-		putKeyBind(KeyCode.H, KeyBinding.Type.WIN_GAME);
+		putKeyBind(KeyCode.H, KeyBinding.Type.SHOOT_MANY);
 
 	}
 
