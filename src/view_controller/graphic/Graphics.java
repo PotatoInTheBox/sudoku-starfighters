@@ -48,7 +48,7 @@ public class Graphics extends VBox {
     private GraphicsContext gc;
 
     private FrameRateTracker frameRateTracker = new FrameRateTracker(200);
-    
+
     private ArrayList<DestructionEntity> destructionEntities = new ArrayList<>();
 
     Image playerSprite;
@@ -183,17 +183,33 @@ public class Graphics extends VBox {
     private void drawAllSprites(int animFrame) {
         drawSprite(playerSprite, new Point2D(game.getPlayer().getX(), game.getPlayer().getY()),
                 new Point2D(game.getPlayer().getWidth(), game.getPlayer().getHeight()));
-        for (Invader invader : game.getInvaders()) {
-            Image invaderSprite = null;
-            if (invader.getInvaderType() == InvaderType.ONION)
-                invaderSprite = invaderSprites[0 + animFrame];
-            else if (invader.getInvaderType() == InvaderType.SPIDER)
-                invaderSprite = invaderSprites[2 + animFrame];
-            else
-                invaderSprite = invaderSprites[4 + animFrame]; // == InvaderType.MUSHROOM
-            drawSprite(invaderSprite, new Point2D(invader.getX(), invader.getY()),
-                    new Point2D(invader.getWidth(), invader.getHeight()));
+        drawInvaders(animFrame);
+        drawBullets();
+        drawDestroyed();
+    }
+
+    private void drawDestroyed() {
+        for (Entity e : game.markedForRemoval) {
+            destructionEntities.add(new DestructionEntity(new Point2D(e.getX(), e.getY()),
+                    new Point2D(e.getWidth(), e.getHeight())));
         }
+
+        ArrayList<DestructionEntity> toRemove = new ArrayList<>();
+
+        for (DestructionEntity e : destructionEntities) {
+            drawSprite(destructionSprite, e.getOriginalPos(),
+                    e.getEndPos());
+            if (e.update()) {
+                toRemove.add(e);
+            }
+        }
+
+        for (DestructionEntity e : toRemove) {
+            destructionEntities.remove(e);
+        }
+    }
+
+    private void drawBullets() {
         for (Bullet bullet : game.getBullets()) {
             // reverse the bullet sprite if it is going down
             if (bullet.getDy() > 0f) {
@@ -204,23 +220,19 @@ public class Graphics extends VBox {
                         new Point2D(bullet.getWidth(), bullet.getHeight()));
             }
         }
-        for(Entity e : game.markedForRemoval) {
-            destructionEntities.add(new DestructionEntity(new Point2D(e.getX(), e.getY()), 
-            		new Point2D(e.getWidth(), e.getHeight())));
-        }
-        
-        ArrayList<DestructionEntity> toRemove = new ArrayList<>();
-        
-        for (DestructionEntity e : destructionEntities) {
-        	drawSprite(destructionSprite, e.getOriginalPos(),
-                    e.getEndPos());
-        	if (e.update()) {
-        		toRemove.add(e);
-        	};
-        }
-        
-        for (DestructionEntity e : toRemove) {
-        	destructionEntities.remove(e);
+    }
+
+    private void drawInvaders(int animFrame) {
+        for (Invader invader : game.getInvaders()) {
+            Image invaderSprite = null;
+            if (invader.getInvaderType() == InvaderType.ONION)
+                invaderSprite = invaderSprites[0 + animFrame];
+            else if (invader.getInvaderType() == InvaderType.SPIDER)
+                invaderSprite = invaderSprites[2 + animFrame];
+            else
+                invaderSprite = invaderSprites[4 + animFrame]; // == InvaderType.MUSHROOM
+            drawSprite(invaderSprite, new Point2D(invader.getX(), invader.getY()),
+                    new Point2D(invader.getWidth(), invader.getHeight()));
         }
     }
 
@@ -287,35 +299,34 @@ public class Graphics extends VBox {
     private void clearCanvas() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
-    
+
 }
 
 class DestructionEntity {
-	private Point2D originalPos;
-	private Point2D endPos;
-	private int framesActive = 20;
-	
-	public DestructionEntity(Point2D originalPos, Point2D endPos) {
-		this.originalPos = originalPos;
-		this.endPos = endPos;
-	}
-	
-	public Point2D getOriginalPos() {
-		return originalPos;
-	}
-	
-	public Point2D getEndPos() {
-		return endPos;
-	}
-	
-	public boolean update() {
-		if (framesActive == 0) {
-			return true;
-		}
-		
-		framesActive--;
-		return false;
-	}
-	
-}
+    private Point2D originalPos;
+    private Point2D endPos;
+    private int framesActive = 20;
 
+    public DestructionEntity(Point2D originalPos, Point2D endPos) {
+        this.originalPos = originalPos;
+        this.endPos = endPos;
+    }
+
+    public Point2D getOriginalPos() {
+        return originalPos;
+    }
+
+    public Point2D getEndPos() {
+        return endPos;
+    }
+
+    public boolean update() {
+        if (framesActive == 0) {
+            return true;
+        }
+
+        framesActive--;
+        return false;
+    }
+
+}
