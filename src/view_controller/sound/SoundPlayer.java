@@ -1,4 +1,4 @@
-package view_controller;
+package view_controller.sound;
 
 import java.io.File;
 import java.net.URI;

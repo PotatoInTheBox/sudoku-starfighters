@@ -1,11 +1,11 @@
-package view_controller;
+package view_controller.utils;
 
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import view_controller.options.KeyBindingsPane;
-import view_controller.options.KeyBinding;
+import view_controller.option.KeyBinding;
+import view_controller.option.KeyBindingsPane;
 
 import java.util.List;
 import java.util.ArrayList;

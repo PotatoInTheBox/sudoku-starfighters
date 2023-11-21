@@ -1,4 +1,4 @@
-package view_controller;
+package view_controller.utils;
 
 public class FrameRateTracker {
 

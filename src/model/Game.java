@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import view_controller.SoundPlayer;
+import view_controller.sound.SoundPlayer;
 
 public class Game {
 

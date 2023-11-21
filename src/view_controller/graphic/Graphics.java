@@ -1,4 +1,4 @@
-package view_controller;
+package view_controller.graphic;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -35,7 +35,9 @@ import model.Game;
 import model.Invader;
 import model.InvaderType;
 import model.Score;
-import view_controller.options.OptionsPane;
+import view_controller.option.OptionsPane;
+import view_controller.panel.GamePane;
+import view_controller.utils.FrameRateTracker;
 
 public class Graphics extends VBox {
 

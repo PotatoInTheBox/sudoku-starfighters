@@ -1,4 +1,4 @@
-package view_controller;
+package view_controller.panel;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

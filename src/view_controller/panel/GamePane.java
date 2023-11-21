@@ -1,4 +1,4 @@
-package view_controller;
+package view_controller.panel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +22,12 @@ import javafx.scene.paint.Color;
 import model.Bullet;
 import model.Game;
 import model.Team;
-import view_controller.options.KeyBinding;
-import view_controller.options.OptionsPane;
+import view_controller.graphic.Graphics;
+import view_controller.option.KeyBinding;
+import view_controller.option.OptionsPane;
+import view_controller.sound.SoundPlayer;
+import view_controller.utils.FrameRateTracker;
+import view_controller.utils.Input;
 
 public class GamePane extends StackPane {
 

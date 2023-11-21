@@ -9,9 +9,14 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import view_controller.options.KeyBinding;
-import view_controller.options.KeyBindingsPane;
-import view_controller.options.OptionsPane;
+import view_controller.option.KeyBinding;
+import view_controller.option.KeyBindingsPane;
+import view_controller.option.OptionsPane;
+import view_controller.panel.GamePane;
+import view_controller.panel.LeaderboardPane;
+import view_controller.panel.MenuPane;
+import view_controller.sound.SoundPlayer;
+import view_controller.utils.Input;
 
 import java.util.Stack;
 

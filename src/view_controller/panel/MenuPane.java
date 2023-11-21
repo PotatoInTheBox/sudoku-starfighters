@@ -1,4 +1,4 @@
-package view_controller;
+package view_controller.panel;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
