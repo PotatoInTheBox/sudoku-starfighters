@@ -140,6 +140,7 @@ public class MainGUI extends Application {
 	private void pushAndEnterPane(Pane pane) {
 		guiStack.push(pane);
 		rootBorderPane.setCenter(pane);
+		chooseThemeMusic(pane);
 	}
 
 	private void popAndExitPane() {
@@ -147,9 +148,19 @@ public class MainGUI extends Application {
 			System.err.println("Cannot exit Gui any further, already at last pane possible.");
 			return;
 		}
-		guiStack.pop();
+		Pane poppedPane = guiStack.pop();
 		Pane pane = guiStack.peek();
 		rootBorderPane.setCenter(pane);
+		chooseThemeMusic(pane);
+	}
+
+	private void chooseThemeMusic(Pane pane){
+		if (pane == gamePane){
+			//SoundPlayer.stopThemeMusic();
+		}
+		if (pane != gamePane){
+			SoundPlayer.playMainThemeMusic();
+		}
 	}
 
 	private Pane peekGuiStack() {
