@@ -35,8 +35,8 @@ import model.Game;
 import model.Invader;
 import model.InvaderType;
 import model.Score;
-import view_controller.option.OptionsPane;
 import view_controller.panel.GamePane;
+import view_controller.panel.OptionsPane;
 import view_controller.utils.FrameRateTracker;
 
 public class Graphics extends VBox {

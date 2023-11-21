@@ -1,4 +1,4 @@
-package view_controller.option;
+package view_controller.utils;
 
 import javafx.scene.input.KeyCode;
 

@@ -1,4 +1,4 @@
-package view_controller.option;
+package view_controller.panel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +28,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import view_controller.utils.Input;
+import view_controller.utils.KeyBinding;
 
 public class KeyBindingsPane extends BorderPane {
     private GridPane gridList;

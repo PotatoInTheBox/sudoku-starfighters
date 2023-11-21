@@ -4,8 +4,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import view_controller.option.KeyBinding;
-import view_controller.option.KeyBindingsPane;
+import view_controller.panel.KeyBindingsPane;
 
 import java.util.List;
 import java.util.ArrayList;

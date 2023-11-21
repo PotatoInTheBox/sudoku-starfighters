@@ -1,4 +1,4 @@
-package view_controller.option;
+package view_controller.panel;
 
 import java.util.ArrayList;
 import java.util.List;
