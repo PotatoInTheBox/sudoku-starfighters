@@ -37,6 +37,7 @@ public class MenuPane extends GridPane {
 	private List<EventHandler<ActionEvent>> exitHandlers = new ArrayList<>();
 
 	public MenuPane() {
+		this.getStyleClass().add("main-menu");
 		continueButton = new Button("Continue");
 		newGameButton = new Button("New Game");
 		leaderboardButton = new Button("Leaderboard");
@@ -61,15 +62,6 @@ public class MenuPane extends GridPane {
         getChildren().add(logoView);
         
 		addColumn(0, continueButton, newGameButton, leaderboardButton, optionsButton, exitButton);
-
-        String buttonStyle = "-fx-background-color: transparent; -fx-border-color: white; -fx-text-fill: white;";
-        continueButton.setStyle(buttonStyle);
-        newGameButton.setStyle(buttonStyle);
-        leaderboardButton.setStyle(buttonStyle);
-        optionsButton.setStyle(buttonStyle);
-        exitButton.setStyle(buttonStyle);
-        
-        setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
 		
 		continueButton.setOnAction(e -> {
 			for (EventHandler<ActionEvent> event : continueGameHandlers)
