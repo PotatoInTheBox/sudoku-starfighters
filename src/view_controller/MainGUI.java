@@ -68,7 +68,7 @@ public class MainGUI extends Application {
 					}
 				}
 			}
-			if(e.getCode().equals(KeyCode.F11)){
+			if (e.getCode().equals(KeyCode.F11)) {
 				primaryStage.setFullScreen(!primaryStage.isFullScreen());
 			}
 		});
@@ -100,6 +100,12 @@ public class MainGUI extends Application {
 			System.exit(0);
 		});
 		leaderboardPane.onBack(e -> {
+			popAndExitPane();
+		});
+		optionsPane.onBack(e -> {
+			popAndExitPane();
+		});
+		keyBindingsPane.onBack(e -> {
 			popAndExitPane();
 		});
 		optionsPane.onKeyBindingsButton(e -> {
@@ -140,6 +146,7 @@ public class MainGUI extends Application {
 	private void pushAndEnterPane(Pane pane) {
 		guiStack.push(pane);
 		rootBorderPane.setCenter(pane);
+		updateContinueButton(pane);
 		chooseThemeMusic(pane);
 	}
 
@@ -151,14 +158,29 @@ public class MainGUI extends Application {
 		Pane poppedPane = guiStack.pop();
 		Pane pane = guiStack.peek();
 		rootBorderPane.setCenter(pane);
+		updateContinueButton(pane);
 		chooseThemeMusic(pane);
 	}
 
-	private void chooseThemeMusic(Pane pane){
-		if (pane == gamePane){
-			//SoundPlayer.stopThemeMusic();
+	private void updateContinueButton(Pane currentPane) {
+		if (currentPane == menuPane) {
+			menuPane.setDisableContinueButton(!isGameExisting());
 		}
-		if (pane != gamePane){
+	}
+
+	private boolean isGameExisting() {
+		if (gamePane != null && gamePane.game != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private void chooseThemeMusic(Pane currentPane) {
+		if (currentPane == gamePane) {
+			// SoundPlayer.stopThemeMusic();
+		}
+		if (currentPane != gamePane) {
 			SoundPlayer.playMainThemeMusic();
 		}
 	}
