@@ -31,14 +31,17 @@ public class LeaderboardPane extends GridPane {
 
 	public static ArrayList<Score> topScores = new ArrayList<Score>();
 	// private VBox pane;
-	private GridPane gridList;
+	private Label paneTitleLabel;
 	private ScrollPane scrollPane;
-
+	private GridPane gridList;
 	private Button backButton;
 	private List<EventHandler<ActionEvent>> backHandlers = new ArrayList<>();
 
 	public LeaderboardPane() {
 		setAlignment(Pos.CENTER);
+		paneTitleLabel = new Label("Leaderboard");
+		paneTitleLabel.getStyleClass().add("dark-mode-header");
+		paneTitleLabel.setPadding(new Insets(25));
 
 		backButton = new Button("Back");
 
@@ -62,6 +65,7 @@ public class LeaderboardPane extends GridPane {
 	public void updateScores() {
 		getChildren().clear();
 		initializeLeaderboardList();
+
 		Collections.sort(topScores, new Comparator<Score>() {
 			@Override
 			public int compare(Score score1, Score score2) {
@@ -80,7 +84,7 @@ public class LeaderboardPane extends GridPane {
 			}
 			i++;
 		}
-		addColumn(0, scrollPane, backButton);
+		addColumn(0, paneTitleLabel, scrollPane, backButton);
 	}
 
 	public static void saveLeaderboard(String fileName) {

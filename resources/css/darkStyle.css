@@ -12,6 +12,14 @@
     -fx-background-color: derive(-fx-base, 0%);
 }
 
+.dark-mode-header {
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white; /* Header text color */
+    -fx-padding: 10px 20px; /* Padding around the header text */
+}
+
+
 /* Label (raw text) is slightly gray to indicate that it's less clickable */
 .label{
     -fx-text-fill: lightgray;
@@ -21,7 +29,6 @@
 .text-field {
     -fx-prompt-text-fill: gray;
 }
-
 
 .button:focus,
 .button:focus-visible,

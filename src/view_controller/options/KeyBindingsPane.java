@@ -36,8 +36,17 @@ public class KeyBindingsPane extends BorderPane {
     private boolean isUsingEscapeKey = false;
     private List<KeyBindingEntry> keyBindingEntries = new ArrayList<>();
 
+    private Button backButton;
+    private List<EventHandler<ActionEvent>> backHandlers = new ArrayList<>();
+
     public KeyBindingsPane(Input input) {
         this.input = input;
+
+        Label paneTitleLabel = new Label("Keybindings");
+        paneTitleLabel.getStyleClass().add("dark-mode-header");
+        paneTitleLabel.setPadding(new Insets(25));
+        this.setTop(paneTitleLabel);
+        setAlignment(paneTitleLabel, Pos.CENTER);
 
         gridList = new GridPane();
         gridList.setAlignment(Pos.CENTER);
@@ -48,7 +57,16 @@ public class KeyBindingsPane extends BorderPane {
         scrollPane = new ScrollPane(gridList);
         scrollPane.setFitToWidth(true);
 
+        backButton = new Button("Back");
+        backButton.setOnAction(e -> {
+            for (EventHandler<ActionEvent> event : backHandlers)
+                event.handle(e);
+        });
+        setAlignment(backButton, Pos.CENTER);
+
+        this.setTop(paneTitleLabel);
         this.setCenter(scrollPane);
+        this.setBottom(backButton);
     }
 
     public boolean isUsingEscapeKey() {
@@ -129,5 +147,9 @@ public class KeyBindingsPane extends BorderPane {
             this.label = label;
         }
 
+    }
+
+    public void onBack(EventHandler<ActionEvent> eventHandler) {
+        backHandlers.add(eventHandler);
     }
 }

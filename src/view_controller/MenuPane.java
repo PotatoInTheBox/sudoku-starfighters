@@ -105,6 +105,10 @@ public class MenuPane extends GridPane {
 	public void onExit(EventHandler<ActionEvent> eventHandler) {
 		exitHandlers.add(eventHandler);
 	}
+
+	public void setDisableContinueButton(boolean disable){
+		continueButton.setDisable(disable);
+	}
 	
     private Image getSpriteFromFile(String path) {
         FileInputStream playerImageFile;

@@ -15,7 +15,9 @@ public class SoundPlayer {
 	public static HashMap<String, Media> songs = new HashMap<>();
 	public static ArrayList<String> fileNames = new ArrayList<>();
 	private static List<MediaPlayer> currentlyPlayingMedia = new ArrayList<>();
-	private static DoubleProperty soundVolume = null;
+	private static double volume = 1d;
+	private static double sfxVolume = 1d;
+	private static double musicVolume = 1d;
 	private static MediaPlayer currentThemeMusic = null;
 
 	public static void loadAllSongs() {
@@ -30,11 +32,19 @@ public class SoundPlayer {
 		createMedia();
 	}
 
-	public static void setVolume(DoubleProperty volumeProperty) {
-		soundVolume = volumeProperty;
-		for (MediaPlayer mediaPlayer : currentlyPlayingMedia) {
-			mediaPlayer.setVolume(soundVolume.doubleValue());
-		}
+	public static void setVolume(double newVolume) {
+		volume = newVolume;
+		updateVolume();
+	}
+
+	public static void setSfxVolume(double newVolume) {
+		sfxVolume = newVolume;
+		updateVolume();
+	}
+
+	public static void setMusicVolume(double newVolume) {
+		musicVolume = newVolume;
+		updateVolume();
 	}
 
 	public static void playMainThemeMusic() {
@@ -97,9 +107,7 @@ public class SoundPlayer {
 	}
 
 	private static void updateMediaPreferences(MediaPlayer mediaPlayer) {
-		if (soundVolume != null) {
-			mediaPlayer.setVolume(soundVolume.doubleValue());
-		}
+		mediaPlayer.setVolume(volume);
 	}
 
 	private static void createMedia() {
@@ -112,6 +120,17 @@ public class SoundPlayer {
 			// Play one mp3 and and have code run when the song ends
 			Media media = new Media(uri.toString());
 			songs.put(fileName, media);
+		}
+	}
+
+	private static void updateVolume() {
+		for (MediaPlayer mediaPlayer : currentlyPlayingMedia) {
+			if (mediaPlayer != currentThemeMusic) {
+				mediaPlayer.setVolume(sfxVolume * volume);
+			}
+		}
+		if (currentThemeMusic != null) {
+			currentThemeMusic.setVolume(musicVolume * volume);
 		}
 	}
 }
