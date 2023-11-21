@@ -1,6 +1,6 @@
 /* (root applies styling to all nodes.) */
 .root { 
-    -fx-accent: #1b1b1b;
+    -fx-accent: rgb(53, 53, 65);
     -fx-focus-color: -fx-accent;
     -fx-base: #000000;
     -fx-control-inner-background: derive(-fx-base, 0%);
@@ -22,19 +22,27 @@
     -fx-prompt-text-fill: gray;
 }
 
+
+.button:focus,
+.button:focus-visible,
+.button:focus-within {
+    -fx-background-color: inherit;
+}
+
 /* Base button style. Affects buttons like "New Game, Options, and Quit" */
 .button {
     -fx-background-color: transparent;
     -fx-border-color: white;
     -fx-text-fill: white;
     -fx-base: -fx-accent;
-} 
+}
 
 /* Make buttons a little bit more gray when hovering over it. Also dotted. */
 .button:hover {
     -fx-background-color: derive(-fx-base, 20%);
     -fx-border-color: gray;
     -fx-text-fill: #c9c9c9;
+    -fx-base: -fx-accent;
 }
 
 /* Scroll pane usually end up making a black border if not transparent. */
