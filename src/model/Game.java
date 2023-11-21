@@ -220,8 +220,11 @@ public class Game {
 
     private void processInvaderPlayerCollision() {
         for (Invader invader : invaders) {
-            if (invader.hasCollidedWith(player)) {
+            if (invader.getY() + invader.getHeight() > height) {
                 loseGame();
+            }
+            if (invader.hasCollidedWith(player)) {
+                isPlayerHit = true;
             }
         }
     }
@@ -270,11 +273,12 @@ public class Game {
                     Invader invader = (Invader) hitEntity;
                     score.changeScore(invader);
                     invaderHitSound();
+                    return; // it hit something, don't keep processing loop
                 } else if (hitEntity.getTeam() == Team.PLAYER) {
                     playerHit();
                     markedForRemoval.add(bullet);
+                    return; // it hit something, don't keep processing loop
                 }
-
             } else if (bullet.isOutOfBounds(0, 0, width, height)) {
                 markedForRemoval.add(bullet);
             }
