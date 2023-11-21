@@ -77,24 +77,20 @@ public class SoundPlayer {
 		mediaPlayer.setOnEndOfMedia(() -> {
 			// System.out.println("media ended");
 			currentlyPlayingMedia.remove(mediaPlayer);
-			System.out.println("# of sounds playing: " + currentlyPlayingMedia.size());
 		});
 		mediaPlayer.setOnStopped(() -> {
 			// System.out.println("media stopped");
 			currentlyPlayingMedia.remove(mediaPlayer);
-			System.out.println("# of sounds playing: " + currentlyPlayingMedia.size());
 		});
 		mediaPlayer.setOnHalted(() -> {
 			// System.out.println("media halted");
 			currentlyPlayingMedia.remove(mediaPlayer);
-			System.out.println("# of sounds playing: " + currentlyPlayingMedia.size());
 		});
 		mediaPlayer.setOnPlaying(() -> {
 			// System.out.println("media started");
 			if (currentlyPlayingMedia.contains(mediaPlayer) == false)
 				currentlyPlayingMedia.add(mediaPlayer);
 			updateMediaPreferences(mediaPlayer);
-			System.out.println("# of sounds playing: " + currentlyPlayingMedia.size());
 		});
 		mediaPlayer.play();
 		return mediaPlayer;
