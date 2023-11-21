@@ -34,12 +34,14 @@ public class OptionsPane extends BorderPane {
 
     public OptionsPane() {
         volumeSlider = new Slider(0, 1, 0.4d);
-
         SoundPlayer.setVolume(volumeSlider.valueProperty());
+        volumeSlider.setOnMouseDragged(e -> {
+            SoundPlayer.setVolume(volumeSlider.valueProperty());
+        });
 
         wireframeCheckBox = new CheckBox();
         capFpsCheckBox = new CheckBox();
-
+        capFpsCheckBox.setSelected(true);
         keyBindingsButton = new Button("Keybinds");
 
         gridList = new GridPane();
