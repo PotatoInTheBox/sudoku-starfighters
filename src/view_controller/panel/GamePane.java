@@ -98,7 +98,7 @@ public class GamePane extends StackPane {
                 }
 
             }
-            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.WIN_GAME))) {
+            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.SHOOT_MANY))) {
                 for (int i = 0; i < 50; i++) {
                     game.addBullet(
                             new Bullet(game.player.getX() - 25 * 4 + i * 4, game.player.getY() - 30, -5f, Team.PLAYER));
