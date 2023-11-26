@@ -15,27 +15,28 @@ import java.util.Collection;
 // To simplify Game logic, considering having more specific methods such as
 // `onJump(EventHandler e)`.
 public class Input {
-	private Scene scene;
+	private static Scene scene;
 
-	private HashMap<KeyCode, Boolean> heldKeys = new HashMap<>();
-	private HashMap<KeyBinding.Type, KeyBinding> keyBindings = new HashMap<>();
+	private static HashMap<KeyCode, Boolean> heldKeys = new HashMap<>();
+	private static HashMap<KeyBinding.Type, KeyBinding> keyBindings = new HashMap<>();
 
-	private List<EventHandler<KeyEvent>> queuedKeyPressedHandlers = new ArrayList<>();
-	private List<EventHandler<KeyEvent>> queuedKeyReleasedHandlers = new ArrayList<>();
+	private static List<EventHandler<KeyEvent>> queuedKeyPressedHandlers = new ArrayList<>();
+	private static List<EventHandler<KeyEvent>> queuedKeyReleasedHandlers = new ArrayList<>();
 
-	private List<EventHandler<KeyEvent>> keyPressedHandlers = new ArrayList<>();
-	private List<EventHandler<KeyEvent>> keyReleasedHandlers = new ArrayList<>();
+	private static List<EventHandler<KeyEvent>> keyPressedHandlers = new ArrayList<>();
+	private static List<EventHandler<KeyEvent>> keyReleasedHandlers = new ArrayList<>();
 
-	private List<EventHandler<KeyEvent>> markedKeyPressedHandlers = new ArrayList<>();
-	private List<EventHandler<KeyEvent>> markedKeyReleasedHandlers = new ArrayList<>();
+	private static List<EventHandler<KeyEvent>> markedKeyPressedHandlers = new ArrayList<>();
+	private static List<EventHandler<KeyEvent>> markedKeyReleasedHandlers = new ArrayList<>();
 
-	// private HashMap<KeyBinding.Type, EventHandler<KeyEvent>> keyBindPressedHandlers = new HashMap<>();
-	// private HashMap<KeyBinding.Type, EventHandler<KeyEvent>> keyBindReleasedHandlers = new HashMap<>();
+	// private HashMap<KeyBinding.Type, EventHandler<KeyEvent>>
+	// keyBindPressedHandlers = new HashMap<>();
+	// private HashMap<KeyBinding.Type, EventHandler<KeyEvent>>
+	// keyBindReleasedHandlers = new HashMap<>();
 
-	public Input(Scene scene) {
-		this.scene = scene;
+	public static void setScene(Scene scene) {
+		Input.scene = scene;
 		assignButtonHandlers();
-
 		putKeyBind(KeyCode.LEFT, KeyBinding.Type.MOVE_LEFT);
 		putKeyBind(KeyCode.RIGHT, KeyBinding.Type.MOVE_RIGHT);
 		putKeyBind(KeyCode.Z, KeyBinding.Type.FIRE);
@@ -46,10 +47,9 @@ public class Input {
 		putKeyBind(KeyCode.SPACE, KeyBinding.Type.FORCE_UNPAUSE);
 		putKeyBind(KeyCode.G, KeyBinding.Type.GHOST);
 		putKeyBind(KeyCode.H, KeyBinding.Type.SHOOT_MANY);
-
 	}
 
-	public KeyCode getKeyFromType(KeyBinding.Type type) {
+	public static KeyCode getKeyFromType(KeyBinding.Type type) {
 		KeyBinding keyBinding = keyBindings.get(type);
 		if (keyBinding == null) {
 			System.err.println("Warning, unbound type in Input: (" + type.name + ")!");
@@ -63,11 +63,11 @@ public class Input {
 	 * 
 	 * @param eventHandler
 	 */
-	public void onKeyDown(EventHandler<KeyEvent> eventHandler) {
+	public static void onKeyDown(EventHandler<KeyEvent> eventHandler) {
 		queuedKeyPressedHandlers.add(eventHandler);
 	}
 
-	public void removeOnKeyDown(EventHandler<KeyEvent> eventHandler) {
+	public static void removeOnKeyDown(EventHandler<KeyEvent> eventHandler) {
 		markedKeyPressedHandlers.add(eventHandler);
 	}
 
@@ -76,20 +76,22 @@ public class Input {
 	 * 
 	 * @param eventHandler
 	 */
-	public void onKeyUp(EventHandler<KeyEvent> eventHandler) {
+	public static void onKeyUp(EventHandler<KeyEvent> eventHandler) {
 		queuedKeyReleasedHandlers.add(eventHandler);
 	}
 
-	public void removeOnKeyUp(EventHandler<KeyEvent> eventHandler) {
+	public static void removeOnKeyUp(EventHandler<KeyEvent> eventHandler) {
 		markedKeyReleasedHandlers.add(eventHandler);
 	}
 
-	// public void onKeyBindDown(KeyBinding.Type type, EventHandler<KeyEvent> eventHandler) {
-	// 	keyBindPressedHandlers.put(type, eventHandler);
+	// public void onKeyBindDown(KeyBinding.Type type, EventHandler<KeyEvent>
+	// eventHandler) {
+	// keyBindPressedHandlers.put(type, eventHandler);
 	// }
 
-	// public void onKeyBindUp(KeyBinding.Type type, EventHandler<KeyEvent> eventHandler) {
-	// 	keyBindReleasedHandlers.put(type, eventHandler);
+	// public void onKeyBindUp(KeyBinding.Type type, EventHandler<KeyEvent>
+	// eventHandler) {
+	// keyBindReleasedHandlers.put(type, eventHandler);
 	// }
 
 	/**
@@ -97,7 +99,7 @@ public class Input {
 	 * 
 	 * @return A float of the X input
 	 */
-	public float getJoystickX() {
+	public static float getJoystickX() {
 		float joystickXInput = 0f;
 
 		if (isKeyDown(keyBindings.get(KeyBinding.Type.MOVE_LEFT).getKey()))
@@ -114,7 +116,7 @@ public class Input {
 	 * 
 	 * @return a float of the Y input
 	 */
-	public float getJoystickY() {
+	public static float getJoystickY() {
 		float joystickYInput = 0f;
 
 		if (isKeyDown(keyBindings.get(KeyBinding.Type.MOVE_UP).getKey()))
@@ -134,7 +136,7 @@ public class Input {
 	 * @param val The current value
 	 * @return The resulting float after clamping
 	 */
-	private float clamp(float min, float max, float val) {
+	private static float clamp(float min, float max, float val) {
 		if (val < min)
 			return min;
 		if (val > max)
@@ -148,7 +150,7 @@ public class Input {
 	 * @param keyCode The key that is being pressed
 	 * @return True if a key is held, false if not
 	 */
-	private boolean isKeyDown(KeyCode keyCode) {
+	public static boolean isKeyDown(KeyCode keyCode) {
 		Boolean key = heldKeys.get(keyCode);
 		if (key != null) {
 			return key;
@@ -162,7 +164,7 @@ public class Input {
 	 * @param keyCode The key being pressed
 	 * @return True if no key is held, false if one is
 	 */
-	private boolean isKeyUp(KeyCode keyCode) {
+	public static boolean isKeyUp(KeyCode keyCode) {
 		Boolean key = heldKeys.get(keyCode);
 		if (key != null) {
 			return key;
@@ -173,7 +175,7 @@ public class Input {
 	/**
 	 * Assigns button handlers for key pressed and key released
 	 */
-	private void assignButtonHandlers() {
+	private static void assignButtonHandlers() {
 		scene.setOnKeyPressed(e -> {
 			boolean wasKeyAlreadyDown = isKeyDown(e.getCode());
 			heldKeys.put(e.getCode(), true);
@@ -193,14 +195,14 @@ public class Input {
 					handler.handle(e);
 				}
 				// for (KeyBinding keyBinding : keyBindings.values()) {
-				// 	if (keyBinding.getKey() == e.getCode()) {
-				// 		try {
-				// 			keyBindPressedHandlers.get(keyBinding.getType()).handle(e);
-				// 		} catch (Exception ex) {
-				// 			// TODO: handle exception
-				// 		}
+				// if (keyBinding.getKey() == e.getCode()) {
+				// try {
+				// keyBindPressedHandlers.get(keyBinding.getType()).handle(e);
+				// } catch (Exception ex) {
+				// // TODO: handle exception
+				// }
 
-				// 	}
+				// }
 				// }
 			}
 		});
@@ -209,7 +211,7 @@ public class Input {
 			// add queued handlers
 			keyReleasedHandlers.addAll(queuedKeyReleasedHandlers);
 			queuedKeyReleasedHandlers.clear();
-			
+
 			// remove marked handlers
 			keyReleasedHandlers.removeAll(markedKeyReleasedHandlers);
 			markedKeyReleasedHandlers.clear();
@@ -218,24 +220,30 @@ public class Input {
 				handler.handle(e);
 			}
 			// for (KeyBinding keyBinding : keyBindings.values()) {
-			// 	if (keyBinding.getKey() == e.getCode()) {
-			// 		try {
-			// 			keyBindReleasedHandlers.get(keyBinding.getType()).handle(e);
-			// 		} catch (Exception ex) {
-			// 			// TODO: handle exception
-			// 		}
+			// if (keyBinding.getKey() == e.getCode()) {
+			// try {
+			// keyBindReleasedHandlers.get(keyBinding.getType()).handle(e);
+			// } catch (Exception ex) {
+			// // TODO: handle exception
+			// }
 
-			// 	}
+			// }
 			// }
 			heldKeys.put(e.getCode(), false);
 		});
 	}
 
-	private void putKeyBind(KeyCode key, KeyBinding.Type type) {
+	private static void putKeyBind(KeyCode key, KeyBinding.Type type) {
 		keyBindings.put(type, new KeyBinding(key, type));
 	}
 
-	public Collection<KeyBinding> getKeyBindings() {
+	public static Collection<KeyBinding> getKeyBindings() {
 		return keyBindings.values();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void removeEventHandler(EventHandler<?> event) {
+		removeOnKeyDown((EventHandler<KeyEvent>) event);
+		removeOnKeyUp((EventHandler<KeyEvent>) event);
 	}
 }

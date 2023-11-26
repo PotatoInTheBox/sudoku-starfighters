@@ -29,7 +29,6 @@ public class MainGUI extends Application {
 	private KeyBindingsPane keyBindingsPane;
 	private LeaderboardPane leaderboardPane;
 	private Scene scene;
-	private Input input;
 	private Stack<Pane> guiStack;
 
 	@Override
@@ -38,9 +37,9 @@ public class MainGUI extends Application {
 		rootBorderPane = new BorderPane();
 		this.scene = new Scene(rootBorderPane, 600, 600);
 
-		this.input = new Input(scene);
-		keyBindingsPane = new KeyBindingsPane(input);
-		keyBindingsPane.addKeyBindFields(input.getKeyBindings());
+		Input.setScene(scene);
+		keyBindingsPane = new KeyBindingsPane();
+		keyBindingsPane.addKeyBindFields(Input.getKeyBindings());
 		keyBindingsPane.displayKeyBindFields();
 		primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 		primaryStage.setScene(scene);
@@ -58,7 +57,7 @@ public class MainGUI extends Application {
 		pushAndEnterPane(menuPane);
 
 		// global keybind
-		input.onKeyDown(e -> {
+		Input.onKeyDown(e -> {
 			if (e.getCode().equals(KeyCode.ESCAPE)) {
 				if (keyBindingsPane.isUsingEscapeKey() == false) {
 					if (peekGuiStack() == gamePane) {
@@ -119,7 +118,7 @@ public class MainGUI extends Application {
 	}
 
 	private void instantiateGame() {
-		gamePane = new GamePane(scene, input, optionsPane, 600, 600);
+		gamePane = new GamePane(scene, optionsPane, 600, 600);
 	}
 
 	private void enterGame() {

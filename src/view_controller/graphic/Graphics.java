@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javafx.animation.AnimationTimer;
 import javafx.beans.value.ChangeListener;
@@ -30,10 +31,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import model.Bullet;
+import model.Collider;
 import model.Entity;
 import model.Game;
 import model.Invader;
+import model.InvaderCluster;
 import model.InvaderType;
+import model.Player;
 import model.Score;
 import view_controller.panel.GamePane;
 import view_controller.panel.OptionsPane;
@@ -42,7 +46,7 @@ import view_controller.utils.FrameRateTracker;
 public class Graphics extends VBox {
 
     private GamePane gamePane;
-    private Game game;
+    public Game game;
     private OptionsPane optionsPane;
     private Canvas canvas;
     private GraphicsContext gc;
@@ -214,7 +218,7 @@ public class Graphics extends VBox {
     }
 
     private void drawAllSprites(int animFrame) {
-        
+
         drawPlayer();
         drawInvaders(animFrame);
         drawBullets();
@@ -222,10 +226,10 @@ public class Graphics extends VBox {
     }
 
     private void drawDestroyed() {
-        for (Entity e : game.markedForRemoval) {
-            destructionEntities.add(new DestructionEntity(new Point2D(e.getX(), e.getY()),
-                    new Point2D(e.getWidth(), e.getHeight())));
-        }
+        // for (Entity e : game.markedForRemoval) {
+        //     destructionEntities.add(new DestructionEntity(new Point2D(e.getX(), e.getY()),
+        //             new Point2D(10, 10)));
+        // }
 
         ArrayList<DestructionEntity> toRemove = new ArrayList<>();
 
@@ -245,12 +249,12 @@ public class Graphics extends VBox {
     private void drawPlayer() {
         double targetWidth = 40;
         double targetHeight = 40;
-        double widthMult = targetWidth / game.getPlayer().getWidth();
-        double heightMult = targetHeight / game.getPlayer().getHeight();
-        double x = game.getPlayer().getX() - game.getPlayer().getWidth() * (widthMult - 1) / 2;
-        double y = game.getPlayer().getY() - game.getPlayer().getHeight() * (heightMult - 1) / 2;
-        double w = game.getPlayer().getWidth() * widthMult;
-        double h = game.getPlayer().getHeight() * heightMult;
+        double widthMult = targetWidth / game.getPlayer().collider.getWidth();
+        double heightMult = targetHeight / game.getPlayer().collider.getHeight();
+        double x = game.getPlayer().getX() - game.getPlayer().collider.getWidth() * (widthMult - 1) / 2;
+        double y = game.getPlayer().getY() - game.getPlayer().collider.getHeight() * (heightMult - 1) / 2;
+        double w = game.getPlayer().collider.getWidth() * widthMult;
+        double h = game.getPlayer().collider.getHeight() * heightMult;
 
         drawSprite(playerSprite, new Point2D(x, y), new Point2D(w, h));
     }
@@ -259,11 +263,13 @@ public class Graphics extends VBox {
         int bulletSpriteIndex = Integer.remainderUnsigned(bulletAnimationCounter, bulletSprites.length);
         double widthMult = 1.4;
         double heightMult = 1.4;
-        for (Bullet bullet : game.getBullets()) {
-            double x = bullet.getX() - bullet.getWidth() * (widthMult - 1) / 2;
-            double y = bullet.getY() - bullet.getHeight() * (heightMult - 1) / 2;
-            double w = bullet.getWidth() * widthMult;
-            double h = bullet.getHeight() * heightMult;
+        Iterator<Bullet> bullets = game.getBullets();
+        while (bullets.hasNext()) {
+            Bullet bullet = bullets.next();
+            double x = bullet.getX() - bullet.collider.getWidth() * (widthMult - 1) / 2;
+            double y = bullet.getY() - bullet.collider.getHeight() * (heightMult - 1) / 2;
+            double w = bullet.collider.getWidth() * widthMult;
+            double h = bullet.collider.getHeight() * heightMult;
             // reverse the bullet sprite if it is going down
             if (bullet.getDy() > 0f) {
                 drawSprite(bulletSprites[bulletSpriteIndex],
@@ -278,7 +284,9 @@ public class Graphics extends VBox {
     }
 
     private void drawInvaders(int animFrame) {
-        for (Invader invader : game.getInvaders()) {
+        Iterator<Invader> invaders = game.getInvaders();
+        while (invaders.hasNext()) {
+            Invader invader = invaders.next();
             Image invaderSprite = null;
             if (invader.getInvaderType() == InvaderType.ONION)
                 invaderSprite = invaderSprites[0 + animFrame];
@@ -287,7 +295,7 @@ public class Graphics extends VBox {
             else
                 invaderSprite = invaderSprites[4 + animFrame]; // == InvaderType.MUSHROOM
             drawSprite(invaderSprite, new Point2D(invader.getX(), invader.getY()),
-                    new Point2D(invader.getWidth(), invader.getHeight()));
+                    new Point2D(invader.collider.getWidth(), invader.collider.getHeight()));
         }
     }
 
@@ -299,12 +307,9 @@ public class Graphics extends VBox {
     }
 
     private void drawAllWireFrames() {
-        drawWireFrame(game.getPlayer(), Color.CYAN);
-        for (Entity e : game.getBullets()) {
-            drawWireFrame(e, Color.YELLOW);
-        }
-        for (Entity e : game.getInvaders()) {
-            drawWireFrame(e, Color.RED);
+        //drawWireFrame(game.getPlayer());
+        for (Entity e : game.getEntities()) {
+            drawWireFrame(e);
         }
     }
 
@@ -314,9 +319,15 @@ public class Graphics extends VBox {
         gc.strokeText(string, x, y + 5);
     }
 
-    private void drawWireFrame(Entity entity, Color color) {
-        drawWireframe(new Point2D(entity.getX(), entity.getY()),
-                new Point2D(entity.getWidth(), entity.getHeight()), color);
+    private void drawWireFrame(Entity entity) {
+        for (Entity subEntity : entity.getChildren()) {
+            if (subEntity.getClass() == Collider.class) {
+                Collider collider = (Collider) subEntity;
+                drawWireframe(new Point2D(collider.getX(), collider.getY()),
+                        new Point2D(collider.getWidth(), collider.getHeight()), Color.WHITESMOKE);
+            }
+        }
+
     }
 
     private void drawWireframe(Point2D startPoint, Point2D endPoint, Color color) {

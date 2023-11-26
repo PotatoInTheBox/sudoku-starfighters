@@ -33,15 +33,13 @@ import view_controller.utils.KeyBinding;
 public class KeyBindingsPane extends BorderPane {
     private GridPane gridList;
     ScrollPane scrollPane;
-    private Input input;
     private boolean isUsingEscapeKey = false;
     private List<KeyBindingEntry> keyBindingEntries = new ArrayList<>();
 
     private Button backButton;
     private List<EventHandler<ActionEvent>> backHandlers = new ArrayList<>();
 
-    public KeyBindingsPane(Input input) {
-        this.input = input;
+    public KeyBindingsPane() {
 
         Label paneTitleLabel = new Label("Keybindings");
         paneTitleLabel.getStyleClass().add("dark-mode-header");
@@ -107,7 +105,7 @@ public class KeyBindingsPane extends BorderPane {
         isUsingEscapeKey = true;
         scrollPane.setDisable(true);
         button.setText("<waiting for input>");
-        input.onKeyDown(new NewKeyHandler(button, keyBinding));
+        Input.onKeyDown(new NewKeyHandler(button, keyBinding));
     }
 
     private class NewKeyHandler implements EventHandler<KeyEvent> {
@@ -126,7 +124,7 @@ public class KeyBindingsPane extends BorderPane {
             }
             button.setText(keyBinding.getKey().toString());
             scrollPane.setDisable(false);
-            input.removeOnKeyDown(this);
+            Input.removeOnKeyDown(this);
             isUsingEscapeKey = false;
         }
     }

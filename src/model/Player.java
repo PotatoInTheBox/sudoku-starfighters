@@ -1,13 +1,83 @@
 package model;
 
+import javafx.scene.input.KeyCode;
+import view_controller.utils.Input;
+
 public class Player extends Entity {
 	protected float speed;
-	private static final float BULLET_SPEED = 3f;
+	public Collider collider;
+	public Sprite sprite;
 
-	public Player(float x, float y, float width, float height, float speed) {
-		super(x, y, width, height);
+	public Player(Game game, float x, float y) {
+		this(game, x, y, 10, 10, 0.5f);
+	}
+
+	public Player(Game game, float x, float y, float width, float height, float speed) {
+		super(game, x, y);
+		collider = new Collider(game, x + (-width / 2), y + (-height / 2), width, height);
+		sprite = new Sprite(game, x + (-width / 2), y + (-height / 2), width, height, null);
+
 		this.speed = speed;
 		this.team = Team.PLAYER;
+
+		addChild(collider, sprite);
+		createHandlers();
+	}
+
+	public void update() {
+		/// handle input
+		float xDir = Input.getJoystickX();
+		float yDir = Input.getJoystickY();
+		if (xDir != 0) {
+			setX(getX() + xDir * speed);
+		}
+		if (yDir != 0) {
+			setY(getY() + yDir * speed);
+		}
+
+		// bound to map
+		bindToGame();
+
+		/// check if colliding with enemy
+		// TODO
+
+		/// bullet collision
+		// TODO
+	}
+
+	private void createHandlers() {
+		// create button press handlers (eg. shoot weapon)
+		onKeyDown(e -> {
+			if (e.getCode() == KeyCode.A) {
+				exShootBullet();
+			}
+		});
+	}
+
+	private void exShootBullet() {
+		// shoot bullet if this player can shoot
+		Bullet bullet = new Bullet(game, getX(), getY(), Bullet.BULLET_PLAYER_SPEED, team);
+		instantiate(bullet);
+	}
+
+	/**
+	 * Push player back into the bounds of the game
+	 */
+	private void bindToGame() {
+		if (collider.isOutOfBounds(0f, 0f, game.getWidth(), game.getHeight())) {
+			if (collider.getX() < 0) {
+				setX(getX()-collider.getX());
+			}
+			if (collider.getX() + collider.getWidth() > game.getWidth()) {
+				setX(game.getWidth() - collider.getWidth() + getX()-collider.getX());
+			}
+			if (collider.getY() < 0) {
+				setY(getY()-collider.getY());
+			}
+			if (collider.getY() + collider.getHeight() > game.getHeight()) {
+				setY(game.getHeight() - collider.getHeight() + getY()-collider.getY());
+			}
+		}
 	}
 
 	/**
@@ -24,7 +94,7 @@ public class Player extends Entity {
 	 * 
 	 * @param analogInput The directional input of the user
 	 */
-	public void testMoveVertical(float analogInput) {
+	public void moveVertical(float analogInput) {
 		y += speed * analogInput;
 	}
 
@@ -43,8 +113,7 @@ public class Player extends Entity {
 	 * @return The created bullet
 	 */
 	public Bullet shootBullet() {
-		Bullet newBullet = new Bullet(x + width / 2, y + height / 2, -BULLET_SPEED, team);
-		return newBullet;
+		return shootBullet(Bullet.BULLET_PLAYER_SPEED);
 	}
 
 	/**
@@ -54,7 +123,7 @@ public class Player extends Entity {
 	 * @return The created bullet
 	 */
 	public Bullet shootBullet(float speed) {
-		Bullet newBullet = new Bullet(x + width / 2, y + height / 2, -speed, team);
+		Bullet newBullet = new Bullet(game, this.getX(), this.getY(), -speed, team);
 		return newBullet;
 	}
 }

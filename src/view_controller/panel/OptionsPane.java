@@ -46,6 +46,7 @@ public class OptionsPane extends BorderPane {
         initializeVolumeSliders();
 
         wireframeCheckBox = new CheckBox();
+        wireframeCheckBox.setSelected(true);
         capFpsCheckBox = new CheckBox();
         capFpsCheckBox.setSelected(true);
         keyBindingsButton = new Button("Keybinds");

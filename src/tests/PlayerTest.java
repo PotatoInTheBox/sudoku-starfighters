@@ -24,12 +24,12 @@ public class PlayerTest {
     void testMovePlayer() {
         Player player = new Player(0, 0, 10, 10, 10);
         player.moveHorizontal(1f);
-        player.testMoveVertical(0.5f);
+        player.moveVertical(0.5f);
         // with a speed of 10 it should have gone 10 right, 5 down
         assertEquals(10, player.getX());
         assertEquals(5, player.getY());
         player.moveHorizontal(-0.5f);
-        player.testMoveVertical(-1f);
+        player.moveVertical(-1f);
         assertEquals(5, player.getX());
         assertEquals(-5, player.getY());
     }

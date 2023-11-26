@@ -31,7 +31,6 @@ import view_controller.utils.KeyBinding;
 
 public class GamePane extends StackPane {
 
-    private Input input;
     public Game game;
     public OptionsPane optionsPane;
     private GameOverPane gameOverPane;
@@ -47,9 +46,8 @@ public class GamePane extends StackPane {
     private boolean isRenderPaused = false;
     private boolean eventBlockedPause = false;
 
-    public GamePane(Scene scene, Input input, OptionsPane optionsPane, double width, double height) {
+    public GamePane(Scene scene, OptionsPane optionsPane, double width, double height) {
         this.scene = scene;
-        this.input = input;
         this.optionsPane = optionsPane;
         this.game = new Game((float) width, (float) height);
         this.graphics = new Graphics(this, width, height);
@@ -58,7 +56,7 @@ public class GamePane extends StackPane {
         addButtonHandlers();
         SoundPlayer.loadAllSongs();
         this.getChildren().add(graphics);
-        game.startNewRound();
+        game.startGame();
         timer.start();
         unpauseGame();
     }
@@ -67,30 +65,36 @@ public class GamePane extends StackPane {
      * Adds key handlers for controls and button presses
      */
     private void addButtonHandlers() {
-        input.onKeyDown(e -> {
+        Input.onKeyDown(e -> {
             if (disabledInputValue) { // do not accept ANY inputs below
                 return;
             }
-            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.FORCE_UNPAUSE))) {
+            if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.FORCE_UNPAUSE))) {
                 if (game.getLives() > 0) {
                     unpauseGame(); // force continue game
                 }
             }
-            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.WIREFRAME))) {
+            if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.WIREFRAME))) {
                 optionsPane.setWireframeEnabled(!optionsPane.isWireframeEnabled());
             }
             if (isGamePaused) { // do game inputs below
                 return;
             }
-            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.FIRE))) {
-                if (getActivePlayerBulletCount() < 1) {
-                    game.shootPlayerBullet(); // better make that shot count xd
-                }
+            if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.FIRE))) {
+                //if (getActivePlayerBulletCount() < 1) {
+                    //game.shootPlayerBullet(); // better make that shot count xd
+                //}
+                
+                game.delete();
+                Input.getJoystickX();
+                game = new Game(600, 600);
+                graphics.game = game;
+                game.startGame();
             }
-            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.RAPID_FIRE))) {
+            if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.RAPID_FIRE))) {
                 game.shootPlayerBullet(); // force bullet shoot anyways
             }
-            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.GHOST))) {
+            if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.GHOST))) {
                 if (game.player.getTeam() == Team.PLAYER) {
                     game.player.setTeam(Team.NEUTRAL);
                 } else {
@@ -98,11 +102,11 @@ public class GamePane extends StackPane {
                 }
 
             }
-            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.SHOOT_MANY))) {
-                for (int i = 0; i < 50; i++) {
-                    game.addBullet(
-                            new Bullet(game.player.getX() - 25 * 4 + i * 4, game.player.getY() - 30, -5f, Team.PLAYER));
-                }
+            if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SHOOT_MANY))) {
+                //for (int i = 0; i < 50; i++) {
+                    // game.addBullet(
+                    //         new Bullet(game.player.getX() - 25 * 4 + i * 4, game.player.getY() - 30, -5f, Team.PLAYER));
+                //}
 
             }
 
@@ -186,6 +190,7 @@ public class GamePane extends StackPane {
         }
 
         while (unprocessedTime >= TARGET_NANO_TIME) {
+            
             if (isGamePaused == false) {
                 logicUpdate();
                 frameRateTracker.logFrameUpdate();
@@ -216,20 +221,20 @@ public class GamePane extends StackPane {
      * Calls logic update
      */
     private void logicUpdate() {
-        game.movePlayer(input.getJoystickX(), input.getJoystickY());
+        //game.movePlayer(Input.getJoystickX(), Input.getJoystickY());
 
         game.update();
 
-        if (game.hasWon()) {
-            pauseGame();
-            winRound();
-        } else if (game.isGameOver()) {
-            pauseGame();
-            loseGame();
-        } else if (game.isPlayerHit()) {
-            pauseGame();
-            loseLife();
-        }
+        // if (game.hasWon()) {
+        //     pauseGame();
+        //     winRound();
+        // } else if (game.isGameOver()) {
+        //     pauseGame();
+        //     loseGame();
+        // } else if (game.isPlayerHit()) {
+        //     pauseGame();
+        //     loseLife();
+        // }
     }
 
     /**
@@ -299,11 +304,11 @@ public class GamePane extends StackPane {
      */
     private int getActivePlayerBulletCount() {
         int playerBulletCount = 0;
-        for (Bullet bullet : game.getBullets()) {
-            if (bullet.getTeam() == Team.PLAYER) {
-                playerBulletCount += 1;
-            }
-        }
+        // for (Bullet bullet : game.getBullets()) {
+        //     if (bullet.getTeam() == Team.PLAYER) {
+        //         playerBulletCount += 1;
+        //     }
+        // }
         return playerBulletCount;
     }
 

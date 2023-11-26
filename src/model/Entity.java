@@ -1,48 +1,70 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javafx.event.EventHandler;
+import javafx.scene.input.KeyEvent;
+import view_controller.utils.Input;
+
+import java.lang.RuntimeException;
+
 public abstract class Entity {
-	protected float x, y, width, height;
+	protected Game game = null;
+	protected float x, y, scale;
 	protected float dx = 0f;
 	protected float dy = 0f;
 	protected Team team = Team.NEUTRAL;
 
-	public Entity(float x, float y, float width, float height) {
+	private Entity parent = null;
+	private List<Entity> children = new ArrayList<>();
+	private List<EventHandler<?>> events = new ArrayList<>();
+
+	public Entity(Game game, float x, float y) {
+		this.game = game;
 		this.x = x;
 		this.y = y;
-		this.width = width;
-		this.height = height;
 	}
 
-	public void setX(float positionX) {
-		this.x = positionX;
+	public void setX(float x) {
+		if (this.parent != null) {
+			this.x = x - this.parent.getX();
+		} else {
+			this.x = x;
+		}
+
 	}
 
-	public void setY(float positionY) {
-		this.y = positionY;
+	public void setY(float y) {
+		if (this.parent != null) {
+			this.y = y - this.parent.getY();
+		} else {
+			this.y = y;
+		}
 	}
 
 	public float getX() {
-		return x;
+		// can also be done recursively using .getX()
+		// I'm doing it iteratively in a loop
+		float absoluteX = 0;
+		Entity curEntity = this;
+		while (curEntity != null) {
+			absoluteX += curEntity.x;
+			curEntity = curEntity.parent;
+		}
+		return absoluteX;
 	}
 
 	public float getY() {
-		return y;
-	}
-
-	public void setWidth(float sizeX) {
-		this.width = sizeX;
-	}
-
-	public void setHeight(float sizeY) {
-		this.height = sizeY;
-	}
-
-	public float getWidth() {
-		return width;
-	}
-
-	public float getHeight() {
-		return height;
+		// can also be done recursively using .getY()
+		// I'm doing it iteratively in a loop
+		float absoluteY = 0;
+		Entity curEntity = this;
+		while (curEntity != null) {
+			absoluteY += curEntity.y;
+			curEntity = curEntity.parent;
+		}
+		return absoluteY;
 	}
 
 	public void setDx(float newHorizontalSpeed) {
@@ -52,6 +74,44 @@ public abstract class Entity {
 	public void setDy(float newVerticalSpeed) {
 		this.dy = newVerticalSpeed;
 	}
+
+	public float getAbsoluteX() {
+		float absoluteX = 0;
+		Entity currEntity = this;
+		while (this != null) {
+			absoluteX += currEntity.getX();
+			currEntity = this.parent;
+		}
+		return absoluteX;
+	}
+
+	// public float getAbsoluteY() {
+	// float absoluteY = this.y;
+	// Entity currEntity = this;
+	// while (this != null) {
+	// absoluteY += currEntity.getY();
+	// currEntity = this.parent;
+	// }
+	// return absoluteY;
+	// }
+
+	// public void setAbsoluteX(float newX) {
+	// Entity currEntity = this;
+	// while (this != null) {
+	// newX -= currEntity.getX();
+	// currEntity = this.parent;
+	// }
+	// this.setX(newX);
+	// }
+
+	// public void setAbsoluteY(float newY) {
+	// Entity currEntity = this;
+	// while (this != null) {
+	// newY -= currEntity.getY();
+	// currEntity = this.parent;
+	// }
+	// this.setY(newY);
+	// }
 
 	public float getDx() {
 		return dx;
@@ -69,45 +129,120 @@ public abstract class Entity {
 		return team;
 	}
 
-	public float getCenterX() {
-		return x + width / 2;
+	public void move(float dx, float dy) {
+		setX(getX() + dx);
+		setY(getY() + dy);
 	}
 
-	public float getCenterY() {
-		return y + height / 2;
+	public List<Entity> getChildren() {
+		return children;
 	}
 
-	public void setCenterX(float x) {
-		this.x = x - width / 2;
+	protected boolean addChild(Entity child) {
+		if (child == null) {
+			throw new RuntimeException("Passed child was null!");
+		}
+		if (child.parent != null) {
+			throw new RuntimeException("Child belongs to another parent!");
+		}
+		boolean success = children.add(child);
+		if (success) {
+			if (game == null) {
+				System.err.println("No game in Entity when adding child");
+			}
+			child.game = game;
+			float originalX = child.getX();
+			float originalY = child.getY();
+			child.parent = this;
+			child.setX(originalX);
+			child.setY(originalY);
+		} else {
+			System.err.println("Could not add child to " + this);
+		}
+		return success;
 	}
 
-	public void setCenterY(float y) {
-		this.y = y - height / 2;
+	protected void addChild(Entity... children) {
+		for (int i = 0; i < children.length; i++) {
+			addChild(children[i]);
+		}
 	}
 
-	public void move() {
-		x += dx;
-		y += dy;
+	protected boolean removeChild(Entity child) {
+		if (child == null) {
+			throw new RuntimeException("Passed child was null!");
+		}
+		if (child.parent != this) {
+			throw new RuntimeException("Child belongs to another parent!");
+		}
+		boolean success = this.children.remove(child);
+		if (success) {
+			float originalX = child.getX();
+			float originalY = child.getY();
+			child.parent = null;
+			child.setX(originalX);
+			child.setY(originalY);
+		}
+		return success;
 	}
 
-	public boolean hasCollidedWith(Entity other) {
-		if (this.x < other.x + other.width &&
-				this.x + this.width > other.x &&
-				this.y < other.y + other.height &&
-				this.y + this.height > other.y) {
-			return true;
-		} else
-			return false;
+	protected void removeChild(Entity... children) {
+		for (int i = 0; i < children.length; i++) {
+			removeChild(children[i]);
+		}
 	}
 
-	public boolean isOutOfBounds(float boundsX, float boundsY, float boundsWidth, float boundsHeight) {
-		// out of bounds means if any part of the collider goes outside the bounds
-		if (this.x + width > boundsX + boundsWidth ||
-				this.x < boundsX ||
-				this.y + height > boundsY + boundsHeight ||
-				this.y < boundsY) {
-			return true;
-		} else
-			return false;
+	/**
+	 * Should be overriden to add functionality for game tick updates
+	 */
+	public void update() {
+	}
+
+	public void onKeyDown(EventHandler<KeyEvent> event) {
+		Input.onKeyDown(event);
+		events.add(event);
+	}
+
+	public void onKeyUp(EventHandler<KeyEvent> event) {
+		Input.onKeyUp(event);
+		events.add(event);
+	}
+
+	/**
+	 * helper method, instead of asking Game directly to make a new entity,
+	 * we can use .instantiate() within our code to do it for us.
+	 */
+	public void instantiate(Entity entity) {
+		if (game == null) {
+			System.err.println("Cannot add object because no game is attached!");
+			return;
+		}
+		instantiate(game, entity);
+	}
+
+	public static void instantiate(Game game, Entity entity) {
+		game.addOnSpawnList(() -> {
+			entity.game = game;
+			game.addEntity(entity);
+		});
+	}
+
+	public void delete() {
+		game.addOnDeletedList(() -> {
+			game.removeEntity(this);
+			for (EventHandler<?> event : events) {
+				Input.removeEventHandler(event);
+			}
+			events.clear();
+			for (Entity child : children) {
+				child.delete();
+			}
+			children.clear();
+			if (parent != null) {
+				parent.children.remove(this);
+				parent = null;
+			}
+		});
+
 	}
 }
