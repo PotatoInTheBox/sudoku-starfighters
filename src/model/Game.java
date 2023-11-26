@@ -21,9 +21,6 @@ public class Game {
     public Queue<Runnable> markedForRemoval = new ConcurrentLinkedQueue<Runnable>();
     public Queue<Runnable> markedForSpawn = new ConcurrentLinkedQueue<Runnable>();
 
-    private List<EntityEvent> entitySpawnListeners = new ArrayList<>();
-    private List<EntityEvent> entityDestroyListeners = new ArrayList<>();
-
     private boolean isPlayerHit = false;
     private boolean processingGameLoop = false;
 
@@ -31,7 +28,7 @@ public class Game {
     private float invaderEncroachAmount = 20f;
     private float playerSpeed = 3f;
 
-    private float difficultyLevel = 1f;
+    private float difficultyLevel = 0f;
 
     private float invaderBaseSpeed = 0.6f;
     private float invaderSpeed = invaderBaseSpeed;
@@ -50,7 +47,7 @@ public class Game {
     private float width;
     private float height;
 
-    private Score score = new Score();
+    public Score score = new Score();
 
     public Game() {
         this(100, 100);
@@ -64,14 +61,20 @@ public class Game {
     public void startGame() {
         delete(); // make sure there are no entities in the Game
         spawnPlayer(width - 20, height - 20, 20, 30);
-        spawnInvaderCluster(0, 0, width / 2, height / 2);
         startNewRound();
     }
 
     public void startNewRound() {
         // keep player
         // delete all invaders
+        deleteAllInvaders();
         // delete all bullets
+        deleteAllBullets();
+
+        // spawn new invaders
+        InvaderCluster cluster = spawnInvaderCluster(0, 0, width / 2, height / 2);
+        increaseDifficulty();
+        cluster.setDifficulty(difficultyLevel);
 
         final float xInvadersPadding = width / 2.5f;
         final float yInvadersHeight = height / 3;
@@ -86,6 +89,7 @@ public class Game {
         // keep player
         // keep invaders
         // delete all bullets
+        deleteAllBullets();
         // bullets.clear();
         Player player = getPlayer();
         player.setX(width / 2);
@@ -94,81 +98,48 @@ public class Game {
 
     }
 
-    // Game logic here, this will run at a constant rate.
+    private void deleteAllInvaders() {
+        for (Entity entity : entities) {
+            if (entity.getClass() == InvaderCluster.class) {
+                entity.delete(); // clusters should also be deleting their children (invaders)
+            }
+        }
+        // Iterator<Invader> invaders = getInvaders();
+        // while (invaders.hasNext()) {
+        // Invader invader = invaders.next();
+        // invader.delete();
+        // }
+    }
+
+    private void deleteAllBullets() {
+        Iterator<Bullet> bullets = getBullets();
+        while (bullets.hasNext()) {
+            Bullet bullet = bullets.next();
+            bullet.delete();
+        }
+    }
+
+    // game logic fixed rate loop
     public void update() {
         processingGameLoop = true;
+
+        /// remove marked for deletion items before starting tick
         for (Runnable runnable : markedForRemoval) {
             runnable.run();
         }
         markedForRemoval.clear();
-        // remove all items marked for deletion
 
-        // update all entities
+        /// update all entities
         for (Entity entity : entities) {
             entity.update();
         }
 
-        // remove all marked entities
-        // for (Entity entity : markedForRemoval) {
-        // if (entity.getClass() == Player.class) {
-        // // player = null;
-        // } else if (entity.getClass() == Bullet.class) {
-        // bullets.remove(entity);
-        // } else if (entity.getClass() == Invader.class) {
-        // invaders.remove(entity);
-        // } else {
-        // throw new RuntimeException("Cannot delete entity that is marked for deletion!
-        // " + entity);
-        // }
-        // }
-
-        // // if (invaders.isEmpty()) {
-        // // final float xInvadersPadding = width / 8;
-        // // final float yInvadersHeight = height / 3;
-        // // spawnAllInvaders(xInvadersPadding, 20, width - xInvadersPadding,
-        // // yInvadersHeight, 8, 5);
-        // // applyInvaderMotion();
-        // // }
-
-        // markedForRemoval.clear();
-
-        // // move bullets
-        // for (Entity bullet : bullets) {
-        // bullet.move();
-        // }
-
-        // // move invaders
-        // for (Entity invader : invaders) {
-        // invader.move();
-        // }
-
-        // // player is moved elsewhere...
-
-        // // bind player to map
-        // bindPlayerToCanvas();
-
-        // // bind invaders to map
-        // bindInvadersToCanvas();
-
-        // // bullet collision detection
-        // processBulletCollisions();
-
-        // // check invader -> player collision
-        // processInvaderPlayerCollision();
-
-        // tryInvaderShootBullet(5 + (78 - invaders.size()));
-
-        // // update invader's speed based on missing invaders
-        // updateInvadersSpeed();
-
-        // // lose all lives if invaders reach bottom of screen
-        // if (invadersReachedEnd())
-        // loseGame();
-
+        // add items to game after ALL updates are finished processing
         for (Runnable runnable : markedForSpawn) {
             runnable.run();
         }
         markedForSpawn.clear();
+
         processingGameLoop = false;
     }
 
@@ -177,20 +148,21 @@ public class Game {
         Entity.instantiate(this, player);
     }
 
-    public void spawnInvaderCluster(float x, float y, float width, float height) {
+    public InvaderCluster spawnInvaderCluster(float x, float y, float width, float height) {
         InvaderCluster cluster = new InvaderCluster(this, 0, 0);
         Entity.instantiate(this, cluster);
         cluster.spawnAllInvaders(x, y, width, height, 3, 4);
+        return cluster;
     }
 
     public void shootPlayerBullet() {
         // entities.add(player.shootBullet());
-        SoundPlayer.playSound("player_shoot.wav", false);
+        // SoundPlayer.playSound("player_shoot.wav", false);
     }
 
     public void shootInvaderBullet(Invader invader) {
         // entities.add(invader.shootBullet());
-        SoundPlayer.playSound("enemy_shoot.wav", false);
+        // SoundPlayer.playSound("enemy_shoot.wav", false);
     }
 
     // TODO
@@ -207,31 +179,12 @@ public class Game {
         return height;
     }
 
-    // TODO
-    private void processInvaderPlayerCollision() {
-        for (Invader invader : invaders) {
-            if (invader.getY() + invader.collider.getHeight() > height) {
-                loseGame();
-            }
-            if (invader.collider.hasCollidedWith(player.collider) && player.getTeam() == Team.PLAYER) {
-                isPlayerHit = true;
-            }
-        }
+    public void loseLife() {
+        isPlayerHit = true;
+        score.changeLives();
     }
 
-    // TODO
-    private boolean invadersReachedEnd() {
-        for (Invader invader : invaders) {
-            if (invader.collider.isOutOfBounds(0, 0, width, height)) {
-                if (invader.getY() + invader.collider.getHeight() > height) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private void loseGame() {
+    public void loseGame() {
         isPlayerHit = true;
         score.setLives(0);
     }
@@ -244,75 +197,6 @@ public class Game {
             float sign = Math.signum(invader.getDx());
             invader.setDx(newSpeed * sign);
         }
-    }
-
-    // TODO
-    private int invaderBulletCount() {
-        int count = 0;
-        for (Bullet bullet : bullets) {
-            if (bullet.getTeam() == Team.INVADERS)
-                count++;
-        }
-        return count;
-    }
-
-    // TODO
-    private void processBulletCollisions() {
-        for (Bullet bullet : bullets) {
-            Entity hitEntity = getBulletHitEntity(bullet);
-            if (hitEntity != null) {
-                if (hitEntity.getTeam() == Team.INVADERS) {
-                    // markedForRemoval.add(bullet);
-                    // markedForRemoval.add(hitEntity);
-                    Invader invader = (Invader) hitEntity;
-                    score.changeScore(invader);
-                    invaderHitSound();
-                    return; // it hit something, don't keep processing loop
-                } else if (hitEntity.getTeam() == Team.PLAYER) {
-                    playerHit();
-                    // markedForRemoval.add(bullet);
-                    return; // it hit something, don't keep processing loop
-                }
-            } else if (bullet.collider.isOutOfBounds(0, 0, width, height)) {
-                // markedForRemoval.add(bullet);
-            }
-        }
-    }
-
-    private void playerHit() {
-        isPlayerHit = true;
-        score.changeLives();
-    }
-
-    private void invaderHitSound() {
-        Random r = new Random();
-        if (r.nextBoolean()) {
-            SoundPlayer.playSound("enemy_death_2.wav", false);
-        } else {
-            SoundPlayer.playSound("enemy_death.wav", false);
-        }
-    }
-
-    // TODO
-    public void movePlayer(float analogX, float analogY) {
-        if (player != null) {
-            player.moveHorizontal(analogX);
-            player.moveVertical(analogY);
-        }
-    }
-
-    // TODO
-    private Entity getBulletHitEntity(Bullet bullet) {
-        if (bullet.getTeam() == Team.PLAYER) {
-            for (Invader invader : invaders) {
-                if (bullet.collider.hasCollidedWith(invader.collider))
-                    return invader;
-            }
-        } else if (bullet.getTeam() == Team.INVADERS) {
-            if (bullet.collider.hasCollidedWith(player.collider))
-                return player;
-        }
-        return null;
     }
 
     public Player getPlayer() {
@@ -328,12 +212,10 @@ public class Game {
 
     }
 
-    // TODO
     public Iterator<Invader> getInvaders() {
         return new EntityClassIterator<Invader>(entities, Invader.class);
     }
 
-    // TODO
     public Iterator<Bullet> getBullets() {
         return new EntityClassIterator<Bullet>(entities, Bullet.class);
     }
@@ -406,7 +288,8 @@ public class Game {
     }
 
     public boolean hasWon() {
-        return invaders.size() == 0;
+        Iterator<Invader> invaders = getInvaders();
+        return invaders.hasNext() == false;
     }
 
     public boolean isGameOver() {
@@ -415,40 +298,6 @@ public class Game {
 
     public void increaseDifficulty() {
         difficultyLevel += 1f;
-        // modify values of the game to increase difficulty
-        invaderSpeed = invaderBaseSpeed + invaderBaseSpeed * invaderDifficultyScalingSpeed * difficultyLevel;
-        invaderMaxSpeed = invaderMaxSpeed + invaderMaxBaseSpeed *
-                invaderMaxDifficultyScalingSpeed * difficultyLevel;
-        invaderBulletCount = baseInvaderBulletCount + baseInvaderBulletCount *
-                invaderDifficultyScalingBulletCount * difficultyLevel;
-    }
-
-    public void onEntitySpawned(EntityEvent event) {
-        entitySpawnListeners.add(event);
-    }
-
-    public boolean removeOnEntitySpawned(EntityEvent event) {
-        return entityDestroyListeners.remove(event);
-    }
-
-    public void onEntityDestroyed(EntityEvent event) {
-        entitySpawnListeners.add(event);
-    }
-
-    public boolean removeOnEntityDestroyed(EntityEvent event) {
-        return entityDestroyListeners.remove(event);
-    }
-
-    private void triggerAllSpawnListeners(Entity entity) {
-        for (EntityEvent event : entitySpawnListeners) {
-            event.run(entity);
-        }
-    }
-
-    private void triggerAllDestroyListeners(Entity entity) {
-        for (EntityEvent event : entityDestroyListeners) {
-            event.run(entity);
-        }
     }
 
     public void addEntity(Entity entity) {
@@ -475,19 +324,19 @@ public class Game {
 
     public void addOnDeletedList(Runnable event) {
         markedForRemoval.add(event);
-        if (processingGameLoop == false) {
-            for (Runnable runnable : markedForRemoval) {
-                runnable.run();
-            }
-            markedForRemoval.clear();
-        }
+        // if (processingGameLoop == false) {
+        // while (markedForRemoval.isEmpty() == false) {
+        // markedForRemoval.remove().run();
+        // }
+        // markedForRemoval.clear();
+        // }
     }
 
     public void addOnSpawnList(Runnable event) {
         markedForSpawn.add(event);
         if (processingGameLoop == false) {
-            for (Runnable runnable : markedForSpawn) {
-                runnable.run();
+            while (markedForSpawn.isEmpty() == false) {
+                markedForSpawn.remove().run();
             }
             markedForSpawn.clear();
         }

@@ -1,7 +1,10 @@
 package model;
 
 import javafx.scene.input.KeyCode;
+import view_controller.sound.SoundPlayer;
 import view_controller.utils.Input;
+
+import java.util.Iterator;
 
 public class Player extends Entity {
 	protected float speed;
@@ -39,10 +42,16 @@ public class Player extends Entity {
 		bindToGame();
 
 		/// check if colliding with enemy
-		// TODO
+		if (collidingWithEnemy()) {
+			SoundPlayer.playSound("player_death.wav", false);
+			game.loseGame();
+		}
 
 		/// bullet collision
-		// TODO
+		if (collidingWithBullet()) {
+			SoundPlayer.playSound("player_death.wav", false);
+			game.loseLife();
+		}
 	}
 
 	private void createHandlers() {
@@ -56,6 +65,7 @@ public class Player extends Entity {
 
 	private void exShootBullet() {
 		// shoot bullet if this player can shoot
+		SoundPlayer.playSound("player_shoot.wav", false);
 		Bullet bullet = new Bullet(game, getX(), getY(), Bullet.BULLET_PLAYER_SPEED, team);
 		instantiate(bullet);
 	}
@@ -66,18 +76,40 @@ public class Player extends Entity {
 	private void bindToGame() {
 		if (collider.isOutOfBounds(0f, 0f, game.getWidth(), game.getHeight())) {
 			if (collider.getX() < 0) {
-				setX(getX()-collider.getX());
+				setX(getX() - collider.getX());
 			}
 			if (collider.getX() + collider.getWidth() > game.getWidth()) {
-				setX(game.getWidth() - collider.getWidth() + getX()-collider.getX());
+				setX(game.getWidth() - collider.getWidth() + getX() - collider.getX());
 			}
 			if (collider.getY() < 0) {
-				setY(getY()-collider.getY());
+				setY(getY() - collider.getY());
 			}
 			if (collider.getY() + collider.getHeight() > game.getHeight()) {
-				setY(game.getHeight() - collider.getHeight() + getY()-collider.getY());
+				setY(game.getHeight() - collider.getHeight() + getY() - collider.getY());
 			}
 		}
+	}
+
+	private boolean collidingWithEnemy() {
+		Iterator<Invader> invaders = game.getInvaders();
+		while (invaders.hasNext()) {
+			Invader invader = invaders.next();
+			if (collider.hasCollidedWith(invader.collider)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean collidingWithBullet() {
+		Iterator<Bullet> bullets = game.getBullets();
+		while (bullets.hasNext()) {
+			Bullet bullet = bullets.next();
+			if (bullet.getTeam() == Team.INVADERS && collider.hasCollidedWith(bullet.collider)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -105,15 +137,6 @@ public class Player extends Entity {
 	 */
 	public boolean isHit() {
 		return false;
-	}
-
-	/**
-	 * Shoots a bullet at default speed
-	 * 
-	 * @return The created bullet
-	 */
-	public Bullet shootBullet() {
-		return shootBullet(Bullet.BULLET_PLAYER_SPEED);
 	}
 
 	/**

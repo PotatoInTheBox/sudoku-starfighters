@@ -225,16 +225,16 @@ public class GamePane extends StackPane {
 
         game.update();
 
-        // if (game.hasWon()) {
-        //     pauseGame();
-        //     winRound();
-        // } else if (game.isGameOver()) {
-        //     pauseGame();
-        //     loseGame();
-        // } else if (game.isPlayerHit()) {
-        //     pauseGame();
-        //     loseLife();
-        // }
+        if (game.hasWon()) {
+            pauseGame();
+            winRound();
+        } else if (game.isGameOver()) {
+            pauseGame();
+            loseGame();
+        } else if (game.isPlayerHit()) {
+            pauseGame();
+            loseLife();
+        }
     }
 
     /**
@@ -251,7 +251,6 @@ public class GamePane extends StackPane {
      * Activates when a life is lost
      */
     private void loseLife() {
-        SoundPlayer.playSound("player_death.wav", false);
         Thread thread = new Thread(() -> {
             eventBlockedPause = true;
             try {

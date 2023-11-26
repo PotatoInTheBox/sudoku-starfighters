@@ -2,6 +2,8 @@ package model;
 
 import java.util.Random;
 
+import view_controller.sound.SoundPlayer;
+
 public class Invader extends Entity {
 
     public Collider collider;
@@ -28,8 +30,13 @@ public class Invader extends Entity {
                 if (bullet.team == Team.PLAYER) {
                     if (bullet.collider.hasCollidedWith(collider)) {
                         // has been hit
+                        playHitSound();
                         delete();
+                        game.score.changeScore(this);
                         bullet.delete();
+                        if (getParent() != null && getParent().getClass() == InvaderCluster.class) {
+                            ((InvaderCluster) getParent()).updateClusterSpeed();
+                        }
                         return;
                     }
                 }
@@ -38,8 +45,9 @@ public class Invader extends Entity {
     }
 
     public void shootBullet() {
+        SoundPlayer.playSound("enemy_shoot.wav", false);
         Bullet bullet = new Bullet(game, getX(), getY(), Bullet.BULLET_INVADER_SPEED, team);
-		instantiate(bullet);
+        instantiate(bullet);
     }
 
     public void setInvaderType(InvaderType invaderType) {
@@ -60,6 +68,15 @@ public class Invader extends Entity {
                 return 20;
             default:
                 return 0;
+        }
+    }
+
+    private void playHitSound() {
+        Random r = new Random();
+        if (r.nextBoolean()) {
+            SoundPlayer.playSound("enemy_death_2.wav", false);
+        } else {
+            SoundPlayer.playSound("enemy_death.wav", false);
         }
     }
 

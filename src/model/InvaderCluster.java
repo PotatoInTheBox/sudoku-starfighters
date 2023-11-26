@@ -15,6 +15,22 @@ public class InvaderCluster extends Entity {
     private int downCounter = 0;
     private final int bulletCountLimit = 4;
 
+    private int startInvadersCount = 0;
+
+    private float difficultyLevel = 1f;
+
+    private float invaderBaseSpeed = 0.6f;
+    private float invaderSpeed = invaderBaseSpeed;
+    private float invaderDifficultyScalingSpeed = 0.1f;
+
+    private float invaderMaxBaseSpeed = 1f;
+    private float invaderMaxSpeed = invaderMaxBaseSpeed;
+    private float invaderMaxDifficultyScalingSpeed = 0.2f;
+
+    private float baseInvaderBulletCount = 4f;
+    private float invaderBulletCount = baseInvaderBulletCount;
+    private float invaderDifficultyScalingBulletCount = 1f;
+
     public InvaderCluster(Game game, float x, float y) {
         super(game, x, y);
         collider = new Collider(game, 0, 0, 0, 0);
@@ -53,6 +69,10 @@ public class InvaderCluster extends Entity {
             }
         }
         tryInvaderShootBullet(5 + (78 - invaders.size()));
+
+        if (hasClusterReachedEnd()){
+            System.out.println("Game has reached end!");
+        }
     }
 
     public void calculateHitBox() {
@@ -92,6 +112,7 @@ public class InvaderCluster extends Entity {
     public void spawnAllInvaders(float startX, float startY, float width, float height, int xCount, int yCount) {
         float invaderWidth = 35f;
         float invaderHeight = 35f;
+        startInvadersCount = 0;
 
         width = width - invaderWidth / 2;
         width = width - invaderHeight / 2;
@@ -113,6 +134,7 @@ public class InvaderCluster extends Entity {
                 float spawnX = x * width / (xCount - 1) + startX + invaderWidth / 2;
                 float spawnY = y * height / (yCount - 1) + startY + invaderHeight / 2;
                 spawnInvader(spawnX, spawnY, invaderWidth, invaderHeight, invaderType);
+                startInvadersCount += 1;
             }
         }
     }
@@ -122,6 +144,28 @@ public class InvaderCluster extends Entity {
         invader.setInvaderType(invaderType);
         addChild(invader);
         instantiate(invader);
+    }
+
+    public void setDifficulty(float amount){
+        invaderSpeed = invaderBaseSpeed + invaderBaseSpeed * invaderDifficultyScalingSpeed * difficultyLevel;
+        invaderMaxSpeed = invaderMaxSpeed + invaderMaxBaseSpeed *
+                invaderMaxDifficultyScalingSpeed * difficultyLevel;
+        invaderBulletCount = baseInvaderBulletCount + baseInvaderBulletCount *
+                invaderDifficultyScalingBulletCount * difficultyLevel;
+        updateClusterSpeed();
+    }
+
+    public void updateClusterSpeed() {
+        List<Invader> invaders = new ArrayList<>();
+        for (Entity entity : getChildren()) {
+            if (entity.getClass() == Invader.class) {
+                Invader invader = (Invader) entity;
+                invaders.add(invader);
+            }
+        }
+        float newSpeed = invaderSpeed
+                + (invaderMaxSpeed - invaderSpeed) * (float) (1 - Math.pow(invaders.size() / startInvadersCount, 2));
+        speed = newSpeed;
     }
 
     /**
@@ -179,6 +223,15 @@ public class InvaderCluster extends Entity {
                 count++;
         }
         return count;
+    }
+
+    private boolean hasClusterReachedEnd() {
+        if (collider.isOutOfBounds(0, 0, game.getWidth(), game.getHeight())) {
+            if (collider.getY() + collider.getHeight() > game.getHeight()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

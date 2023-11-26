@@ -134,6 +134,10 @@ public abstract class Entity {
 		setY(getY() + dy);
 	}
 
+	public Entity getParent(){
+		return parent;
+	}
+
 	public List<Entity> getChildren() {
 		return children;
 	}
