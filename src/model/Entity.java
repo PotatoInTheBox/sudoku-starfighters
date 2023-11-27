@@ -165,6 +165,7 @@ public abstract class Entity {
 			child.parent = this;
 			child.setX(originalX);
 			child.setY(originalY);
+			instantiate(game, child);
 		} else {
 			System.err.println("Could not add child to " + this);
 		}
@@ -269,7 +270,6 @@ public abstract class Entity {
 
 	public void delete() {
 		game.addOnDeletedList(() -> {
-			game.removeEntity(this);
 			for (EventHandler<?> event : keyDownEvents) {
 				Input.removeEventHandler(event);
 			}
@@ -278,6 +278,7 @@ public abstract class Entity {
 			}
 			keyDownEvents.clear();
 			keyUpEvents.clear();
+			game.removeEntity(this);
 			for (Entity child : children) {
 				child.delete();
 			}

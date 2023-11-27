@@ -1,6 +1,5 @@
 package model;
 
-
 public class Rect extends Entity {
     protected float width, height;
 
@@ -40,5 +39,10 @@ public class Rect extends Entity {
 
     public void setCenterY(float y) {
         this.y = y - height / 2;
+    }
+
+    public void setCenter(float x, float y) {
+        setCenterX(x);
+        setCenterY(y);
     }
 }

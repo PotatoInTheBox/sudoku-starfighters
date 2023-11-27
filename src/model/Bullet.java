@@ -12,10 +12,15 @@ public class Bullet extends Entity {
 		this(game, x, y, 5f, 10f, dy, team);
 	}
 
+	public Bullet(Game game, float dy, Team team) {
+		this(game, 0, 0, 5f, 10f, dy, team);
+	}
+
 	public Bullet(Game game, float x, float y, float width, float height, float dy, Team team) {
 		super(game, x, y);
-		collider = new Collider(game, x + (-width / 2), y + (-height / 2), width, height);
-		sprite = new Sprite(game, x + (-width / 2), y + (-height / 2), width, height, null);
+		collider = new Collider(game, width, height);
+		collider.setCenter(x, y);
+		sprite = new Sprite(game, x + (-width / 2), y + (-height / 2), width, height, "bullet.png");
 		addChild(collider, sprite);
 		this.team = team;
 		this.dy = dy; // must explicitly be given a speed

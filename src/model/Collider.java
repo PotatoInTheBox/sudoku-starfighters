@@ -6,6 +6,10 @@ public class Collider extends Rect {
         super(game, x, y, width, height);
     }
 
+    public Collider(Game game, float width, float height) {
+        super(game, 0, 0, width, height);
+    }
+
     public boolean hasCollidedWith(Collider other) {
         float myX = getX();
         float myY = getY();

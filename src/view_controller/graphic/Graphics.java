@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.HashMap;
+import java.io.File;
+import java.net.URI;
 
 import javafx.animation.AnimationTimer;
 import javafx.beans.value.ChangeListener;
@@ -39,6 +42,7 @@ import model.InvaderCluster;
 import model.InvaderType;
 import model.Player;
 import model.Score;
+import model.Sprite;
 import view_controller.panel.GamePane;
 import view_controller.panel.OptionsPane;
 import view_controller.utils.FrameRateTracker;
@@ -105,7 +109,16 @@ public class Graphics extends VBox {
         } else {
             bulletTickedThisFrame = false;
         }
-        drawAllSprites(valueToPass);
+
+        for (Entity entity : game.getEntities()) {
+            if (entity.getClass() == Sprite.class) {
+                Sprite sprite = (Sprite) entity;
+                float spriteX = sprite.getX();
+                float spriteY = sprite.getY();
+                drawSprite(sprite.getImage(), new Point2D(spriteX, spriteY),
+                        new Point2D(sprite.getWidth(), sprite.getHeight()));
+            }
+        }
 
         if (optionsPane.isWireframeEnabled())
             drawAllWireFrames();
@@ -227,8 +240,9 @@ public class Graphics extends VBox {
 
     private void drawDestroyed() {
         // for (Entity e : game.markedForRemoval) {
-        //     destructionEntities.add(new DestructionEntity(new Point2D(e.getX(), e.getY()),
-        //             new Point2D(10, 10)));
+        // destructionEntities.add(new DestructionEntity(new Point2D(e.getX(),
+        // e.getY()),
+        // new Point2D(10, 10)));
         // }
 
         ArrayList<DestructionEntity> toRemove = new ArrayList<>();
@@ -299,15 +313,15 @@ public class Graphics extends VBox {
         }
     }
 
-    private void drawSprite(Image image, Point2D startPoint, Point2D endPoint) {
+    private void drawSprite(Image image, Point2D startPoint, Point2D size) {
         Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);
-        Point2D mappedEndPoint = mapGamePointOntoGraphics(endPoint);
+        Point2D mappedEndPoint = mapGamePointOntoGraphics(size);
         gc.drawImage(image, mappedStartPoint.getX(), mappedStartPoint.getY(),
                 mappedEndPoint.getX(), mappedEndPoint.getY());
     }
 
     private void drawAllWireFrames() {
-        //drawWireFrame(game.getPlayer());
+        // drawWireFrame(game.getPlayer());
         for (Entity e : game.getEntities()) {
             drawWireFrame(e);
         }

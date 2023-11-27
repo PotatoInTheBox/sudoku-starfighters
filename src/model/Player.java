@@ -20,8 +20,10 @@ public class Player extends Entity {
 
 	public Player(Game game, float x, float y, float width, float height) {
 		super(game, x, y);
-		collider = new Collider(game, x + (-width / 2), y + (-height / 2), width, height);
-		sprite = new Sprite(game, x + (-width / 2), y + (-height / 2), width, height, null);
+		collider = new Collider(game, 0, 0, width / 2, 2 * height / 3);
+		collider.setCenter(x, y);
+		sprite = new Sprite(game, 0, 0, width, height, "player_ship.png");
+		sprite.setCenter(x, y);
 
 		this.team = Team.PLAYER;
 
@@ -60,22 +62,22 @@ public class Player extends Entity {
 		// create button press handlers (eg. shoot weapon)
 		onKeyDown(e -> {
 			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.FIRE))) {
-                // if (getActivePlayerBulletCount() < 1) {
-                // game.shootPlayerBullet(); // better make that shot count xd
-                // }
-                shootBullet(0,0);
-            }
-            if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.RAPID_FIRE))) {
-                shootBullet(0,0);
-            }
+				// if (getActivePlayerBulletCount() < 1) {
+				// game.shootPlayerBullet(); // better make that shot count xd
+				// }
+				shootBullet(0, 0);
+			}
+			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.RAPID_FIRE))) {
+				shootBullet(0, 0);
+			}
 			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SHOOT_MANY))) {
-                for (int i = 0; i < 50; i++) {
+				for (int i = 0; i < 50; i++) {
 					shootBullet(i * 4 - 25 * 4, 0);
-                }
+				}
 			}
 			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.GHOST))) {
-                isInvincible = !isInvincible;
-            }
+				isInvincible = !isInvincible;
+			}
 		});
 	}
 

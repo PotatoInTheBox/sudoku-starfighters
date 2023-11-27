@@ -42,7 +42,7 @@ public class Game {
 
     public void startGame() {
         delete(); // make sure there are no entities in the Game
-        spawnPlayer(width - 20, height - 20, 20, 30);
+        spawnPlayer(width - 20, height - 20, 30, 30);
         startNewRound();
     }
 
@@ -330,7 +330,6 @@ public class Game {
             while (markedForSpawn.isEmpty() == false) {
                 markedForSpawn.remove().run();
             }
-            markedForSpawn.clear();
         }
     }
 

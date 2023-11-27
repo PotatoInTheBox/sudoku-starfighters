@@ -14,6 +14,7 @@ public class InvaderCluster extends Entity {
     private boolean isMovingVertically = false;
     private float downAmount = 30f;
     private float moveDownOriginY = 0f;
+    private float distanceTravelled = 0f;
     private final int bulletCountLimit = 4;
 
     private int startInvadersCount = 0;
@@ -47,11 +48,23 @@ public class InvaderCluster extends Entity {
         // move invaders left/right/down
         if (isMovingVertically) {
             move(0, speed);
-            if (moveDownOriginY + downAmount < getY()){
+            distanceTravelled += speed;
+            if (moveDownOriginY + downAmount < getY()) {
                 isMovingVertically = false;
             }
         } else {
             move(direction * speed, 0);
+            distanceTravelled += direction * speed;
+        }
+
+        if (distanceTravelled > 40f) {
+            distanceTravelled = 0f;
+            for (Entity entity : getChildren()) {
+                if (entity.getClass() == Invader.class) {
+                    Invader invader = (Invader) entity;
+                    invader.sprite.nextFrame();
+                }
+            }
         }
 
         // check if hitting a wall
@@ -74,7 +87,7 @@ public class InvaderCluster extends Entity {
         }
         tryInvaderShootBullet(5 + (78 - invaders.size()));
 
-        if (hasClusterReachedEnd()){
+        if (hasClusterReachedEnd()) {
             System.out.println("Game has reached end!");
         }
     }
@@ -150,7 +163,7 @@ public class InvaderCluster extends Entity {
         instantiate(invader);
     }
 
-    public void setDifficulty(float amount){
+    public void setDifficulty(float amount) {
         difficultyLevel = amount;
         invaderSpeed = invaderBaseSpeed + invaderBaseSpeed * invaderDifficultyScalingSpeed * difficultyLevel;
         invaderMaxSpeed = invaderMaxSpeed + invaderMaxBaseSpeed *
