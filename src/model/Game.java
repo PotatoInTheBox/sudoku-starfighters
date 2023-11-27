@@ -38,6 +38,7 @@ public class Game {
     private float invaderDifficultyScalingBulletCount = 1f;
 
     private float startInvadersCount;
+    private float turretsSpawned = 0;
 
     private float width;
     private float height;
@@ -56,7 +57,6 @@ public class Game {
     public void startNewRound() {
         clearAllEntities();
         spawnPlayer(width - 20, height - 20, 20, 30);
-        spawnTurret(width - 100, height - 100, 20, 30);
         final float xInvadersPadding = width / 2.5f;
         final float yInvadersHeight = height / 3;
         startInvadersCount = 0;
@@ -110,8 +110,9 @@ public class Game {
             invader.move();
         }
         
+        // Update turrets (will choose new targets and shoot)
         for (Turret turret : turrets) {
-        	turret.update(invaders);
+        	tryTurretsShootBullet();
         }
 
         // player is moved elsewhere...
@@ -189,9 +190,20 @@ public class Game {
         invaders.add(invader);
     }
     
-    public void spawnTurret(float x, float y, float width, float height) {
-        Turret turret = new Turret(x, y, width, height);
+    public void spawnTurret() {
+    	float x = 150;
+    	float y = 450;
+    	
+    	// Limit of 2 turrets
+    	if (turretsSpawned == 2) {
+    		return;
+    	}
+    	
+    	x = x + ((width-50)/2) * turretsSpawned;
+        Turret turret = new Turret(x, y, 20, 30);
+        turret.setTarget(invaders);
         turrets.add(turret);
+        turretsSpawned += 1;
     }
 
     public void shootPlayerBullet() {
@@ -225,6 +237,14 @@ public class Game {
         if (r.nextInt(1000) < threshhold * reducedPercentModifier) {
             shootInvaderBullet(toShoot);
         }
+    }
+    
+    private void tryTurretsShootBullet() {
+    	for (Turret turret : turrets) {
+    		if (turret.update(invaders)) {
+    			shootTurretBullet(turret);
+    		}
+    	}
     }
 
     public void addBullet(Bullet bullet) {
@@ -299,6 +319,10 @@ public class Game {
                     playerHit();
                     markedForRemoval.add(bullet);
                     return; // it hit something, don't keep processing loop
+                } else if (hitEntity.getTeam() == Team.NEUTRAL) {
+                	markedForRemoval.add(bullet);
+                    markedForRemoval.add(hitEntity);
+                    invaderHitSound();
                 }
             } else if (bullet.isOutOfBounds(0, 0, width, height)) {
                 markedForRemoval.add(bullet);
@@ -383,7 +407,7 @@ public class Game {
     }
 
     private Entity getBulletHitEntity(Bullet bullet) {
-        if (bullet.getTeam() == Team.PLAYER) {
+        if (bullet.getTeam() == Team.PLAYER || bullet.getTeam() == Team.NEUTRAL) {
             for (Invader invader : invaders) {
                 if (bullet.hasCollidedWith(invader))
                     return invader;
@@ -391,7 +415,12 @@ public class Game {
         } else if (bullet.getTeam() == Team.INVADERS) {
             if (bullet.hasCollidedWith(player))
                 return player;
-        }
+            for (Turret turret : turrets) {
+            	if (bullet.hasCollidedWith(turret)) {
+            		return turret;
+            	}
+            }
+        } 
         return null;
     }
 

@@ -14,7 +14,7 @@ public class Turret extends Entity {
 	
 	public Turret(float x, float y, float width, float height) {
 		super(x, y, width, height);
-		this.team = Team.PLAYER;
+		this.team = Team.NEUTRAL;
 	}
 	
 	public void setTarget(Invader toTarget) {
@@ -32,17 +32,20 @@ public class Turret extends Entity {
 		float dx = change[0];
 		float dy = change[1];
 		
-	    Bullet newBullet = new Bullet(x + width / 2, y + height / 2, dx, dy, team);
+	    Bullet newBullet = new Bullet(x, y, dx, dy, team);
 	    return newBullet;
 	}
 	
-	public void update(ArrayList<Invader> invaders) {
-		timer = (timer + 1) % 60;
+	// Return val determines whether to shoot or not
+	public boolean update(ArrayList<Invader> invaders) {
+		timer = (timer + 1) % 360;
 		
-		if (timer == 59) {
+		if (timer == 359) {
 			setTarget(invaders);
 			lookAtTarget();
+			return true;
 		}
+		return false;
 	}
 	
 	private void lookAtTarget() {
@@ -68,10 +71,22 @@ public class Turret extends Entity {
 	private float[] determineDxDy() {
 		float targetXPos = currentTarget.x;
 		float targetYPos = currentTarget.y;
+		float distance = (float) 2;
 		
-		float slope = (targetYPos - this.getCenterY()) / (targetXPos - this.getCenterX());
+		double xVal;
+		double yVal;
+		
+		// Distance Formula
+		double ratioOfDistance = Math.pow(targetXPos - this.getCenterX(), 2) + Math.pow(targetYPos - this.getCenterY(), 2);
+		ratioOfDistance = Math.sqrt(ratioOfDistance);
+		ratioOfDistance = distance/ratioOfDistance;
+		
+		xVal = (1-ratioOfDistance) * this.getCenterX() + ratioOfDistance * targetXPos;
+		yVal = (1-ratioOfDistance) * this.getCenterY() + ratioOfDistance * targetYPos;
 		
 		float[] change = new float[2];
+		change[0] = (float) xVal - this.getCenterX();
+		change[1] = (float) yVal - this.getCenterY();
 		
 		
 		

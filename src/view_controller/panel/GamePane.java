@@ -105,6 +105,10 @@ public class GamePane extends StackPane {
                 }
 
             }
+            
+            if (e.getCode().equals(input.getKeyFromType(KeyBinding.Type.SPAWN_TURRET))) {
+            	game.spawnTurret();
+            }
 
         });
     }
