@@ -11,6 +11,7 @@ public class Game {
     public Player player;
     public ArrayList<Invader> invaders = new ArrayList<>();
     public ArrayList<Bullet> bullets = new ArrayList<>();
+    public ArrayList<Turret> turrets = new ArrayList<>();
     public List<Entity> markedForRemoval = new ArrayList<>();
 
     private List<EntityEvent> entitySpawnListeners = new ArrayList<>();
@@ -55,6 +56,7 @@ public class Game {
     public void startNewRound() {
         clearAllEntities();
         spawnPlayer(width - 20, height - 20, 20, 30);
+        spawnTurret(width - 100, height - 100, 20, 30);
         final float xInvadersPadding = width / 2.5f;
         final float yInvadersHeight = height / 3;
         startInvadersCount = 0;
@@ -81,6 +83,8 @@ public class Game {
                 bullets.remove(entity);
             } else if (entity.getClass() == Invader.class) {
                 invaders.remove(entity);
+            } else if (entity.getClass() == Turret.class) {
+            	turrets.remove(entity);
             } else {
                 throw new RuntimeException("Cannot delete entity that is marked for deletion! " + entity);
             }
@@ -104,6 +108,10 @@ public class Game {
         // move invaders
         for (Entity invader : invaders) {
             invader.move();
+        }
+        
+        for (Turret turret : turrets) {
+        	turret.update(invaders);
         }
 
         // player is moved elsewhere...
@@ -180,6 +188,11 @@ public class Game {
         invader.setInvaderType(invaderType);
         invaders.add(invader);
     }
+    
+    public void spawnTurret(float x, float y, float width, float height) {
+        Turret turret = new Turret(x, y, width, height);
+        turrets.add(turret);
+    }
 
     public void shootPlayerBullet() {
         bullets.add(player.shootBullet());
@@ -189,6 +202,11 @@ public class Game {
     public void shootInvaderBullet(Invader entity) {
         bullets.add(entity.shootBullet());
         SoundPlayer.playSound("enemy_shoot.wav", false);
+    }
+    
+    public void shootTurretBullet(Turret entity) {
+    	bullets.add(entity.shootBullet());
+    	SoundPlayer.playSound("player_shoot.wav", false);
     }
 
     private void tryInvaderShootBullet(int threshhold) {
@@ -387,6 +405,10 @@ public class Game {
 
     public List<Invader> getInvaders() {
         return invaders;
+    }
+    
+    public List<Turret> getTurrets() {
+    	return turrets;
     }
 
     public List<Bullet> getBullets() {

@@ -35,6 +35,7 @@ import model.Game;
 import model.Invader;
 import model.InvaderType;
 import model.Score;
+import model.Turret;
 import view_controller.panel.GamePane;
 import view_controller.panel.OptionsPane;
 import view_controller.utils.FrameRateTracker;
@@ -218,6 +219,7 @@ public class Graphics extends VBox {
         drawPlayer();
         drawInvaders(animFrame);
         drawBullets();
+        drawTurrets();
         drawDestroyed();
     }
 
@@ -291,6 +293,13 @@ public class Graphics extends VBox {
         }
     }
 
+    private void drawTurrets() {
+    	for (Turret turret : game.getTurrets()) {
+    		drawWireFrame(turret, Color.GREEN);
+    		gc.strokeLine(turret.getCenterX(), turret.getCenterY(), turret.gunLineX, turret.gunLineY);
+    	}
+    }
+    
     private void drawSprite(Image image, Point2D startPoint, Point2D endPoint) {
         Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);
         Point2D mappedEndPoint = mapGamePointOntoGraphics(endPoint);
