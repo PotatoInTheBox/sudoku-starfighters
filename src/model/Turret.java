@@ -10,7 +10,6 @@ public class Turret extends Entity {
 	public float gunLineY = this.getCenterY() - 30;
 	
 	public float timer = 0;
-
 	
 	public Turret(float x, float y, float width, float height) {
 		super(x, y, width, height);

@@ -12,6 +12,7 @@ public class Game {
     public ArrayList<Invader> invaders = new ArrayList<>();
     public ArrayList<Bullet> bullets = new ArrayList<>();
     public ArrayList<Turret> turrets = new ArrayList<>();
+    public ArrayList<House> houses = new ArrayList<>();
     public List<Entity> markedForRemoval = new ArrayList<>();
 
     private List<EntityEvent> entitySpawnListeners = new ArrayList<>();
@@ -61,6 +62,7 @@ public class Game {
         final float yInvadersHeight = height / 3;
         startInvadersCount = 0;
         spawnAllInvaders(xInvadersPadding, 20, width - xInvadersPadding, yInvadersHeight, 7, 5);
+        spawnAllHouses();
         applyInvaderMotion();
         startPlayerLife();
     }
@@ -85,6 +87,9 @@ public class Game {
                 invaders.remove(entity);
             } else if (entity.getClass() == Turret.class) {
             	turrets.remove(entity);
+            }
+            else if (entity.getClass() == House.class) {
+                houses.remove(entity);
             } else {
                 throw new RuntimeException("Cannot delete entity that is marked for deletion! " + entity);
             }
@@ -204,6 +209,27 @@ public class Game {
         turret.setTarget(invaders);
         turrets.add(turret);
         turretsSpawned += 1;
+    }
+    
+    public void spawnAllHouses() {
+    	for(int j = 0; j < 3; j++) {
+        	float startX = 100;
+    		startX += (175 * j);
+        	for(int i = 0; i < 4; i++) {
+        		float addX = 0;
+        		float addY = 0;
+        		if(i%2==0) {
+        			addY = 25;
+        		}
+        		if (i == 1 || i == 2) {
+        			addX = 25;
+        		}
+            	float x = startX + addX;
+            	float y = 400 + addY;
+                House house = new House(x, y, 25, 25);
+            	houses.add(house);
+        	}
+    	}
     }
 
     public void shootPlayerBullet() {
@@ -438,6 +464,10 @@ public class Game {
     
     public List<Turret> getTurrets() {
     	return turrets;
+    }
+    
+    public List<House> getHouses(){
+    	return houses;
     }
 
     public List<Bullet> getBullets() {

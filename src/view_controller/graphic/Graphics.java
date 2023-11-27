@@ -32,6 +32,7 @@ import javafx.scene.paint.Color;
 import model.Bullet;
 import model.Entity;
 import model.Game;
+import model.House;
 import model.Invader;
 import model.InvaderType;
 import model.Score;
@@ -220,6 +221,7 @@ public class Graphics extends VBox {
         drawInvaders(animFrame);
         drawBullets();
         drawTurrets();
+        drawHouses();
         drawDestroyed();
     }
 
@@ -297,6 +299,12 @@ public class Graphics extends VBox {
     	for (Turret turret : game.getTurrets()) {
     		drawWireFrame(turret, Color.GREEN);
     		gc.strokeLine(turret.getCenterX(), turret.getCenterY(), turret.gunLineX, turret.gunLineY);
+    	}
+    }
+    
+    private void drawHouses() {
+    	for (House house : game.getHouses()) {
+    		drawWireFrame(house, Color.GREEN);
     	}
     }
     
