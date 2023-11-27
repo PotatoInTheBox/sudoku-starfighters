@@ -24,7 +24,7 @@ public class Invader extends Entity {
 
     @Override
     public void update() {
-        for (Entity entity : game.entities) {
+        for (Entity entity : game.getEntities()) {
             if (entity.getClass() == Bullet.class) {
                 Bullet bullet = (Bullet) entity;
                 if (bullet.team == Team.PLAYER) {

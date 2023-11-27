@@ -10,9 +10,10 @@ public class InvaderCluster extends Entity {
     public Collider collider;
     private int lastChildrenCount = 0;
     private float speed = 1f;
-    private float horizontalSpeed = 0.3f;
     private float direction = 1f;
-    private int downCounter = 0;
+    private boolean isMovingVertically = false;
+    private float downAmount = 30f;
+    private float moveDownOriginY = 0f;
     private final int bulletCountLimit = 4;
 
     private int startInvadersCount = 0;
@@ -44,11 +45,13 @@ public class InvaderCluster extends Entity {
         lastChildrenCount = getChildren().size();
 
         // move invaders left/right/down
-        if (downCounter == 0) {
-            move(direction * speed, 0);
+        if (isMovingVertically) {
+            move(0, speed);
+            if (moveDownOriginY + downAmount < getY()){
+                isMovingVertically = false;
+            }
         } else {
-            move(0, horizontalSpeed);
-            downCounter -= 1;
+            move(direction * speed, 0);
         }
 
         // check if hitting a wall
@@ -57,8 +60,9 @@ public class InvaderCluster extends Entity {
             bindToGame();
             // reverse direction
             direction = direction * -1f;
-            // set down counter to 60 game ticks
-            downCounter = 60;
+            // set position where we started moving down and signal we are going down
+            moveDownOriginY = getY();
+            isMovingVertically = true;
         }
 
         List<Invader> invaders = new ArrayList<>();
@@ -147,11 +151,17 @@ public class InvaderCluster extends Entity {
     }
 
     public void setDifficulty(float amount){
+        difficultyLevel = amount;
         invaderSpeed = invaderBaseSpeed + invaderBaseSpeed * invaderDifficultyScalingSpeed * difficultyLevel;
         invaderMaxSpeed = invaderMaxSpeed + invaderMaxBaseSpeed *
                 invaderMaxDifficultyScalingSpeed * difficultyLevel;
         invaderBulletCount = baseInvaderBulletCount + baseInvaderBulletCount *
                 invaderDifficultyScalingBulletCount * difficultyLevel;
+
+        System.out.println("Difficulty settings: ");
+        System.out.println("\tinvaderSpeed: " + invaderSpeed);
+        System.out.println("\tinvaderMaxSpeed: " + invaderMaxSpeed);
+        System.out.println("\tinvaderBulletCount: " + invaderBulletCount);
         updateClusterSpeed();
     }
 

@@ -5,12 +5,12 @@ import java.util.List;
 
 import javafx.scene.image.Image;
 
-public class Sprite {
+public class Sprites {
 
     protected List<Image> images = new ArrayList<>();
     protected int imageFrame = 0;
 
-    public Sprite() {
+    public Sprites() {
         super();
     }
 

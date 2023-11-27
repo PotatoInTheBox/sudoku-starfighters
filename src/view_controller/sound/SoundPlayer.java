@@ -84,7 +84,9 @@ public class SoundPlayer {
 		if (!sounds.containsKey(fileName)){
 			return;
 		}
-		sounds.get(fileName).play();
+		AudioClip sound = sounds.get(fileName);
+		sound.setVolume(sfxVolume * volume);
+		sound.play();
 	}
 
 	public static MediaPlayer playSong(String fileName, boolean isMusic) {

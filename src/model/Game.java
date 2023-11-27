@@ -14,7 +14,7 @@ import view_controller.sound.SoundPlayer;
 
 public class Game {
 
-    public List<Entity> entities = new ArrayList<>();
+    private List<Entity> entities = new ArrayList<>();
     public Queue<Runnable> markedForRemoval = new ConcurrentLinkedQueue<Runnable>();
     public Queue<Runnable> markedForSpawn = new ConcurrentLinkedQueue<Runnable>();
 
@@ -112,10 +112,9 @@ public class Game {
         }
 
         // add items to game after ALL updates are finished processing
-        for (Runnable runnable : markedForSpawn) {
-            runnable.run();
+        while (markedForSpawn.isEmpty() == false) {
+            markedForSpawn.remove().run();
         }
-        markedForSpawn.clear();
 
         processingGameLoop = false;
     }
@@ -239,7 +238,7 @@ public class Game {
     }
 
     public void setPaused(boolean isPaused) {
-        if (lastIsPaused == isPaused){
+        if (lastIsPaused == isPaused) {
             return;
         }
         lastIsPaused = isPaused;
@@ -288,11 +287,15 @@ public class Game {
     }
 
     public void addEntity(Entity entity) {
-        entities.add(entity);
+        addOnSpawnList(() -> {
+            entities.add(entity);
+        });
     }
 
     public void removeEntity(Entity entity) {
-        entities.remove(entity);
+        addOnDeletedList(() -> {
+            entities.remove(entity);
+        });
     }
 
     public void delete() {
