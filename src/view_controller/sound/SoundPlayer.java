@@ -7,29 +7,40 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 public class SoundPlayer {
 	public static HashMap<String, Media> songs = new HashMap<>();
-	public static ArrayList<String> fileNames = new ArrayList<>();
+	public static HashMap<String, AudioClip> sounds = new HashMap<>();
+	public static ArrayList<String> fileNameSongs = new ArrayList<>();
+	public static ArrayList<String> fileNameSounds = new ArrayList<>();
 	private static List<MediaPlayer> currentlyPlayingMedia = new ArrayList<>();
 	private static double volume = 1d;
 	private static double sfxVolume = 1d;
 	private static double musicVolume = 1d;
 	private static MediaPlayer currentThemeMusic = null;
 
-	public static void loadAllSongs() {
-		fileNames.add("player_shoot.wav");
-		fileNames.add("player_death.wav");
-		fileNames.add("enemy_shoot.wav");
-		fileNames.add("enemy_death.wav");
-		fileNames.add("enemy_death_2.wav");
-		fileNames.add("game_over.mp3");
-		fileNames.add("theme_song.mp3");
+	public static void loadAllAudio() {
+		loadAllSongs();
+		loadAllSounds();
+	}
 
+	private static void loadAllSongs() {
+		fileNameSongs.add("game_over.mp3");
+		fileNameSongs.add("theme_song.mp3");
 		createMedia();
+	}
+
+	private static void loadAllSounds() {
+		fileNameSounds.add("player_shoot.wav");
+		fileNameSounds.add("player_death.wav");
+		fileNameSounds.add("enemy_shoot.wav");
+		fileNameSounds.add("enemy_death.wav");
+		fileNameSounds.add("enemy_death_2.wav");
+		createSounds();
 	}
 
 	public static void setVolume(double newVolume) {
@@ -52,7 +63,7 @@ public class SoundPlayer {
 			// System.err.println("Cannot play theme music, already playing theme music!");
 			return;
 		}
-		currentThemeMusic = playSound("theme_song.mp3", true);
+		currentThemeMusic = playSong("theme_song.mp3", true);
 		currentThemeMusic.setOnEndOfMedia(() -> {
 			currentThemeMusic.seek(Duration.ZERO);
 		});
@@ -66,21 +77,29 @@ public class SoundPlayer {
 		}
 	}
 
-	public static MediaPlayer playSound(String fileName, boolean isMusic) {
+	public static void playSound(String fileName) {
+		if (!sounds.containsKey(fileName)){
+			loadSound(fileName);
+		}
+		if (!sounds.containsKey(fileName)){
+			return;
+		}
+		sounds.get(fileName).play();
+	}
+
+	public static MediaPlayer playSong(String fileName, boolean isMusic) {
 		Media media = null;
 
 		if (songs.containsKey(fileName)) {
 			media = songs.get(fileName);
 		} else {
-			String path = "resources/sounds/" + fileName;
-
-			// Need a File and URI object so the path works on all OSs
-			File file = new File(path);
-			URI uri = file.toURI();
-			// Play one mp3 and and have code run when the song ends
-			media = new Media(uri.toString());
-
+			loadSong(fileName);
 		}
+		if (!songs.containsKey(fileName)){
+			return null;
+		}
+
+		media = songs.get(fileName);
 		songs.put(fileName, media);
 
 		MediaPlayer mediaPlayer = new MediaPlayer(media);
@@ -114,15 +133,44 @@ public class SoundPlayer {
 	}
 
 	private static void createMedia() {
-		for (String fileName : fileNames) {
-			String path = "resources/sounds/" + fileName;
+		for (String fileName : fileNameSongs) {
+			loadSong(fileName);
+		}
+	}
 
-			// Need a File and URI object so the path works on all OSs
-			File file = new File(path);
+	private static void createSounds() {
+		for (String fileName : fileNameSounds) {
+			loadSound(fileName);
+		}
+	}
+
+	private static void loadSong(String fileName) {
+		File file = loadAudioFile(fileName);
+		if (file != null) {
 			URI uri = file.toURI();
 			// Play one mp3 and and have code run when the song ends
 			Media media = new Media(uri.toString());
 			songs.put(fileName, media);
+		}
+	}
+
+	private static void loadSound(String fileName) {
+		File file = loadAudioFile(fileName);
+		if (file != null) {
+			URI uri = file.toURI();
+			AudioClip sound = new AudioClip(uri.toString());
+			sounds.put(fileName, sound);
+		}
+	}
+
+	private static File loadAudioFile(String fileName) {
+		String path = "resources/sounds/" + fileName;
+		try {
+			// Need a File and URI object so the path works on all OSs
+			return new File(path);
+		} catch (Exception e) {
+			System.err.println("Cannot local audio file " + path);
+			return null;
 		}
 	}
 

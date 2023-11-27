@@ -54,7 +54,7 @@ public class GamePane extends StackPane {
         this.gameOverPane = new GameOverPane();
         this.timer = new Timer();
         addButtonHandlers();
-        SoundPlayer.loadAllSongs();
+        SoundPlayer.loadAllAudio();
         this.getChildren().add(graphics);
         game.startGame();
         timer.start();
@@ -68,11 +68,6 @@ public class GamePane extends StackPane {
         Input.onKeyDown(e -> {
             if (disabledInputValue) { // do not accept ANY inputs below
                 return;
-            }
-            if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.FORCE_UNPAUSE))) {
-                if (game.getLives() > 0) {
-                    unpauseGame(); // force continue game
-                }
             }
             if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.WIREFRAME))) {
                 optionsPane.setWireframeEnabled(!optionsPane.isWireframeEnabled());
@@ -89,18 +84,26 @@ public class GamePane extends StackPane {
      */
     public void pauseGame() {
         isGamePaused = true;
+        game.setPaused(true);
     }
 
     /**
      * Resumes the Game
      */
     public void unpauseGame() {
-        // cannot unpause while the player is hit
         // cannot unpause if an event is blocking it
-        if (!isGamePaused || eventBlockedPause || game.isPlayerHit()) {
+        if (eventBlockedPause){
             return;
         }
-        lastTime = System.nanoTime();
+        // cannot unpause while the player is hit
+        if (game.isPlayerHit()){
+            return;
+        }
+        if (!isGamePaused) {
+            game.setPaused(false);
+            return;
+        }
+        game.setPaused(false);
         isGamePaused = false;
     }
 
@@ -197,13 +200,10 @@ public class GamePane extends StackPane {
         game.update();
 
         if (game.hasWon()) {
-            pauseGame();
             winRound();
         } else if (game.isGameOver()) {
-            pauseGame();
             loseGame();
         } else if (game.isPlayerHit()) {
-            pauseGame();
             loseLife();
         }
     }
@@ -212,8 +212,9 @@ public class GamePane extends StackPane {
      * Activates when game is lost
      */
     private void loseGame() {
+        pauseGame();
         // SoundPlayer.playSound("player_death.wav");
-        SoundPlayer.playSound("game_over.mp3", false);
+        SoundPlayer.playSong("game_over.mp3", false);
         // eventBlockedPause = true;
         promptGameOver();
     }
@@ -222,6 +223,7 @@ public class GamePane extends StackPane {
      * Activates when a life is lost
      */
     private void loseLife() {
+        pauseGame();
         Thread thread = new Thread(() -> {
             eventBlockedPause = true;
             try {
@@ -242,6 +244,7 @@ public class GamePane extends StackPane {
      * Activates when the round is won
      */
     private void winRound() {
+        pauseGame();
         Thread thread = new Thread(() -> {
             eventBlockedPause = true;
             try {

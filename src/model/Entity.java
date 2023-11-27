@@ -14,11 +14,16 @@ public abstract class Entity {
 	protected float x, y, scale;
 	protected float dx = 0f;
 	protected float dy = 0f;
+	protected boolean isFrozen = false;
+
 	protected Team team = Team.NEUTRAL;
 
 	private Entity parent = null;
 	private List<Entity> children = new ArrayList<>();
-	private List<EventHandler<?>> events = new ArrayList<>();
+	private List<EventHandler<?>> keyDownEvents = new ArrayList<>();
+	private List<EventHandler<?>> keyUpEvents = new ArrayList<>();
+	private List<EventHandler<?>> frozenKeyDownEventHandlers = new ArrayList<>();
+	private List<EventHandler<?>> frozenKeyUpEventHandlers = new ArrayList<>();
 
 	public Entity(Game game, float x, float y) {
 		this.game = game;
@@ -134,7 +139,7 @@ public abstract class Entity {
 		setY(getY() + dy);
 	}
 
-	public Entity getParent(){
+	public Entity getParent() {
 		return parent;
 	}
 
@@ -204,12 +209,43 @@ public abstract class Entity {
 
 	public void onKeyDown(EventHandler<KeyEvent> event) {
 		Input.onKeyDown(event);
-		events.add(event);
+		keyDownEvents.add(event);
 	}
 
 	public void onKeyUp(EventHandler<KeyEvent> event) {
 		Input.onKeyUp(event);
-		events.add(event);
+		keyUpEvents.add(event);
+	}
+
+	private void unfreezeEventHandlers() {
+		for (EventHandler<?> event : keyDownEvents) {
+			Input.onKeyDown((EventHandler<KeyEvent>)event);
+		}
+		for (EventHandler<?> event : keyUpEvents) {
+			Input.onKeyUp((EventHandler<KeyEvent>)event);
+		}
+	}
+
+	private void freezeEventHandlers() {
+		for (EventHandler<?> event : keyDownEvents) {
+			Input.removeEventHandler((EventHandler<KeyEvent>)event);
+		}
+		for (EventHandler<?> event : keyUpEvents) {
+			Input.removeEventHandler((EventHandler<KeyEvent>)event);
+		}
+	}
+
+	public boolean isFrozen() {
+		return isFrozen;
+	}
+
+	public void setFrozen(boolean isFrozen) {
+		this.isFrozen = isFrozen;
+		if (isFrozen){
+			freezeEventHandlers();
+		} else {
+			unfreezeEventHandlers();
+		}
 	}
 
 	/**
@@ -234,10 +270,14 @@ public abstract class Entity {
 	public void delete() {
 		game.addOnDeletedList(() -> {
 			game.removeEntity(this);
-			for (EventHandler<?> event : events) {
+			for (EventHandler<?> event : keyDownEvents) {
 				Input.removeEventHandler(event);
 			}
-			events.clear();
+			for (EventHandler<?> event : keyUpEvents) {
+				Input.removeEventHandler(event);
+			}
+			keyDownEvents.clear();
+			keyUpEvents.clear();
 			for (Entity child : children) {
 				child.delete();
 			}

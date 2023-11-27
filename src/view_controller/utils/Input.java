@@ -6,10 +6,15 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import view_controller.panel.KeyBindingsPane;
 
+import java.time.LocalTime;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Collection;
+import java.util.Queue;
+import java.util.Iterator;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 // Input class for delivering input to the Game.
 // To simplify Game logic, considering having more specific methods such as
@@ -20,11 +25,8 @@ public class Input {
 	private static HashMap<KeyCode, Boolean> heldKeys = new HashMap<>();
 	private static HashMap<KeyBinding.Type, KeyBinding> keyBindings = new HashMap<>();
 
-	private static List<EventHandler<KeyEvent>> queuedKeyPressedHandlers = new ArrayList<>();
-	private static List<EventHandler<KeyEvent>> queuedKeyReleasedHandlers = new ArrayList<>();
-
-	private static List<EventHandler<KeyEvent>> keyPressedHandlers = new ArrayList<>();
-	private static List<EventHandler<KeyEvent>> keyReleasedHandlers = new ArrayList<>();
+	private static Queue<EventHandler<KeyEvent>> keyPressedHandlers = new ConcurrentLinkedQueue<>();
+	private static Queue<EventHandler<KeyEvent>> keyReleasedHandlers = new ConcurrentLinkedQueue<>();
 
 	private static List<EventHandler<KeyEvent>> markedKeyPressedHandlers = new ArrayList<>();
 	private static List<EventHandler<KeyEvent>> markedKeyReleasedHandlers = new ArrayList<>();
@@ -64,11 +66,17 @@ public class Input {
 	 * @param eventHandler
 	 */
 	public static void onKeyDown(EventHandler<KeyEvent> eventHandler) {
-		queuedKeyPressedHandlers.add(eventHandler);
+		markedKeyPressedHandlers.remove(eventHandler);
+		if (keyPressedHandlers.contains(eventHandler)) {
+			return;
+		}
+		keyPressedHandlers.add(eventHandler);
 	}
 
 	public static void removeOnKeyDown(EventHandler<KeyEvent> eventHandler) {
-		markedKeyPressedHandlers.add(eventHandler);
+		if (keyPressedHandlers.contains(eventHandler)) {
+			markedKeyPressedHandlers.add(eventHandler);
+		}
 	}
 
 	/**
@@ -77,11 +85,18 @@ public class Input {
 	 * @param eventHandler
 	 */
 	public static void onKeyUp(EventHandler<KeyEvent> eventHandler) {
-		queuedKeyReleasedHandlers.add(eventHandler);
+		markedKeyReleasedHandlers.remove(eventHandler);
+		if (keyReleasedHandlers.contains(eventHandler)) {
+			return;
+		}
+		keyReleasedHandlers.add(eventHandler);
 	}
 
 	public static void removeOnKeyUp(EventHandler<KeyEvent> eventHandler) {
-		markedKeyReleasedHandlers.add(eventHandler);
+		if (keyReleasedHandlers.contains(eventHandler)) {
+			markedKeyReleasedHandlers.add(eventHandler);
+		}
+
 	}
 
 	// public void onKeyBindDown(KeyBinding.Type type, EventHandler<KeyEvent>
@@ -180,37 +195,18 @@ public class Input {
 			boolean wasKeyAlreadyDown = isKeyDown(e.getCode());
 			heldKeys.put(e.getCode(), true);
 
-			// add queued handlers
-			keyPressedHandlers.addAll(queuedKeyPressedHandlers);
-			queuedKeyPressedHandlers.clear();
-
 			// remove marked handlers
 			keyPressedHandlers.removeAll(markedKeyPressedHandlers);
 			markedKeyPressedHandlers.clear();
 
-			// only fire the events for non-repeating press
-			// (can't be held down while repeatedly giving keyDown)
 			if (wasKeyAlreadyDown == false) {
 				for (EventHandler<KeyEvent> handler : keyPressedHandlers) {
 					handler.handle(e);
 				}
-				// for (KeyBinding keyBinding : keyBindings.values()) {
-				// if (keyBinding.getKey() == e.getCode()) {
-				// try {
-				// keyBindPressedHandlers.get(keyBinding.getType()).handle(e);
-				// } catch (Exception ex) {
-				// // TODO: handle exception
-				// }
-
-				// }
-				// }
 			}
 		});
 		scene.setOnKeyReleased(e -> {
-
-			// add queued handlers
-			keyReleasedHandlers.addAll(queuedKeyReleasedHandlers);
-			queuedKeyReleasedHandlers.clear();
+			heldKeys.put(e.getCode(), false);
 
 			// remove marked handlers
 			keyReleasedHandlers.removeAll(markedKeyReleasedHandlers);
@@ -219,17 +215,6 @@ public class Input {
 			for (EventHandler<KeyEvent> handler : keyReleasedHandlers) {
 				handler.handle(e);
 			}
-			// for (KeyBinding keyBinding : keyBindings.values()) {
-			// if (keyBinding.getKey() == e.getCode()) {
-			// try {
-			// keyBindReleasedHandlers.get(keyBinding.getType()).handle(e);
-			// } catch (Exception ex) {
-			// // TODO: handle exception
-			// }
-
-			// }
-			// }
-			heldKeys.put(e.getCode(), false);
 		});
 	}
 

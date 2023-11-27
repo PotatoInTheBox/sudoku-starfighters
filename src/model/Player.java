@@ -8,9 +8,11 @@ import view_controller.utils.KeyBinding;
 import java.util.Iterator;
 
 public class Player extends Entity {
-	private float speed = 3f;
 	public Collider collider;
 	public Sprite sprite;
+
+	private float speed = 3f;
+	private boolean isInvincible = false;
 
 	public Player(Game game, float x, float y) {
 		this(game, x, y, 10, 10);
@@ -42,14 +44,14 @@ public class Player extends Entity {
 		bindToGame();
 
 		/// check if colliding with enemy
-		if (collidingWithEnemy()) {
-			SoundPlayer.playSound("player_death.wav", false);
+		if (!isInvincible && collidingWithEnemy()) {
+			SoundPlayer.playSound("player_death.wav");
 			game.loseGame();
 		}
 
 		/// bullet collision
-		if (collidingWithBullet()) {
-			SoundPlayer.playSound("player_death.wav", false);
+		if (!isInvincible && collidingWithBullet()) {
+			SoundPlayer.playSound("player_death.wav");
 			game.loseLife();
 		}
 	}
@@ -61,7 +63,6 @@ public class Player extends Entity {
                 // if (getActivePlayerBulletCount() < 1) {
                 // game.shootPlayerBullet(); // better make that shot count xd
                 // }
-
                 shootBullet(0,0);
             }
             if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.RAPID_FIRE))) {
@@ -73,20 +74,15 @@ public class Player extends Entity {
                 }
 			}
 			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.GHOST))) {
-                if (getTeam() == Team.PLAYER) {
-                	setTeam(Team.NEUTRAL);
-                } else {
-                	setTeam(Team.PLAYER);
-                }
-
+                isInvincible = !isInvincible;
             }
 		});
 	}
 
 	private void shootBullet(float xOffset, float yOffset) {
 		// shoot bullet if this player can shoot
-		SoundPlayer.playSound("player_shoot.wav", false);
-		Bullet bullet = new Bullet(game, getX(), getY(), Bullet.BULLET_PLAYER_SPEED, team);
+		SoundPlayer.playSound("player_shoot.wav");
+		Bullet bullet = new Bullet(game, getX() + xOffset, getY() + yOffset, Bullet.BULLET_PLAYER_SPEED, team);
 		instantiate(bullet);
 	}
 

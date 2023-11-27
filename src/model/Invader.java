@@ -45,7 +45,7 @@ public class Invader extends Entity {
     }
 
     public void shootBullet() {
-        SoundPlayer.playSound("enemy_shoot.wav", false);
+        SoundPlayer.playSound("enemy_shoot.wav");
         Bullet bullet = new Bullet(game, getX(), getY(), Bullet.BULLET_INVADER_SPEED, team);
         instantiate(bullet);
     }
@@ -74,9 +74,9 @@ public class Invader extends Entity {
     private void playHitSound() {
         Random r = new Random();
         if (r.nextBoolean()) {
-            SoundPlayer.playSound("enemy_death_2.wav", false);
+            SoundPlayer.playSound("enemy_death_2.wav");
         } else {
-            SoundPlayer.playSound("enemy_death.wav", false);
+            SoundPlayer.playSound("enemy_death.wav");
         }
     }
 

@@ -21,6 +21,9 @@ public class Game {
     private boolean isPlayerHit = false;
     private boolean processingGameLoop = false;
 
+    private boolean lastIsPaused = false;
+    private boolean isPaused = false;
+
     private float difficultyLevel = 0f;
 
     private float width;
@@ -104,7 +107,8 @@ public class Game {
 
         /// update all entities
         for (Entity entity : entities) {
-            entity.update();
+            if (entity.isFrozen() == false)
+                entity.update();
         }
 
         // add items to game after ALL updates are finished processing
@@ -230,6 +234,26 @@ public class Game {
         // return markedForRemoval;
     }
 
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    public void setPaused(boolean isPaused) {
+        if (lastIsPaused == isPaused){
+            return;
+        }
+        lastIsPaused = isPaused;
+        this.isPaused = isPaused;
+        for (Entity entity : entities) {
+            if (isPaused) {
+                entity.setFrozen(true);
+            } else {
+                entity.setFrozen(false);
+            }
+        }
+
+    }
+
     public boolean isPlayerHit() {
         return isPlayerHit;
     }
@@ -276,7 +300,7 @@ public class Game {
             entity.delete();
         }
         // for (Runnable runnable : markedForRemoval) {
-        //     runnable.run();
+        // runnable.run();
         // }
         while (markedForRemoval.isEmpty() == false) {
             markedForRemoval.remove().run();
@@ -290,10 +314,10 @@ public class Game {
     public void addOnDeletedList(Runnable event) {
         markedForRemoval.add(event);
         // if (processingGameLoop == false) {
-        //     while (markedForRemoval.isEmpty() == false) {
-        //         markedForRemoval.remove().run();
-        //     }
-        //     markedForRemoval.clear();
+        // while (markedForRemoval.isEmpty() == false) {
+        // markedForRemoval.remove().run();
+        // }
+        // markedForRemoval.clear();
         // }
     }
 
