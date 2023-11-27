@@ -192,7 +192,7 @@ public class Game {
     
     public void spawnTurret() {
     	float x = 150;
-    	float y = 450;
+    	float y = 400;
     	
     	// Limit of 2 turrets
     	if (turretsSpawned == 2) {
