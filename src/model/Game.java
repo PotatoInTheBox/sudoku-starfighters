@@ -14,9 +14,6 @@ import view_controller.sound.SoundPlayer;
 
 public class Game {
 
-    public Player player;
-    public ArrayList<Invader> invaders = new ArrayList<>();
-    public ArrayList<Bullet> bullets = new ArrayList<>();
     public List<Entity> entities = new ArrayList<>();
     public Queue<Runnable> markedForRemoval = new ConcurrentLinkedQueue<Runnable>();
     public Queue<Runnable> markedForSpawn = new ConcurrentLinkedQueue<Runnable>();
@@ -24,25 +21,7 @@ public class Game {
     private boolean isPlayerHit = false;
     private boolean processingGameLoop = false;
 
-    private float invaderDirection = -1f;
-    private float invaderEncroachAmount = 20f;
-    private float playerSpeed = 3f;
-
     private float difficultyLevel = 0f;
-
-    private float invaderBaseSpeed = 0.6f;
-    private float invaderSpeed = invaderBaseSpeed;
-    private float invaderDifficultyScalingSpeed = 0.1f;
-
-    private float invaderMaxBaseSpeed = 1f;
-    private float invaderMaxSpeed = invaderMaxBaseSpeed;
-    private float invaderMaxDifficultyScalingSpeed = 0.2f;
-
-    private float baseInvaderBulletCount = 4f;
-    private float invaderBulletCount = baseInvaderBulletCount;
-    private float invaderDifficultyScalingBulletCount = 1f;
-
-    private float startInvadersCount;
 
     private float width;
     private float height;
@@ -76,12 +55,6 @@ public class Game {
         increaseDifficulty();
         cluster.setDifficulty(difficultyLevel);
 
-        final float xInvadersPadding = width / 2.5f;
-        final float yInvadersHeight = height / 3;
-        startInvadersCount = 0;
-        // spawnAllInvaders(xInvadersPadding, 20, width - xInvadersPadding,
-        // yInvadersHeight, 7, 5);
-        // applyInvaderMotion();
         startPlayerLife();
     }
 
@@ -144,7 +117,7 @@ public class Game {
     }
 
     public void spawnPlayer(float x, float y, float width, float height) {
-        Player player = new Player(this, x, y, width, height, playerSpeed);
+        Player player = new Player(this, x, y, width, height);
         Entity.instantiate(this, player);
     }
 
@@ -187,16 +160,6 @@ public class Game {
     public void loseGame() {
         isPlayerHit = true;
         score.setLives(0);
-    }
-
-    // TODO
-    private void updateInvadersSpeed() {
-        float newSpeed = invaderSpeed
-                + (invaderMaxSpeed - invaderSpeed) * (float) (1 - Math.pow(invaders.size() / startInvadersCount, 2));
-        for (Invader invader : invaders) {
-            float sign = Math.signum(invader.getDx());
-            invader.setDx(newSpeed * sign);
-        }
     }
 
     public Player getPlayer() {
@@ -312,10 +275,12 @@ public class Game {
         for (Entity entity : entities) {
             entity.delete();
         }
-        for (Runnable runnable : markedForRemoval) {
-            runnable.run();
+        // for (Runnable runnable : markedForRemoval) {
+        //     runnable.run();
+        // }
+        while (markedForRemoval.isEmpty() == false) {
+            markedForRemoval.remove().run();
         }
-        markedForRemoval.clear();
     }
 
     public List<Entity> getEntities() {
@@ -325,10 +290,10 @@ public class Game {
     public void addOnDeletedList(Runnable event) {
         markedForRemoval.add(event);
         // if (processingGameLoop == false) {
-        // while (markedForRemoval.isEmpty() == false) {
-        // markedForRemoval.remove().run();
-        // }
-        // markedForRemoval.clear();
+        //     while (markedForRemoval.isEmpty() == false) {
+        //         markedForRemoval.remove().run();
+        //     }
+        //     markedForRemoval.clear();
         // }
     }
 

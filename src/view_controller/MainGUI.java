@@ -118,6 +118,9 @@ public class MainGUI extends Application {
 	}
 
 	private void instantiateGame() {
+		if (gamePane != null){
+			gamePane.delete();
+		}
 		gamePane = new GamePane(scene, optionsPane, 600, 600);
 	}
 

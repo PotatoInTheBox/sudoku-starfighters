@@ -80,35 +80,6 @@ public class GamePane extends StackPane {
             if (isGamePaused) { // do game inputs below
                 return;
             }
-            if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.FIRE))) {
-                //if (getActivePlayerBulletCount() < 1) {
-                    //game.shootPlayerBullet(); // better make that shot count xd
-                //}
-                
-                game.delete();
-                Input.getJoystickX();
-                game = new Game(600, 600);
-                graphics.game = game;
-                game.startGame();
-            }
-            if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.RAPID_FIRE))) {
-                game.shootPlayerBullet(); // force bullet shoot anyways
-            }
-            if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.GHOST))) {
-                if (game.player.getTeam() == Team.PLAYER) {
-                    game.player.setTeam(Team.NEUTRAL);
-                } else {
-                    game.player.setTeam(Team.PLAYER);
-                }
-
-            }
-            if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SHOOT_MANY))) {
-                //for (int i = 0; i < 50; i++) {
-                    // game.addBullet(
-                    //         new Bullet(game.player.getX() - 25 * 4 + i * 4, game.player.getY() - 30, -5f, Team.PLAYER));
-                //}
-
-            }
 
         });
     }
@@ -190,13 +161,13 @@ public class GamePane extends StackPane {
         }
 
         while (unprocessedTime >= TARGET_NANO_TIME) {
-            
+
             if (isGamePaused == false) {
                 logicUpdate();
                 frameRateTracker.logFrameUpdate();
             }
             // hasUpdatedLogic = true;
-            
+
             if (!isRenderPaused && optionsPane.isCapFpsEnabled())
                 frameUpdate();
             unprocessedTime -= TARGET_NANO_TIME;
@@ -221,7 +192,7 @@ public class GamePane extends StackPane {
      * Calls logic update
      */
     private void logicUpdate() {
-        //game.movePlayer(Input.getJoystickX(), Input.getJoystickY());
+        // game.movePlayer(Input.getJoystickX(), Input.getJoystickY());
 
         game.update();
 
@@ -304,9 +275,9 @@ public class GamePane extends StackPane {
     private int getActivePlayerBulletCount() {
         int playerBulletCount = 0;
         // for (Bullet bullet : game.getBullets()) {
-        //     if (bullet.getTeam() == Team.PLAYER) {
-        //         playerBulletCount += 1;
-        //     }
+        // if (bullet.getTeam() == Team.PLAYER) {
+        // playerBulletCount += 1;
+        // }
         // }
         return playerBulletCount;
     }
@@ -318,5 +289,11 @@ public class GamePane extends StackPane {
      */
     public void disabledInput(boolean value) {
         this.disabledInputValue = value;
+    }
+
+    public void delete() {
+        pauseGame();
+        timer.stop();
+        game.delete();
     }
 }

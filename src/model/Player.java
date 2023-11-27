@@ -3,24 +3,24 @@ package model;
 import javafx.scene.input.KeyCode;
 import view_controller.sound.SoundPlayer;
 import view_controller.utils.Input;
+import view_controller.utils.KeyBinding;
 
 import java.util.Iterator;
 
 public class Player extends Entity {
-	protected float speed;
+	private float speed = 3f;
 	public Collider collider;
 	public Sprite sprite;
 
 	public Player(Game game, float x, float y) {
-		this(game, x, y, 10, 10, 0.5f);
+		this(game, x, y, 10, 10);
 	}
 
-	public Player(Game game, float x, float y, float width, float height, float speed) {
+	public Player(Game game, float x, float y, float width, float height) {
 		super(game, x, y);
 		collider = new Collider(game, x + (-width / 2), y + (-height / 2), width, height);
 		sprite = new Sprite(game, x + (-width / 2), y + (-height / 2), width, height, null);
 
-		this.speed = speed;
 		this.team = Team.PLAYER;
 
 		addChild(collider, sprite);
@@ -57,13 +57,33 @@ public class Player extends Entity {
 	private void createHandlers() {
 		// create button press handlers (eg. shoot weapon)
 		onKeyDown(e -> {
-			if (e.getCode() == KeyCode.A) {
-				exShootBullet();
+			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.FIRE))) {
+                // if (getActivePlayerBulletCount() < 1) {
+                // game.shootPlayerBullet(); // better make that shot count xd
+                // }
+
+                shootBullet(0,0);
+            }
+            if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.RAPID_FIRE))) {
+                shootBullet(0,0);
+            }
+			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SHOOT_MANY))) {
+                for (int i = 0; i < 50; i++) {
+					shootBullet(i * 4 - 25 * 4, 0);
+                }
 			}
+			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.GHOST))) {
+                if (getTeam() == Team.PLAYER) {
+                	setTeam(Team.NEUTRAL);
+                } else {
+                	setTeam(Team.PLAYER);
+                }
+
+            }
 		});
 	}
 
-	private void exShootBullet() {
+	private void shootBullet(float xOffset, float yOffset) {
 		// shoot bullet if this player can shoot
 		SoundPlayer.playSound("player_shoot.wav", false);
 		Bullet bullet = new Bullet(game, getX(), getY(), Bullet.BULLET_PLAYER_SPEED, team);
