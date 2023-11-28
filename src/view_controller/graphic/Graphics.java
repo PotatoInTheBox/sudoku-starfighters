@@ -357,13 +357,15 @@ public class Graphics extends VBox {
                 drawWireframe(new Point2D(collider.getX(), collider.getY()),
                         new Point2D(collider.getWidth(), collider.getHeight()), Color.WHITESMOKE);
             }
+            drawCircleWireframe(new Point2D(subEntity.getX(), subEntity.getY()),
+                    new Point2D(5, 5), Color.CYAN);
         }
 
     }
 
-    private void drawWireframe(Point2D startPoint, Point2D endPoint, Color color) {
+    private void drawWireframe(Point2D startPoint, Point2D size, Color color) {
         Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);
-        Point2D mappedEndPoint = mapGamePointOntoGraphics(endPoint);
+        Point2D mappedEndPoint = mapGamePointOntoGraphics(size);
         double x = mappedStartPoint.getX();
         double y = mappedStartPoint.getY();
         double w = mappedEndPoint.getX();
@@ -374,6 +376,18 @@ public class Graphics extends VBox {
         gc.strokeLine(x + w, y, x + w, y + h); // right
         gc.strokeLine(x, y, x + w, y); // top
         gc.strokeLine(x, y + h, x + w, y + h); // down
+    }
+
+    private void drawCircleWireframe(Point2D startPoint, Point2D size, Color color) {
+        Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);
+        Point2D mappedEndPoint = mapGamePointOntoGraphics(size);
+        double x = mappedStartPoint.getX();
+        double y = mappedStartPoint.getY();
+        double w = mappedEndPoint.getX();
+        double h = mappedEndPoint.getY();
+        gc.setStroke(color);
+        gc.setLineWidth(2);
+        gc.strokeOval(x, y, w, h);
     }
 
     private void drawRectangle(double x, double y, double width, double height, Color color) {

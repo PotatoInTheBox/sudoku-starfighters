@@ -20,7 +20,8 @@ public class Bullet extends Entity {
 		super(game, x, y);
 		collider = new Collider(game, width, height);
 		collider.setCenter(x, y);
-		sprite = new Sprite(game, x + (-width / 2), y + (-height / 2), width, height, "bullet.png");
+		sprite = new Sprite(game, 0, 0, width, height, "bullet.png");
+		sprite.setCenter(x, y);
 		addChild(collider, sprite);
 		this.team = team;
 		this.dy = dy; // must explicitly be given a speed
@@ -35,6 +36,8 @@ public class Bullet extends Entity {
 			move(0, BULLET_INVADER_SPEED);
 		}
 		if (collider.isOutOfBounds(0, 0, game.getWidth(), game.getHeight())){
+			Explosion explosion = new Explosion(game, getX(), getY(), sprite.getWidth(), sprite.getHeight());
+			instantiate(game, explosion);
 			delete();
 		}
 	}

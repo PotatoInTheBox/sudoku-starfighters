@@ -34,11 +34,13 @@ public class Rect extends Entity {
     }
 
     public void setCenterX(float x) {
-        this.x = x - width / 2;
+        this.setX(x - width / 2);
+        //this.x = x - width / 2;
     }
 
     public void setCenterY(float y) {
-        this.y = y - height / 2;
+        this.setY(y - height / 2);
+        //this.y = y - height / 2;
     }
 
     public void setCenter(float x, float y) {

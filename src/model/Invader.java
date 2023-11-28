@@ -14,8 +14,10 @@ public class Invader extends Entity {
 
     public Invader(Game game, float x, float y, float width, float height, float speed) {
         super(game, x, y);
-        collider = new Collider(game, x + (-width / 2), y + (-height / 2), width, height);
-        sprite = new Sprite(game, x + (-width / 2), y + (-height / 2), width, height);
+        collider = new Collider(game, 0, 0, width, height);
+        collider.setCenter(x, y);
+        sprite = new Sprite(game, 0, 0, width, height);
+        sprite.setCenter(x, y);
 
         this.team = Team.INVADERS;
         invaderType = InvaderType.ONION;
@@ -32,6 +34,8 @@ public class Invader extends Entity {
                     if (bullet.collider.hasCollidedWith(collider)) {
                         // has been hit
                         playHitSound();
+                        Explosion explosion = new Explosion(game, getX(), getY(), sprite.getWidth(), sprite.getHeight());
+			            instantiate(game, explosion);
                         delete();
                         game.score.changeScore(this);
                         bullet.delete();
