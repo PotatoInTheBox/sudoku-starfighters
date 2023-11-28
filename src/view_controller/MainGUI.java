@@ -80,6 +80,10 @@ public class MainGUI extends Application {
 		primaryStage.show();
 	}
 
+	/**
+	 * Adds all the button handlers
+	 * @param scene The scene
+	 */
 	private void addButtonHandlers(Scene scene) {
 		menuPane.onNewGame(e -> {
 			instantiateGame();
@@ -117,6 +121,9 @@ public class MainGUI extends Application {
 		});
 	}
 
+	/**
+	 * Instantiates the game
+	 */
 	private void instantiateGame() {
 		if (gamePane != null){
 			gamePane.delete();
@@ -124,12 +131,18 @@ public class MainGUI extends Application {
 		gamePane = new GamePane(scene, optionsPane, 600, 600);
 	}
 
+	/**
+	 * Enters the player into the game
+	 */
 	private void enterGame() {
 		gamePane.disabledInput(false);
 		pushAndEnterPane(gamePane);
 		gamePane.unpauseGame();
 	}
 
+	/**
+	 * Exits the player out of the game
+	 */
 	private void exitGame() {
 		gamePane.pauseGame();
 		gamePane.disabledInput(true);
@@ -150,6 +163,10 @@ public class MainGUI extends Application {
 
 	}
 
+	/**
+	 * Pushes the pane to the GUI stack
+	 * @param pane The pane to push
+	 */
 	private void pushAndEnterPane(Pane pane) {
 		guiStack.push(pane);
 		rootBorderPane.setCenter(pane);
@@ -157,6 +174,9 @@ public class MainGUI extends Application {
 		chooseThemeMusic(pane);
 	}
 
+	/**
+	 * Pops the pane from the GUI stack
+	 */
 	private void popAndExitPane() {
 		if (guiStack.size() <= 1) {
 			System.err.println("Cannot exit Gui any further, already at last pane possible.");
@@ -169,12 +189,20 @@ public class MainGUI extends Application {
 		chooseThemeMusic(pane);
 	}
 
+	/**
+	 * Changes the continue button if a current game is going
+	 * @param currentPane The current pane
+	 */
 	private void updateContinueButton(Pane currentPane) {
 		if (currentPane == menuPane) {
 			menuPane.setDisableContinueButton(!isGameExisting());
 		}
 	}
 
+	/**
+	 * If a game is currently going
+	 * @return True if there is a game
+	 */
 	private boolean isGameExisting() {
 		if (gamePane != null && gamePane.game != null) {
 			return true;
@@ -183,6 +211,10 @@ public class MainGUI extends Application {
 		}
 	}
 
+	/**
+	 * Selects the theme music to play
+	 * @param currentPane The current pane
+	 */
 	private void chooseThemeMusic(Pane currentPane) {
 		if (currentPane == gamePane) {
 			// SoundPlayer.stopThemeMusic();
@@ -192,6 +224,10 @@ public class MainGUI extends Application {
 		}
 	}
 
+	/**
+	 * Peeks the GUI stack
+	 * @return The Pane that was peeked
+	 */
 	private Pane peekGuiStack() {
 		return guiStack.peek();
 	}

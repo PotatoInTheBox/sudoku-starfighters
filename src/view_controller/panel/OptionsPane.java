@@ -86,6 +86,9 @@ public class OptionsPane extends BorderPane {
         this.setBottom(backButton);
     }
 
+    /**
+     * Sets volume sliders to initial values
+     */
     private void initializeVolumeSliders() {
         final double MAX_VALUE = 1d;
         volumeSlider = new Slider(0, MAX_VALUE, 0.6d / MAX_VALUE);
@@ -105,27 +108,52 @@ public class OptionsPane extends BorderPane {
         });
     }
 
+    /**
+     * If wire frame is enabled
+     * @return Wire Frame State
+     */
     public boolean isWireframeEnabled() {
         return wireframeCheckBox.isSelected();
     }
 
+    /**
+     * If FPS cap is enabled
+     * @return FPS state
+     */
     public boolean isCapFpsEnabled() {
         return capFpsCheckBox.isSelected();
     }
 
+    /**
+     * Sets the wire frame
+     * @param newValue If the wire frame is enabled or not
+     */
     public void setWireframeEnabled(boolean newValue) {
         wireframeCheckBox.setSelected(newValue);
     }
 
+    /**
+     * Sets on key binding button pressed
+     * @param eventHandler The event
+     */
     public void onKeyBindingsButton(EventHandler<ActionEvent> eventHandler) {
         keyBindingHandlers.add(eventHandler);
     }
 
+    /**
+     * Add an item to the settings list
+     * @param label The label for the setting
+     * @param item The item to set
+     */
     private void addSettingsItem(Label label, Control item) {
         gridList.addColumn(0, label);
         gridList.addColumn(1, item);
     }
 
+    /**
+     * Sets on back
+     * @param eventHandler The event
+     */
     public void onBack(EventHandler<ActionEvent> eventHandler) {
         backHandlers.add(eventHandler);
     }

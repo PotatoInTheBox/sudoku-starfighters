@@ -67,6 +67,7 @@ public class Graphics extends VBox {
     Image[] bulletSprites;
     Image[] houseSprites;
     Image destructionSprite;
+    Image bulletSprite;
 
     public Graphics(GamePane gamePane, double width, double height) {
         this.gamePane = gamePane;
@@ -94,6 +95,9 @@ public class Graphics extends VBox {
         this.heightProperty().addListener(stageSizeListener);
     }
 
+    /**
+     * Updates all the graphics on a frame by frame basis
+     */
     public void update() {
         // clear screen
         drawRectangle(0, 0, canvas.getWidth(), canvas.getHeight(), Color.BLACK);
@@ -144,10 +148,10 @@ public class Graphics extends VBox {
      * 
      * @author Wolfgang Fahl https://stackoverflow.com/a/51726678
      * 
-     * @param inputImage
-     * @param oldColor
-     * @param newColor
-     * @return reColored Image
+     * @param inputImage The input image
+     * @param oldColor The old color
+     * @param newColor The new color
+     * @return reColored Image The final recolored image
      * 
      */
     public static Image debugTempReColor(Image inputImage, Color oldColor, Color newColor) {
@@ -182,6 +186,11 @@ public class Graphics extends VBox {
         return outputImage;
     }
 
+    /**
+     * Gets a sprite from a file
+     * @param path The path to the Image
+     * @return The final Image
+     */
     private Image getSpriteFromFile(String path) {
         FileInputStream playerImageFile;
         try {
@@ -201,6 +210,9 @@ public class Graphics extends VBox {
                 mappedEndPoint.getX(), mappedEndPoint.getY());
     }
 
+    /**
+     * Draw the wire frames for all entities
+     */
     private void drawAllWireFrames() {
         for (Entity e : game.getEntities()) {
             drawWireFrame(e);
@@ -208,6 +220,9 @@ public class Graphics extends VBox {
 
     }
 
+    /*
+     * Draws text
+     */
     private void drawText(String string, float x, float y) {
         gc.setLineWidth(1);
         gc.setStroke(Color.WHITE);
@@ -259,6 +274,11 @@ public class Graphics extends VBox {
         gc.fillRect(x, y, width, height);
     }
 
+    /**
+     * Maps a game point to the graphics
+     * @param point The point to map to
+     * @return The point on the graphics
+     */
     private Point2D mapGamePointOntoGraphics(Point2D point) {
         double graphicsWidth = canvas.getWidth();
         double graphicsHeight = canvas.getHeight();
@@ -271,6 +291,9 @@ public class Graphics extends VBox {
         return new Point2D(point.getX() * scaleX, point.getY() * scaleY);
     }
 
+    /**
+     * Clears the canvas
+     */
     private void clearCanvas() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }

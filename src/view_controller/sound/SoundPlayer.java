@@ -18,11 +18,15 @@ public class SoundPlayer {
 	public static ArrayList<String> fileNameSongs = new ArrayList<>();
 	public static ArrayList<String> fileNameSounds = new ArrayList<>();
 	private static List<MediaPlayer> currentlyPlayingMedia = new ArrayList<>();
+	private static List<MediaPlayer> allSfxMedia = new ArrayList<>();
 	private static double volume = 1d;
 	private static double sfxVolume = 1d;
 	private static double musicVolume = 1d;
 	private static MediaPlayer currentThemeMusic = null;
 
+	/**
+	 * Loads all of the sounds effects and songs to be used in the game
+	 */
 	public static void loadAllAudio() {
 		loadAllSongs();
 		loadAllSounds();
@@ -43,21 +47,36 @@ public class SoundPlayer {
 		createSounds();
 	}
 
+	/**
+	 * Sets the volume of all the sounds
+	 * @param newVolume The new volume to set to
+	 */
 	public static void setVolume(double newVolume) {
 		volume = newVolume;
 		updateVolume();
 	}
 
+	/**
+	 * Sets the volume of the effects
+	 * @param newVolume The new volume to set to
+	 */
 	public static void setSfxVolume(double newVolume) {
 		sfxVolume = newVolume;
 		updateVolume();
 	}
 
+	/**
+	 * Sets the volume of the music
+	 * @param newVolume The new volume to set to
+	 */
 	public static void setMusicVolume(double newVolume) {
 		musicVolume = newVolume;
 		updateVolume();
 	}
 
+	/**
+	 * Starts the theme song
+	 */
 	public static void playMainThemeMusic() {
 		if (currentThemeMusic != null) {
 			// System.err.println("Cannot play theme music, already playing theme music!");
@@ -69,6 +88,9 @@ public class SoundPlayer {
 		});
 	}
 
+	/**
+	 * Stops the theme song
+	 */
 	public static void stopThemeMusic() {
 		if (currentThemeMusic != null) {
 			currentThemeMusic.stop();
@@ -103,7 +125,7 @@ public class SoundPlayer {
 
 		media = songs.get(fileName);
 		songs.put(fileName, media);
-
+		
 		MediaPlayer mediaPlayer = new MediaPlayer(media);
 		mediaPlayer.setOnEndOfMedia(() -> {
 			// System.out.println("media ended");
@@ -130,10 +152,16 @@ public class SoundPlayer {
 			mediaPlayer.setVolume(musicVolume * volume);
 		else
 			mediaPlayer.setVolume(sfxVolume * volume);
+		
+		if (!isMusic) 
+			allSfxMedia.add(mediaPlayer);
 		mediaPlayer.play();
 		return mediaPlayer;
 	}
 
+	/**
+	 * Creates new media
+	 */
 	private static void createMedia() {
 		for (String fileName : fileNameSongs) {
 			loadSong(fileName);
@@ -176,6 +204,11 @@ public class SoundPlayer {
 		}
 	}
 
+
+
+	/**
+	 * Updates the overall volume
+	 */
 	private static void updateVolume() {
 		for (MediaPlayer mediaPlayer : currentlyPlayingMedia) {
 			if (mediaPlayer != currentThemeMusic) {
