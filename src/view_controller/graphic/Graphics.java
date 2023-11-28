@@ -90,6 +90,9 @@ public class Graphics extends VBox {
         this.heightProperty().addListener(stageSizeListener);
     }
 
+    /**
+     * Updates all the graphics on a frame by frame basis
+     */
     public void update() {
         drawRectangle(0, 0, canvas.getWidth(), canvas.getHeight(), Color.BLACK);
 
@@ -119,6 +122,9 @@ public class Graphics extends VBox {
         frameRateTracker.logFrameUpdate();
     }
 
+    /**
+     * Loads all of the sprites for the graphical component
+     */
     private void loadSprites() {
         playerSprite = getSpriteFromFile("./resources/images/player_ship.png");
         invaderSprites = new Image[6];
@@ -147,6 +153,11 @@ public class Graphics extends VBox {
         destructionSprite = getSpriteFromFile("./resources/images/destruction_frame.png");
     }
 
+    /**
+     * Generate a bullet with animation
+     * @param inputImage The first image of the bullet
+     * @return A list of Images of the animation
+     */
     public static Image[] generateBulletAnimation(Image inputImage) {
         int W = (int) inputImage.getWidth();
         int H = (int) inputImage.getHeight();
@@ -174,10 +185,10 @@ public class Graphics extends VBox {
      * 
      * @author Wolfgang Fahl https://stackoverflow.com/a/51726678
      * 
-     * @param inputImage
-     * @param oldColor
-     * @param newColor
-     * @return reColored Image
+     * @param inputImage The input image
+     * @param oldColor The old color
+     * @param newColor The new color
+     * @return reColored Image The final recolored image
      * 
      */
     public static Image debugTempReColor(Image inputImage, Color oldColor, Color newColor) {
@@ -212,6 +223,11 @@ public class Graphics extends VBox {
         return outputImage;
     }
 
+    /**
+     * Gets a sprite from a file
+     * @param path The path to the Image
+     * @return The final Image
+     */
     private Image getSpriteFromFile(String path) {
         FileInputStream playerImageFile;
         try {
@@ -224,6 +240,10 @@ public class Graphics extends VBox {
         }
     }
 
+    /**
+     * Draw all sprites on the screen
+     * @param animFrame The int frame of animation for invaders
+     */
     private void drawAllSprites(int animFrame) {
         
         drawPlayer();
@@ -234,6 +254,9 @@ public class Graphics extends VBox {
         drawDestroyed();
     }
 
+    /**
+     * Draw destruction marks
+     */
     private void drawDestroyed() {
         for (Entity e : game.markedForRemoval) {
             destructionEntities.add(new DestructionEntity(new Point2D(e.getX(), e.getY()),
@@ -255,6 +278,9 @@ public class Graphics extends VBox {
         }
     }
 
+    /**
+     * Draws the player
+     */
     private void drawPlayer() {
         double targetWidth = 40;
         double targetHeight = 40;
@@ -268,6 +294,9 @@ public class Graphics extends VBox {
         drawSprite(playerSprite, new Point2D(x, y), new Point2D(w, h));
     }
 
+    /**
+     * Draws all bullets
+     */
     private void drawBullets() {
         int bulletSpriteIndex = Integer.remainderUnsigned(bulletAnimationCounter, bulletSprites.length);
         double widthMult = 1.4;
@@ -290,6 +319,10 @@ public class Graphics extends VBox {
         }
     }
 
+    /**
+     * Draws all invaders
+     * @param animFrame The animation frame for all invaders
+     */
     private void drawInvaders(int animFrame) {
         for (Invader invader : game.getInvaders()) {
             Image invaderSprite = null;
@@ -304,6 +337,9 @@ public class Graphics extends VBox {
         }
     }
 
+    /**
+     * Draws all turrets
+     */
     private void drawTurrets() {
     	for (Turret turret : game.getTurrets()) {
     		drawWireFrame(turret, Color.GREEN);
@@ -311,6 +347,9 @@ public class Graphics extends VBox {
     	}
     }
     
+    /**
+     * Draws all houses
+     */
     private void drawHouses() {
     	for (House house : game.getHouses()) {
     		Image houseSprite = houseSprites[house.getHits()];
@@ -319,6 +358,12 @@ public class Graphics extends VBox {
     	}
     }
     
+    /**
+     * Draws a specific sprite
+     * @param image The image to draw
+     * @param startPoint The starting coordinate
+     * @param endPoint The end coordinate
+     */
     private void drawSprite(Image image, Point2D startPoint, Point2D endPoint) {
         Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);
         Point2D mappedEndPoint = mapGamePointOntoGraphics(endPoint);
@@ -326,6 +371,9 @@ public class Graphics extends VBox {
                 mappedEndPoint.getX(), mappedEndPoint.getY());
     }
 
+    /**
+     * Draw the wire frames for all entities
+     */
     private void drawAllWireFrames() {
         drawWireFrame(game.getPlayer(), Color.CYAN);
         for (Entity e : game.getBullets()) {
@@ -336,17 +384,31 @@ public class Graphics extends VBox {
         }
     }
 
+    /*
+     * Draws text
+     */
     private void drawText(String string, float x, float y) {
         gc.setLineWidth(1);
         gc.setStroke(Color.WHITE);
         gc.strokeText(string, x, y + 5);
     }
 
+    /**
+     * Draws wire frame
+     * @param entity Entity to draw for
+     * @param color The color of the frame
+     */
     private void drawWireFrame(Entity entity, Color color) {
         drawWireframe(new Point2D(entity.getX(), entity.getY()),
                 new Point2D(entity.getWidth(), entity.getHeight()), color);
     }
 
+    /**
+     * Draws wire frame
+     * @param startPoint The start point
+     * @param endPoint The end point
+     * @param color The color of the frame
+     */
     private void drawWireframe(Point2D startPoint, Point2D endPoint, Color color) {
         Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);
         Point2D mappedEndPoint = mapGamePointOntoGraphics(endPoint);
@@ -362,11 +424,24 @@ public class Graphics extends VBox {
         gc.strokeLine(x, y + h, x + w, y + h); // down
     }
 
+    /**
+     * Draws a rectangle
+     * @param x The X
+     * @param y The Y
+     * @param width The width of the rectangle
+     * @param height The height of the rectangle
+     * @param color The color of the rectangle
+     */
     private void drawRectangle(double x, double y, double width, double height, Color color) {
         gc.setFill(color);
         gc.fillRect(x, y, width, height);
     }
 
+    /**
+     * Maps a game point to the graphics
+     * @param point The point to map to
+     * @return The point on the graphics
+     */
     private Point2D mapGamePointOntoGraphics(Point2D point) {
         double graphicsWidth = canvas.getWidth();
         double graphicsHeight = canvas.getHeight();
@@ -379,6 +454,9 @@ public class Graphics extends VBox {
         return new Point2D(point.getX() * scaleX, point.getY() * scaleY);
     }
 
+    /**
+     * Clears the canvas
+     */
     private void clearCanvas() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
@@ -395,14 +473,26 @@ class DestructionEntity {
         this.endPos = endPos;
     }
 
+    /**
+     * Gets the original position
+     * @return The original position point
+     */
     public Point2D getOriginalPos() {
         return originalPos;
     }
 
+    /**
+     * Gets the end position
+     * @return The end position point
+     */
     public Point2D getEndPos() {
         return endPos;
     }
 
+    /**
+     * Updates a destruction entity
+     * @return If there are frames Active
+     */
     public boolean update() {
         if (framesActive == 0) {
             return true;
