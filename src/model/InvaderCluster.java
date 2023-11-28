@@ -3,6 +3,10 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.lang.Math;
+
+import javafx.scene.paint.Color;
+
 import java.util.Iterator;
 
 public class InvaderCluster extends Entity {
@@ -32,6 +36,9 @@ public class InvaderCluster extends Entity {
     private float baseInvaderBulletCount = 4f;
     private float invaderBulletCount = baseInvaderBulletCount;
     private float invaderDifficultyScalingBulletCount = 1f;
+
+    private static final Color[] INVADER_PALETTE = {Color.PURPLE, Color.BLUE, Color.LIGHTGREEN, Color.RED.brighter()};
+    Random random = new Random();
 
     public InvaderCluster(Game game, float x, float y) {
         super(game, x, y);
@@ -137,7 +144,7 @@ public class InvaderCluster extends Entity {
         for (int y = 0; y < yCount; y++) {
             for (int x = 0; x < xCount; x++) {
                 InvaderType invaderType;
-                switch (y % 3) {
+                switch (Math.floorMod(random.nextInt(), 3)) {
                     case 0:
                         invaderType = InvaderType.ONION;
                         break;
@@ -150,15 +157,17 @@ public class InvaderCluster extends Entity {
                 }
                 float spawnX = x * width / (xCount - 1) + startX + invaderWidth / 2;
                 float spawnY = y * height / (yCount - 1) + startY + invaderHeight / 2;
-                spawnInvader(spawnX, spawnY, invaderWidth, invaderHeight, invaderType);
+                Color color = INVADER_PALETTE[Math.floorMod(random.nextInt(), INVADER_PALETTE.length)];
+                spawnInvader(spawnX, spawnY, invaderWidth, invaderHeight, invaderType, color);
                 startInvadersCount += 1;
             }
         }
     }
 
-    public void spawnInvader(float x, float y, float width, float height, InvaderType invaderType) {
+    public void spawnInvader(float x, float y, float width, float height, InvaderType invaderType, Color color) {
         Invader invader = new Invader(game, x, y, width, height, 2f);
         invader.setInvaderType(invaderType);
+        invader.sprite.setColor(color);
         addChild(invader);
         instantiate(invader);
     }

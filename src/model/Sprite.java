@@ -1,6 +1,7 @@
 package model;
 
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import view_controller.graphic.Sprites;
 
 import java.util.List;
@@ -52,8 +53,24 @@ public class Sprite extends Rect {
         }
     }
 
+    public void setImage(Image... images) {
+        sprites.clear();
+        addImage(images);
+    }
+
+    public void setImage(String... imagePaths) {
+        sprites.clear();
+        addImage(imagePaths);
+    }
+
     public void clearImages() {
         sprites.clear();
+    }
+
+    public void setColor(Color color) {
+        for (int i = 0; i < sprites.size(); i++) {
+            sprites.set(i, Sprites.getColoredImage(sprites.get(i), color));
+        }
     }
 
 }
