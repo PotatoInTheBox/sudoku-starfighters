@@ -61,7 +61,7 @@ public class InvaderCluster extends Entity {
             }
         } else {
             move(direction * speed, 0);
-            distanceTravelled += direction * speed;
+            distanceTravelled += speed;
         }
 
         if (distanceTravelled > 40f) {

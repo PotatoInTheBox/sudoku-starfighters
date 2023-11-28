@@ -22,7 +22,7 @@ public class Bullet extends Entity {
 		collider.setCenter(x, y);
 		sprite = new Sprite(game, 0, 0, width, height, "bullet.png");
 		sprite.setCenter(x, y);
-		
+
 		addChild(collider, sprite);
 
 		this.team = team;

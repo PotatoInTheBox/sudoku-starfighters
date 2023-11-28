@@ -51,10 +51,13 @@ public class Game {
 
     public void startNewRound() {
         // keep player
+        // keep turrets
         // delete all invaders
         deleteAllInvaders();
         // delete all bullets
         deleteAllBullets();
+        // delete all houses
+        deleteAllHouses();
 
         // spawn houses
         for (int i = 0; i < 3; i++) {
@@ -121,6 +124,14 @@ public class Game {
         }
     }
 
+    private void deleteAllHouses(){
+        Iterator<House> houses = getHouses();
+        while (houses.hasNext()) {
+            House house = houses.next();
+            house.delete();
+        }
+    }
+
     // game logic fixed rate loop
     public void update() {
         processingGameLoop = true;
@@ -132,7 +143,7 @@ public class Game {
 
         /// update all entities
         for (Entity entity : entities) {
-            if (entity.isFrozen() == false)
+            if (entity.isFrozen() == false && entity.isAlive)
                 entity.update();
         }
 
@@ -152,7 +163,7 @@ public class Game {
     public InvaderCluster spawnInvaderCluster(float x, float y, float width, float height) {
         InvaderCluster cluster = new InvaderCluster(this, 0, 0);
         Entity.instantiate(this, cluster);
-        cluster.spawnAllInvaders(x, y, width, height, 3, 4);
+        cluster.spawnAllInvaders(x, y, width, height, 4, 4);
         return cluster;
     }
 
@@ -197,6 +208,10 @@ public class Game {
 
     public Iterator<Bullet> getBullets() {
         return new EntityClassIterator<Bullet>(entities, Bullet.class);
+    }
+
+    public Iterator<House> getHouses() {
+        return new EntityClassIterator<House>(entities, House.class);
     }
 
     private class EntityClassIterator<T> implements Iterator<T> {

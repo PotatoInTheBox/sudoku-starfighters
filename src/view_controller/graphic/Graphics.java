@@ -115,6 +115,10 @@ public class Graphics extends VBox {
         drawText(fpsAverageString, 10, 15);
         drawText("Score: " + Integer.toString(game.getScore()), 10, 30);
         drawText("Lives: " + Integer.toString(game.getLives()), 10, 45);
+        if (game.getPlayer() != null){
+            drawText("Coins: " + Integer.toString(game.getPlayer().coins), 10, 60);
+        }
+        
 
         frameRateTracker.logFrameUpdate();
     }
@@ -189,7 +193,6 @@ public class Graphics extends VBox {
             return null;
         }
     }
-
 
     private void drawSprite(Image image, Point2D startPoint, Point2D size) {
         Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);

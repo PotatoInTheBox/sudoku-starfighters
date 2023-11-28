@@ -36,6 +36,8 @@ public class Invader extends Entity {
                         playHitSound();
                         Explosion explosion = new Explosion(game, getX(), getY(), sprite.getWidth(), sprite.getHeight());
 			            instantiate(game, explosion);
+                        Coin coin = new Coin(game, getX(), getY(), 30, 30);
+			            instantiate(game, coin);
                         delete();
                         game.score.changeScore(this);
                         bullet.delete();

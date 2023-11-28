@@ -14,6 +14,8 @@ public class Player extends Entity {
 	private float speed = 3f;
 	private boolean isInvincible = false;
 
+	public int coins = 0;
+
 	public Player(Game game, float x, float y) {
 		this(game, x, y, 10, 10);
 	}
@@ -49,6 +51,13 @@ public class Player extends Entity {
 		if (!isInvincible && collidingWithEnemy()) {
 			SoundPlayer.playSound("player_death.wav");
 			game.loseGame();
+		}
+
+		/// check if colliding with coin
+		Coin collidedCoin = collidedCoin();
+		if (collidedCoin != null && collidedCoin.isAlive){
+			collidedCoin.delete();
+			coins += 1;
 		}
 
 		/// bullet collision
@@ -134,5 +143,15 @@ public class Player extends Entity {
 		return false;
 	}
 
+	private Coin collidedCoin() {
+		for (Entity entity : game.getEntities()) {
+			if (entity.getClass() == Coin.class) {
+				if (collider.hasCollidedWith(((Coin) entity).collider)) {
+					return (Coin) entity;
+				}
+			}
+		}
+		return null;
+	}
 
 }

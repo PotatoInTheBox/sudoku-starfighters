@@ -13,6 +13,9 @@ public class Turret extends Entity {
 	public Collider collider;
 	public Sprite sprite;
 
+	private Sprite[] barrelSprites = new Sprite[8];
+	private float barrelLength = 40f;
+
 	public Invader currentTarget = null;
 
 	public int shootTimer = 0;
@@ -24,8 +27,14 @@ public class Turret extends Entity {
 		sprite = new Sprite(game, 0, 0, width, height);
 		sprite.setCenter(x, y);
 		this.team = Team.PLAYER;
-		addChild(collider, sprite);
 		sprite.setImage("player_ship.png");
+		for (int i = 0; i < barrelSprites.length; i++) {
+			barrelSprites[i] = new Sprite(game, 0, 0, width/3, height/3);
+			barrelSprites[i].setImage("player_ship.png");
+		}
+		addChild(collider, sprite);
+		addChild(barrelSprites);
+		aimBarrel(0, -1); // aim up initially
 		currentTarget = getNextTarget();
 		shootTimer = 120;
 	}
@@ -45,7 +54,13 @@ public class Turret extends Entity {
 			}
 		}
 
-		// aim barrel towards target enemy
+		// aim barrel towards target enemy (if about to shoot)
+		if (shootTimer < 60 && currentTarget != null && currentTarget.isAlive) {
+			float xOffset = currentTarget.getX() - getX();
+			float yOffset = currentTarget.getY() - getY();
+			float dist = (float) Math.sqrt(xOffset * xOffset + yOffset * yOffset);
+			aimBarrel(xOffset / dist, yOffset / dist);
+		}
 
 		// check if shoot timer is ready
 		if (shootTimer <= 0) {
@@ -53,11 +68,11 @@ public class Turret extends Entity {
 				float xOffset = currentTarget.getX() - getX();
 				float yOffset = currentTarget.getY() - getY();
 				float dist = (float) Math.sqrt(xOffset * xOffset + yOffset * yOffset);
-				shootBullet(0, 0, xOffset/dist, yOffset/dist);
+				shootBullet(0, 0, xOffset / dist, yOffset / dist);
 			}
 			currentTarget = getNextTarget();
-
 		}
+		
 
 		if (shootTimer <= 0) {
 			shootTimer = 120;
@@ -66,7 +81,10 @@ public class Turret extends Entity {
 	}
 
 	private void aimBarrel(float dx, float dy) {
-
+		for (int i = 0; i < barrelSprites.length; i++) {
+			float segLen = i / (float)barrelSprites.length;
+			barrelSprites[i].setCenter(getX() + segLen * dx * barrelLength, getY() + segLen * dy * barrelLength);
+		}
 	}
 
 	private void shootBullet(float xOffset, float yOffset, float dx, float dy) {
