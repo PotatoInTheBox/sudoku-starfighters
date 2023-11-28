@@ -135,11 +135,12 @@ public class Graphics extends VBox {
         invaderSprites[4] = debugTempReColor(invaderSprites[4], Color.WHITE, Color.web("#ff7373"));
         invaderSprites[5] = debugTempReColor(invaderSprites[5], Color.WHITE, Color.web("#ff7373"));
 
-        houseSprites = new Image[4];
+        houseSprites = new Image[5];
         houseSprites[0] = getSpriteFromFile("./resources/images/House_Damage_Level_1.png");
         houseSprites[1] = getSpriteFromFile("./resources/images/House_Damage_Level_2.png");
         houseSprites[2] = getSpriteFromFile("./resources/images/House_Damage_Level_3.png");
         houseSprites[3] = getSpriteFromFile("./resources/images/House_Damage_Level_4.png");
+        houseSprites[4] = getSpriteFromFile("./resources/images/House_Damage_Level_1.png");
 
         Image bulletSprite = getSpriteFromFile("./resources/images/bullet4.png");
         bulletSprites = generateBulletAnimation(bulletSprite);
@@ -313,7 +314,6 @@ public class Graphics extends VBox {
     private void drawHouses() {
     	for (House house : game.getHouses()) {
     		Image houseSprite = houseSprites[house.getHits()];
-    		drawWireFrame(house, Color.GREEN);
             drawSprite(houseSprite, new Point2D(house.getX(), house.getY()),
                     new Point2D(house.getWidth(), house.getHeight()));
     	}

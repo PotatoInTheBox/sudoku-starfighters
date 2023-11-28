@@ -346,9 +346,19 @@ public class Game {
                     markedForRemoval.add(bullet);
                     return; // it hit something, don't keep processing loop
                 } else if (hitEntity.getTeam() == Team.NEUTRAL) {
-                	markedForRemoval.add(bullet);
-                    markedForRemoval.add(hitEntity);
-                    invaderHitSound();
+                	if (hitEntity.getClass() == House.class) {
+                		House hitHouse = (House) hitEntity;
+                		hitHouse.hit();
+                		if(hitHouse.getHits() >= 4) {
+                            markedForRemoval.add(hitEntity);
+                		}
+                    	markedForRemoval.add(bullet);
+                        invaderHitSound();
+                	} else {
+                    	markedForRemoval.add(bullet);
+                        markedForRemoval.add(hitEntity);
+                        invaderHitSound();
+                	}
                 }
             } else if (bullet.isOutOfBounds(0, 0, width, height)) {
                 markedForRemoval.add(bullet);
@@ -438,12 +448,22 @@ public class Game {
                 if (bullet.hasCollidedWith(invader))
                     return invader;
             }
+            for (House house : houses) {
+            	if (bullet.hasCollidedWith(house)) {
+            		return house;
+            	}
+            }
         } else if (bullet.getTeam() == Team.INVADERS) {
             if (bullet.hasCollidedWith(player))
                 return player;
             for (Turret turret : turrets) {
             	if (bullet.hasCollidedWith(turret)) {
             		return turret;
+            	}
+            }
+            for (House house : houses) {
+            	if (bullet.hasCollidedWith(house)) {
+            		return house;
             	}
             }
         } 
