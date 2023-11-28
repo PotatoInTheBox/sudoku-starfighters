@@ -15,6 +15,7 @@ public class SoundPlayer {
 	public static HashMap<String, Media> songs = new HashMap<>();
 	public static ArrayList<String> fileNames = new ArrayList<>();
 	private static List<MediaPlayer> currentlyPlayingMedia = new ArrayList<>();
+	private static List<MediaPlayer> allSfxMedia = new ArrayList<>();
 	private static double volume = 1d;
 	private static double sfxVolume = 1d;
 	private static double musicVolume = 1d;
@@ -86,7 +87,18 @@ public class SoundPlayer {
 			currentThemeMusic = null;
 		}
 	}
-
+	
+	/**
+	 * Clears the sfxMedia list
+	 */
+	public static void clearSfxPlayers() {
+		List<MediaPlayer> toDelete = allSfxMedia.subList(0, allSfxMedia.size()/2);
+		for (MediaPlayer player : allSfxMedia) {
+			player.dispose();
+		}
+		allSfxMedia = new ArrayList<>();
+	}
+	
 	/**
 	 * Plays a specific sound
 	 * @param fileName The sound to play
@@ -109,7 +121,7 @@ public class SoundPlayer {
 
 		}
 		songs.put(fileName, media);
-
+		
 		MediaPlayer mediaPlayer = new MediaPlayer(media);
 		mediaPlayer.setOnEndOfMedia(() -> {
 			// System.out.println("media ended");
@@ -136,6 +148,9 @@ public class SoundPlayer {
 			mediaPlayer.setVolume(musicVolume * volume);
 		else
 			mediaPlayer.setVolume(sfxVolume * volume);
+		
+		if (!isMusic) 
+			allSfxMedia.add(mediaPlayer);
 		mediaPlayer.play();
 		return mediaPlayer;
 	}

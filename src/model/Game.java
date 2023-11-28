@@ -56,6 +56,7 @@ public class Game {
     }
 
     public void startNewRound() {
+        SoundPlayer.clearSfxPlayers();
         clearAllEntities();
         spawnPlayer(width - 20, height - 20, 20, 30);
         final float xInvadersPadding = width / 2.5f;

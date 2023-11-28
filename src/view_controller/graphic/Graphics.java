@@ -61,6 +61,7 @@ public class Graphics extends VBox {
     Image[] bulletSprites;
     Image[] houseSprites;
     Image destructionSprite;
+    Image bulletSprite;
 
     public Graphics(GamePane gamePane, double width, double height) {
         this.gamePane = gamePane;
@@ -148,8 +149,8 @@ public class Graphics extends VBox {
         houseSprites[3] = getSpriteFromFile("./resources/images/House_Damage_Level_4.png");
         houseSprites[4] = getSpriteFromFile("./resources/images/House_Damage_Level_1.png");
 
-        Image bulletSprite = getSpriteFromFile("./resources/images/bullet4.png");
-        bulletSprites = generateBulletAnimation(bulletSprite);
+        bulletSprite = getSpriteFromFile("./resources/images/bullet.png");
+        // bulletSprites = generateBulletAnimation(bulletSprite);
         destructionSprite = getSpriteFromFile("./resources/images/destruction_frame.png");
     }
 
@@ -298,7 +299,7 @@ public class Graphics extends VBox {
      * Draws all bullets
      */
     private void drawBullets() {
-        int bulletSpriteIndex = Integer.remainderUnsigned(bulletAnimationCounter, bulletSprites.length);
+        // int bulletSpriteIndex = Integer.remainderUnsigned(bulletAnimationCounter, bulletSprites.length);
         double widthMult = 1.4;
         double heightMult = 1.4;
         for (Bullet bullet : game.getBullets()) {
@@ -308,11 +309,11 @@ public class Graphics extends VBox {
             double h = bullet.getHeight() * heightMult;
             // reverse the bullet sprite if it is going down
             if (bullet.getDy() > 0f) {
-                drawSprite(bulletSprites[bulletSpriteIndex],
+                drawSprite(bulletSprite,
                         new Point2D(x, y + h),
                         new Point2D(w, -h));
             } else {
-                drawSprite(bulletSprites[bulletSpriteIndex],
+                drawSprite(bulletSprite,
                         new Point2D(x, y),
                         new Point2D(w, h));
             }
