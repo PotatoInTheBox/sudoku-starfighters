@@ -85,31 +85,59 @@ public class MenuPane extends GridPane {
 		});
 	}
 
-	/// Expose button handlers.
+	/**
+	 * Continue game handler
+	 * @param eventHandler The event
+	 */
 	public void onContinueGame(EventHandler<ActionEvent> eventHandler) {
 		continueGameHandlers.add(eventHandler);
 	}
 
+	/**
+	 * On New Game handler
+	 * @param eventHandler The event
+	 */
 	public void onNewGame(EventHandler<ActionEvent> eventHandler) {
 		newGameHandlers.add(eventHandler);
 	}
 
+	/**
+	 * On Leader board handler
+	 * @param eventHandler The event
+	 */
 	public void onLeaderboard(EventHandler<ActionEvent> eventHandler) {
 		leaderboardHandlers.add(eventHandler);
 	}
 
+	/**
+	 * Continue game handler
+	 * @param eventHandler The event
+	 */
 	public void onOptions(EventHandler<ActionEvent> eventHandler) {
 		optionsHandlers.add(eventHandler);
 	}
 
+	/**
+	 * On exit handler
+	 * @param eventHandler The event
+	 */
 	public void onExit(EventHandler<ActionEvent> eventHandler) {
 		exitHandlers.add(eventHandler);
 	}
 
+	/**
+	 * Disables the continue button
+	 * @param disable The state of the continue button
+	 */
 	public void setDisableContinueButton(boolean disable){
 		continueButton.setDisable(disable);
 	}
 	
+	/**
+	 * Retrieves a sprite from a file
+	 * @param path The path of the sprite
+	 * @return The sprite
+	 */
     private Image getSpriteFromFile(String path) {
         FileInputStream playerImageFile;
         try {

@@ -20,6 +20,9 @@ public class SoundPlayer {
 	private static double musicVolume = 1d;
 	private static MediaPlayer currentThemeMusic = null;
 
+	/**
+	 * Loads all of the sounds effects and songs to be used in the game
+	 */
 	public static void loadAllSongs() {
 		fileNames.add("player_shoot.wav");
 		fileNames.add("player_death.wav");
@@ -32,21 +35,36 @@ public class SoundPlayer {
 		createMedia();
 	}
 
+	/**
+	 * Sets the volume of all the sounds
+	 * @param newVolume The new volume to set to
+	 */
 	public static void setVolume(double newVolume) {
 		volume = newVolume;
 		updateVolume();
 	}
 
+	/**
+	 * Sets the volume of the effects
+	 * @param newVolume The new volume to set to
+	 */
 	public static void setSfxVolume(double newVolume) {
 		sfxVolume = newVolume;
 		updateVolume();
 	}
 
+	/**
+	 * Sets the volume of the music
+	 * @param newVolume The new volume to set to
+	 */
 	public static void setMusicVolume(double newVolume) {
 		musicVolume = newVolume;
 		updateVolume();
 	}
 
+	/**
+	 * Starts the theme song
+	 */
 	public static void playMainThemeMusic() {
 		if (currentThemeMusic != null) {
 			// System.err.println("Cannot play theme music, already playing theme music!");
@@ -58,6 +76,9 @@ public class SoundPlayer {
 		});
 	}
 
+	/**
+	 * Stops the theme song
+	 */
 	public static void stopThemeMusic() {
 		if (currentThemeMusic != null) {
 			currentThemeMusic.stop();
@@ -66,6 +87,12 @@ public class SoundPlayer {
 		}
 	}
 
+	/**
+	 * Plays a specific sound
+	 * @param fileName The sound to play
+	 * @param isMusic If the sound is music or an effect
+	 * @return The MediaPlayer of the sound
+	 */
 	public static MediaPlayer playSound(String fileName, boolean isMusic) {
 		Media media = null;
 
@@ -113,6 +140,9 @@ public class SoundPlayer {
 		return mediaPlayer;
 	}
 
+	/**
+	 * Creates new media
+	 */
 	private static void createMedia() {
 		for (String fileName : fileNames) {
 			String path = "resources/sounds/" + fileName;
@@ -126,6 +156,9 @@ public class SoundPlayer {
 		}
 	}
 
+	/**
+	 * Updates the overall volume
+	 */
 	private static void updateVolume() {
 		for (MediaPlayer mediaPlayer : currentlyPlayingMedia) {
 			if (mediaPlayer != currentThemeMusic) {
