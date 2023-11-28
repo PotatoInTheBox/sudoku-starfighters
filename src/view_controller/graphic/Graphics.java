@@ -47,6 +47,8 @@ import view_controller.panel.GamePane;
 import view_controller.panel.OptionsPane;
 import view_controller.utils.FrameRateTracker;
 
+import java.util.ConcurrentModificationException;
+
 public class Graphics extends VBox {
 
     private GamePane gamePane;
@@ -110,18 +112,16 @@ public class Graphics extends VBox {
             bulletTickedThisFrame = false;
         }
 
-        for (Entity entity : game.getEntities()) {
-            if (entity.getClass() == Sprite.class) {
-                Sprite sprite = (Sprite) entity;
-                float spriteX = sprite.getX();
-                float spriteY = sprite.getY();
-                drawSprite(sprite.getImage(), new Point2D(spriteX, spriteY),
-                        new Point2D(sprite.getWidth(), sprite.getHeight()));
-            }
+        try {
+            drawSprites();
+            if (optionsPane.isWireframeEnabled())
+                drawAllWireFrames();
+        } catch (ConcurrentModificationException e) {
+            // TODO concurrent modification sometimes happens,
+            // unsure why...
+            System.err.println(e);
         }
 
-        if (optionsPane.isWireframeEnabled())
-            drawAllWireFrames();
         double fpsAvg = frameRateTracker.getAverageUpdate();
         double tpsAvg = gamePane.frameRateTracker.getAverageUpdate();
         String fpsAverageString = String.format("Average FPS/UPS: %8.4f / %8.4f", fpsAvg, tpsAvg);
@@ -131,6 +131,21 @@ public class Graphics extends VBox {
         drawText("Lives: " + Integer.toString(game.getLives()), 10, 45);
 
         frameRateTracker.logFrameUpdate();
+    }
+
+    private void drawSprites() {
+        for (Entity entity : game.getEntities()) {
+            if (entity.getClass() == Sprite.class) {
+                Sprite sprite = (Sprite) entity;
+                float spriteX = sprite.getX();
+                float spriteY = sprite.getY();
+                if (sprite.getParent() == null) {
+                    System.out.println("Orphan sprite " + sprite);
+                }
+                drawSprite(sprite.getImage(), new Point2D(spriteX, spriteY),
+                        new Point2D(sprite.getWidth(), sprite.getHeight()));
+            }
+        }
     }
 
     private void loadSprites() {
@@ -322,9 +337,11 @@ public class Graphics extends VBox {
 
     private void drawAllWireFrames() {
         // drawWireFrame(game.getPlayer());
+
         for (Entity e : game.getEntities()) {
             drawWireFrame(e);
         }
+
     }
 
     private void drawText(String string, float x, float y) {

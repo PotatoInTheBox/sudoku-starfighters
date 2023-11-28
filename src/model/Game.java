@@ -100,10 +100,9 @@ public class Game {
         processingGameLoop = true;
 
         /// remove marked for deletion items before starting tick
-        for (Runnable runnable : markedForRemoval) {
-            runnable.run();
+        while (markedForRemoval.isEmpty() == false) {
+            markedForRemoval.remove().run();
         }
-        markedForRemoval.clear();
 
         /// update all entities
         for (Entity entity : entities) {
