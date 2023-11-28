@@ -270,8 +270,8 @@ public abstract class Entity {
 	}
 
 	public void delete() {
+		isAlive = false;
 		game.addOnDeletedList(() -> {
-			isAlive = false;
 			for (EventHandler<?> event : keyDownEvents) {
 				Input.removeEventHandler(event);
 			}
