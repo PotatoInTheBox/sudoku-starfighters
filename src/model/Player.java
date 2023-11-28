@@ -78,13 +78,17 @@ public class Player extends Entity {
 			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.GHOST))) {
 				isInvincible = !isInvincible;
 			}
+			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SPAWN_TURRET))) {
+				Turret turret = new Turret(game, getX(), getY(), 20, 20);
+				instantiate(game, turret);
+			}
 		});
 	}
 
 	private void shootBullet(float xOffset, float yOffset) {
 		// shoot bullet if this player can shoot
 		SoundPlayer.playSound("player_shoot.wav");
-		Bullet bullet = new Bullet(game, getX() + xOffset, getY() + yOffset, Bullet.BULLET_PLAYER_SPEED, team);
+		Bullet bullet = new Bullet(game, getX() + xOffset, getY() + yOffset, -1, team);
 		instantiate(bullet);
 	}
 
@@ -130,41 +134,5 @@ public class Player extends Entity {
 		return false;
 	}
 
-	/**
-	 * Moves the player left and right
-	 * 
-	 * @param analogInput The directional input of the user
-	 */
-	public void moveHorizontal(float analogInput) {
-		x += speed * analogInput;
-	}
 
-	/**
-	 * Moves the player up and down for testing
-	 * 
-	 * @param analogInput The directional input of the user
-	 */
-	public void moveVertical(float analogInput) {
-		y += speed * analogInput;
-	}
-
-	/**
-	 * Specifies if the player is hit
-	 * 
-	 * @return If the player is hit
-	 */
-	public boolean isHit() {
-		return false;
-	}
-
-	/**
-	 * Shoots a bullet at a specific speed
-	 * 
-	 * @param speed The speed at which to fire the bullet
-	 * @return The created bullet
-	 */
-	public Bullet shootBullet(float speed) {
-		Bullet newBullet = new Bullet(game, this.getX(), this.getY(), -speed, team);
-		return newBullet;
-	}
 }

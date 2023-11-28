@@ -32,10 +32,10 @@ public class Bullet extends Entity {
 	@Override
 	public void update() {
 		if (team == Team.PLAYER){
-			move(0, -BULLET_PLAYER_SPEED);
+			move(dx * BULLET_PLAYER_SPEED, dy * BULLET_PLAYER_SPEED);
 		}
 		if (team == Team.INVADERS){
-			move(0, BULLET_INVADER_SPEED);
+			move(dx * BULLET_INVADER_SPEED, dy * BULLET_INVADER_SPEED);
 		}
 		if (collider.isOutOfBounds(0, 0, game.getWidth(), game.getHeight())){
 			Explosion explosion = new Explosion(game, getX(), getY(), sprite.getWidth(), sprite.getHeight());

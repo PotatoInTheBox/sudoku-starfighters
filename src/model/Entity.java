@@ -15,6 +15,7 @@ public abstract class Entity {
 	protected float dx = 0f;
 	protected float dy = 0f;
 	protected boolean isFrozen = false;
+	protected boolean isAlive = true;
 
 	protected Team team = Team.NEUTRAL;
 
@@ -270,6 +271,7 @@ public abstract class Entity {
 
 	public void delete() {
 		game.addOnDeletedList(() -> {
+			isAlive = false;
 			for (EventHandler<?> event : keyDownEvents) {
 				Input.removeEventHandler(event);
 			}

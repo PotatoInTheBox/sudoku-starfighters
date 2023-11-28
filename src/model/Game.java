@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.ArrayDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import javafx.scene.paint.Color;
+
 import java.util.Queue;
 import java.util.Iterator;
 import java.util.ConcurrentModificationException;
@@ -53,12 +56,35 @@ public class Game {
         // delete all bullets
         deleteAllBullets();
 
+        // spawn houses
+        for (int i = 0; i < 3; i++) {
+            spawnAllHouses(i * width/3 + 60, height - 120, 60, 60, 3, 3);
+        }
+        
+
         // spawn new invaders
         InvaderCluster cluster = spawnInvaderCluster(0, 0, width / 2, height / 2);
         increaseDifficulty();
         cluster.setDifficulty(difficultyLevel);
 
         startPlayerLife();
+    }
+
+    private void spawnAllHouses(float x, float y, float width, float height, int rowCount, int colCount) {
+        float houseWidth = width/colCount;
+        float houseHeight = height/rowCount;
+        for (int r = 0; r < rowCount; r++) {
+            for (int c = 0; c < colCount; c++) {
+                float spawnX = c * width / colCount + x + houseWidth / 2;
+                float spawnY = r * height / rowCount + y + houseHeight / 2;
+                spawnHouse(spawnX, spawnY, houseWidth, houseHeight);
+            }
+        }
+    }
+
+    private void spawnHouse(float x, float y, float width, float height) {
+        House house = new House(this, x, y, width, height);
+        Entity.instantiate(this, house);
     }
 
     public void startPlayerLife() {
@@ -129,18 +155,6 @@ public class Game {
         cluster.spawnAllInvaders(x, y, width, height, 3, 4);
         return cluster;
     }
-
-    public void shootPlayerBullet() {
-        // entities.add(player.shootBullet());
-        // SoundPlayer.playSound("player_shoot.wav", false);
-    }
-
-    public void shootInvaderBullet(Invader invader) {
-        // entities.add(invader.shootBullet());
-        // SoundPlayer.playSound("enemy_shoot.wav", false);
-    }
-
-    // TODO
 
     public void addBullet(Bullet bullet) {
         entities.add(bullet);

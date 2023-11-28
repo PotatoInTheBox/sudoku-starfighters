@@ -38,12 +38,14 @@ import model.Bullet;
 import model.Collider;
 import model.Entity;
 import model.Game;
+import model.House;
 import model.Invader;
 import model.InvaderCluster;
 import model.InvaderType;
 import model.Player;
 import model.Score;
 import model.Sprite;
+import model.Turret;
 import view_controller.panel.GamePane;
 import view_controller.panel.OptionsPane;
 import view_controller.utils.FrameRateTracker;
@@ -59,6 +61,12 @@ public class Graphics extends VBox {
     private GraphicsContext gc;
 
     private FrameRateTracker frameRateTracker = new FrameRateTracker(200);
+
+    Image playerSprite;
+    Image[] invaderSprites;
+    Image[] bulletSprites;
+    Image[] houseSprites;
+    Image destructionSprite;
 
     public Graphics(GamePane gamePane, double width, double height) {
         this.gamePane = gamePane;
@@ -125,6 +133,63 @@ public class Graphics extends VBox {
             }
         }
     }
+
+    /**
+     * reColor the given InputImage to the given color
+     * inspired by https://stackoverflow.com/a/12945629/1497139
+     * 
+     * @author Wolfgang Fahl https://stackoverflow.com/a/51726678
+     * 
+     * @param inputImage
+     * @param oldColor
+     * @param newColor
+     * @return reColored Image
+     * 
+     */
+    public static Image debugTempReColor(Image inputImage, Color oldColor, Color newColor) {
+        int W = (int) inputImage.getWidth();
+        int H = (int) inputImage.getHeight();
+        WritableImage outputImage = new WritableImage(W, H);
+        PixelReader reader = inputImage.getPixelReader();
+        PixelWriter writer = outputImage.getPixelWriter();
+        int ob = (int) (oldColor.getBlue() * 255);
+        int or = (int) (oldColor.getRed() * 255);
+        int og = (int) (oldColor.getGreen() * 255);
+        int nb = (int) (newColor.getBlue() * 255);
+        int nr = (int) (newColor.getRed() * 255);
+        int ng = (int) (newColor.getGreen() * 255);
+        for (int y = 0; y < H; y++) {
+            for (int x = 0; x < W; x++) {
+                int argb = reader.getArgb(x, y);
+                int a = (argb >> 24) & 0xFF;
+                int r = (argb >> 16) & 0xFF;
+                int g = (argb >> 8) & 0xFF;
+                int b = argb & 0xFF;
+                if (g == og && r == or && b == ob) {
+                    r = nr;
+                    g = ng;
+                    b = nb;
+                }
+
+                argb = (a << 24) | (r << 16) | (g << 8) | b;
+                writer.setArgb(x, y, argb);
+            }
+        }
+        return outputImage;
+    }
+
+    private Image getSpriteFromFile(String path) {
+        FileInputStream playerImageFile;
+        try {
+            playerImageFile = new FileInputStream(path);
+            Image sprite = new Image(playerImageFile);
+            return sprite;
+        } catch (FileNotFoundException e) {
+            System.out.println("Could not find" + path);
+            return null;
+        }
+    }
+
 
     private void drawSprite(Image image, Point2D startPoint, Point2D size) {
         Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);
@@ -205,35 +270,6 @@ public class Graphics extends VBox {
 
     private void clearCanvas() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-    }
-
-}
-
-class DestructionEntity {
-    private Point2D originalPos;
-    private Point2D endPos;
-    private int framesActive = 20;
-
-    public DestructionEntity(Point2D originalPos, Point2D endPos) {
-        this.originalPos = originalPos;
-        this.endPos = endPos;
-    }
-
-    public Point2D getOriginalPos() {
-        return originalPos;
-    }
-
-    public Point2D getEndPos() {
-        return endPos;
-    }
-
-    public boolean update() {
-        if (framesActive == 0) {
-            return true;
-        }
-
-        framesActive--;
-        return false;
     }
 
 }
