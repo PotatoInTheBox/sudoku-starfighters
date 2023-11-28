@@ -60,9 +60,11 @@ public class Game {
         spawnPlayer(width - 20, height - 20, 20, 30);
         final float xInvadersPadding = width / 2.5f;
         final float yInvadersHeight = height / 3;
+        turretsSpawned = 0;
         startInvadersCount = 0;
         spawnAllInvaders(xInvadersPadding, 20, width - xInvadersPadding, yInvadersHeight, 7, 5);
         destroyAllHouses();
+        destroyAllTurrets();
         spawnAllHouses();
         applyInvaderMotion();
         startPlayerLife();
@@ -197,19 +199,21 @@ public class Game {
     }
     
     public void spawnTurret() {
-    	float x = 150;
-    	float y = 400;
+    	float x = (turretsSpawned == 0) ? 115 : 465;
+    	float y = 368;
     	
     	// Limit of 2 turrets
     	if (turretsSpawned == 2) {
     		return;
     	}
-    	
-    	x = x + ((width-50)/2) * turretsSpawned;
         Turret turret = new Turret(x, y, 20, 30);
         turret.setTarget(invaders);
         turrets.add(turret);
         turretsSpawned += 1;
+    }
+    
+    public void destroyAllTurrets() {
+    	turrets = new ArrayList<>();
     }
     
     public void destroyAllHouses() {
@@ -360,8 +364,11 @@ public class Game {
                     	markedForRemoval.add(bullet);
                         invaderHitSound();
                 	} else {
+                		Turret hitTurret = (Turret) hitEntity;
                     	markedForRemoval.add(bullet);
-                        markedForRemoval.add(hitEntity);
+                    	if (hitTurret.updateHealth() <= 0) {
+                    		markedForRemoval.add(hitTurret);
+                    	}
                         invaderHitSound();
                 	}
                 }
