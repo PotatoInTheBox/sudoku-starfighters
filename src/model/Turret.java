@@ -17,16 +17,27 @@ public class Turret extends Entity {
 		this.team = Team.NEUTRAL;
 	}
 	
+	/**
+	 * Sets a target for the turret
+	 * @param toTarget The Invader that is targeted
+	 */
 	public void setTarget(Invader toTarget) {
 		currentTarget = toTarget;
 	}
 	
-	// Psuedo Random Target
+	/**
+	 * Finds a pseudo random target
+	 * @param invaders The list of all invaders that could be targeted
+	 */
 	public void setTarget(ArrayList<Invader> invaders) {
 		Random r = new Random();
 		currentTarget = invaders.get(r.nextInt(invaders.size()));
 	}
 	
+	/**
+	 * Shoots a bullet
+	 * @return The shot bullet
+	 */
 	public Bullet shootBullet() {
 		float[] change = determineDxDy();
 		float dx = change[0];
@@ -36,7 +47,11 @@ public class Turret extends Entity {
 	    return newBullet;
 	}
 	
-	// Return val determines whether to shoot or not
+	/**
+	 * Determines whether to shoot or not
+	 * @param invaders The list of invaders
+	 * @return If the turret should shoot
+	 */
 	public boolean update(ArrayList<Invader> invaders) {
 		timer = (timer + 1) % 320;
 		
@@ -48,10 +63,17 @@ public class Turret extends Entity {
 		return false;
 	}
 	
+	/**
+	 * Updates the health of the turret
+	 * @return The current health
+	 */
 	public float updateHealth() {
 		return --health;
 	}
 	
+	/**
+	 * Turns the turret to look at a target
+	 */
 	private void lookAtTarget() {
 		float targetXPos = currentTarget.x;
 		float targetYPos = currentTarget.y;
@@ -72,6 +94,10 @@ public class Turret extends Entity {
 		gunLineY = (float) yVal;
 	}
 	
+	/**
+	 * Determines the DX and DY values
+	 * @return A Float Array with the values
+	 */
 	private float[] determineDxDy() {
 		float targetXPos = currentTarget.x;
 		float targetYPos = currentTarget.y;
