@@ -53,7 +53,7 @@ public class Invader extends Entity {
         SoundPlayer.playSound("enemy_shoot.wav");
         Bullet bullet = new Bullet(game, getX(), getY(), Bullet.BULLET_INVADER_SPEED, team);
         bullet.sprite.setHeight(-bullet.sprite.getHeight()); // flip the bullet
-        bullet.sprite.setCenter(0, 0);
+        bullet.sprite.setCenter(getX(), getY());
         instantiate(bullet);
     }
 
