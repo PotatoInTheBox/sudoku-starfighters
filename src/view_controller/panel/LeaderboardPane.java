@@ -55,12 +55,16 @@ public class LeaderboardPane extends GridPane {
 		updateScores();
 	}
 
+	/**
+	 * Sets the back button
+	 * @param eventHandler For On Back
+	 */
 	public void onBack(EventHandler<ActionEvent> eventHandler) {
 		backHandlers.add(eventHandler);
 	}
 
 	/**
-	 * Updates the score for the Leaderboard
+	 * Updates the score for the Leader board
 	 */
 	public void updateScores() {
 		getChildren().clear();
@@ -87,6 +91,10 @@ public class LeaderboardPane extends GridPane {
 		addColumn(0, paneTitleLabel, scrollPane, backButton);
 	}
 
+	/**
+	 * Saves the leader board to a file
+	 * @param fileName The name of the file to save to
+	 */
 	public static void saveLeaderboard(String fileName) {
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
 			LinkedList<Score> list = new LinkedList<Score>();
@@ -99,6 +107,10 @@ public class LeaderboardPane extends GridPane {
 		}
 	}
 
+	/**
+	 * Loads the leader board from a file
+	 * @param fileName The name of the file to load from
+	 */
 	@SuppressWarnings("unchecked")
 	public static void loadLeaderboard(String fileName) {
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
@@ -112,6 +124,9 @@ public class LeaderboardPane extends GridPane {
 		}
 	}
 
+	/**
+	 * Initializes the leader board on start up
+	 */
 	private void initializeLeaderboardList() {
 		gridList = new GridPane();
 		gridList.setVgap(20);

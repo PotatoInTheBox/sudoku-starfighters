@@ -70,10 +70,17 @@ public class KeyBindingsPane extends BorderPane {
         this.setBottom(backButton);
     }
 
+    /**
+     * Finds if user is using the escape key
+     * @return Boolean of user state
+     */
     public boolean isUsingEscapeKey() {
         return isUsingEscapeKey;
     }
 
+    /**
+     * Displays the key bindings
+     */
     public void displayKeyBindFields() {
         Collections.sort(keyBindingEntries, KeyBindingEntry.comparator);
         gridList.getChildren().clear();
@@ -83,11 +90,19 @@ public class KeyBindingsPane extends BorderPane {
         }
     }
 
+    /**
+     * Add key binding fields
+     * @param keyBindings The Collection of KeyBindings
+     */
     public void addKeyBindFields(Collection<KeyBinding> keyBindings) {
         for (KeyBinding keyBindingSetItem : keyBindings)
             addKeyBindField(keyBindingSetItem);
     }
 
+    /**
+     * Add key binding fields
+     * @param keyBinding One specific key binding
+     */
     public void addKeyBindField(KeyBinding keyBinding) {
         for (KeyBindingEntry entry : keyBindingEntries)
             if (entry.keyBinding == keyBinding)
@@ -103,6 +118,11 @@ public class KeyBindingsPane extends BorderPane {
         keyBindingEntries.add(new KeyBindingEntry(keyBinding, button, label));
     }
 
+    /**
+     * Assigns a certain button
+     * @param button A specific button
+     * @param keyBinding A specific key bind
+     */
     private void assigningButton(Button button, KeyBinding keyBinding) {
         isUsingEscapeKey = true;
         scrollPane.setDisable(true);
@@ -120,6 +140,9 @@ public class KeyBindingsPane extends BorderPane {
             this.keyBinding = keyBinding;
         }
 
+        /**
+         * Handles a key press
+         */
         public void handle(KeyEvent e) {
             if (e.getCode() != KeyCode.ESCAPE) {
                 keyBinding.setKey(e.getCode());
