@@ -9,7 +9,8 @@ public class Turret extends Entity {
 	public float gunLineX = this.getCenterX();
 	public float gunLineY = this.getCenterY() - 30;
 	
-	public float timer = 0;
+	private float timer = 0;
+	private float health = 3;
 	
 	public Turret(float x, float y, float width, float height) {
 		super(x, y, width, height);
@@ -37,14 +38,18 @@ public class Turret extends Entity {
 	
 	// Return val determines whether to shoot or not
 	public boolean update(ArrayList<Invader> invaders) {
-		timer = (timer + 1) % 360;
+		timer = (timer + 1) % 320;
 		
-		if (timer == 359) {
+		if (timer == 319) {
 			setTarget(invaders);
 			lookAtTarget();
 			return true;
 		}
 		return false;
+	}
+	
+	public float updateHealth() {
+		return --health;
 	}
 	
 	private void lookAtTarget() {
@@ -70,7 +75,7 @@ public class Turret extends Entity {
 	private float[] determineDxDy() {
 		float targetXPos = currentTarget.x;
 		float targetYPos = currentTarget.y;
-		float distance = (float) 2;
+		float distance = (float) 2.5;
 		
 		double xVal;
 		double yVal;
@@ -87,10 +92,7 @@ public class Turret extends Entity {
 		change[0] = (float) xVal - this.getCenterX();
 		change[1] = (float) yVal - this.getCenterY();
 		
-		
-		
 		return change;
 	}
 	
-
 }
