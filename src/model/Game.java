@@ -62,6 +62,7 @@ public class Game {
         final float yInvadersHeight = height / 3;
         startInvadersCount = 0;
         spawnAllInvaders(xInvadersPadding, 20, width - xInvadersPadding, yInvadersHeight, 7, 5);
+        destroyAllHouses();
         spawnAllHouses();
         applyInvaderMotion();
         startPlayerLife();
@@ -209,6 +210,10 @@ public class Game {
         turret.setTarget(invaders);
         turrets.add(turret);
         turretsSpawned += 1;
+    }
+    
+    public void destroyAllHouses() {
+    	houses = new ArrayList<>(); 
     }
     
     public void spawnAllHouses() {
