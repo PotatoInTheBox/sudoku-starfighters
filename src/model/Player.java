@@ -160,7 +160,8 @@ public class Player extends Entity {
 	 * Push player back into the bounds of the game
 	 */
 	private void bindToGame() {
-		if (collider.isOutOfBounds(0f, game.yInvaderGoal, game.getWidth(), game.getHeight())) {
+		float boundsHeight = game.getHeight() - game.yInvaderGoal;
+		if (collider.isOutOfBounds(0f, game.yInvaderGoal, game.getWidth(), boundsHeight)) {
 			if (collider.getX() < 0) {
 				setX(getX() - collider.getX());
 			}
