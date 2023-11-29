@@ -9,6 +9,8 @@ public class Coin extends Entity {
     public Sprite sprite;
 
     public final static float COIN_SPEED = 1.4f;
+    private int coinFrameCountDown = 0;
+    private final static int COIN_FRAME_DELAY = 30;
 
     /**
      * Coin constructor creates a coin with the given dimensions.
@@ -23,7 +25,8 @@ public class Coin extends Entity {
         super(game, x, y);
         collider = new Collider(game, width, height);
         collider.setCenter(x, y);
-        sprite = new Sprite(game, 0, 0, width, height, "temp_coin.png");
+        sprite = new Sprite(game, 0, 0, width, height);
+        sprite.addImage("coin_frame1.png", "coin_frame2.png", "coin_frame3.png", "coin_frame4.png");
         sprite.setCenter(x, y);
 
         addChild(collider, sprite);
@@ -35,5 +38,12 @@ public class Coin extends Entity {
         if (collider.isOutOfBounds(0, 0, game.getWidth(), game.getHeight())) {
             delete();
         }
+
+        if (coinFrameCountDown <= 0){
+            sprite.nextFrame();
+            coinFrameCountDown = COIN_FRAME_DELAY;
+        }
+
+        coinFrameCountDown -= 1;
     }
 }
