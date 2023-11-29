@@ -135,7 +135,7 @@ public abstract class Entity {
 	 * Set the dx value. This value can later be utilized by any entity to know
 	 * what direction it should move.
 	 * 
-	 * @param newHorizontalSpeed
+	 * @param newHorizontalSpeed 
 	 */
 	public void setDx(float newHorizontalSpeed) {
 		this.dx = newHorizontalSpeed;
