@@ -107,8 +107,6 @@ public class Graphics extends VBox {
             if (optionsPane.isWireframeEnabled())
                 drawAllWireFrames();
         } catch (ConcurrentModificationException e) {
-            // TODO concurrent modification sometimes happens,
-            // unsure why...
             System.err.println(e);
         }
 

@@ -81,6 +81,7 @@ public class Player extends Entity {
 		/// check if colliding with coin
 		Coin collidedCoin = collidedCoin();
 		if (collidedCoin != null && collidedCoin.isAlive) {
+			SoundPlayer.playSound("coin_pickup.wav");
 			collidedCoin.delete();
 			coins += 1;
 		}
