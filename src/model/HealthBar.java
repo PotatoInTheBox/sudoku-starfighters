@@ -35,7 +35,7 @@ public class HealthBar extends Rect {
     private void updateSprites(){
         for (int i = 0; i < sprites.length; i++) {
             if (hp - 1 >= i) {
-                sprites[i].setImage("player_ship.png");
+                sprites[i].setImage("heart.png");
             } else {
                 sprites[i].clearImages();
             }
