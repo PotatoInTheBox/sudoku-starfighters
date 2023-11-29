@@ -34,6 +34,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import model.Bullet;
 import model.Collider;
 import model.Entity;
@@ -102,6 +104,20 @@ public class Graphics extends VBox {
         // clear screen
         drawRectangle(0, 0, canvas.getWidth(), canvas.getHeight(), Color.BLACK);
 
+        //double fpsAvg = frameRateTracker.getAverageUpdate();
+        //double tpsAvg = gamePane.frameRateTracker.getAverageUpdate();
+        //String fpsAverageString = String.format("Average FPS/UPS: %8.4f / %8.4f", fpsAvg, tpsAvg);
+
+        //drawText(fpsAverageString, 10, 15);
+        drawText(Integer.toString(game.getScore()), 300, 100, 75, 0.2f);
+        for(int i = 0; i<game.getLives(); i++) {
+        	drawSprite(getSpriteFromFile("./resources/images/heart.png"), new Point2D(500 + 30*i, 565), new Point2D(25, 25));
+        }
+        //drawText("Lives: " + Integer.toString(game.getLives()), 10, 45);
+        if (game.getPlayer() != null){
+            drawText("Coins: " + Integer.toString(game.getPlayer().coins), 45, 580, 20, 0.7f);
+        }
+        
         try {
             drawSprites();
             if (optionsPane.isWireframeEnabled())
@@ -109,19 +125,7 @@ public class Graphics extends VBox {
         } catch (ConcurrentModificationException e) {
             System.err.println(e);
         }
-
-        double fpsAvg = frameRateTracker.getAverageUpdate();
-        double tpsAvg = gamePane.frameRateTracker.getAverageUpdate();
-        String fpsAverageString = String.format("Average FPS/UPS: %8.4f / %8.4f", fpsAvg, tpsAvg);
-
-        drawText(fpsAverageString, 10, 15);
-        drawText("Score: " + Integer.toString(game.getScore()), 10, 30);
-        drawText("Lives: " + Integer.toString(game.getLives()), 10, 45);
-        if (game.getPlayer() != null){
-            drawText("Coins: " + Integer.toString(game.getPlayer().coins), 10, 60);
-        }
         
-
         frameRateTracker.logFrameUpdate();
     }
 
@@ -225,6 +229,21 @@ public class Graphics extends VBox {
         gc.setLineWidth(1);
         gc.setStroke(Color.WHITE);
         gc.strokeText(string, x, y + 5);
+    }
+    
+    private void drawText(String string, float x, float y, float width, float opacity) {
+        gc.setLineWidth(1);
+        gc.setStroke(Color.WHITE);
+        
+        gc.setGlobalAlpha(opacity);
+        gc.setFont(Font.font(width));
+        gc.setTextAlign(TextAlignment.CENTER);
+        
+        gc.strokeText(string, x, y + 5);
+        
+        gc.setGlobalAlpha(1);
+        gc.setTextAlign(TextAlignment.LEFT);
+        gc.setFont(Font.font(12));
     }
 
     private void drawWireFrame(Entity entity) {
