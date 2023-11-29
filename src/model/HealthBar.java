@@ -24,6 +24,10 @@ public class HealthBar extends Rect {
 
     }
 
+    /**
+     * Sets the HP of the health bar
+     * @param newHp The HP to set to
+     */
     public void setHp(int newHp) {
         if (newHp == hp) {
             return;
@@ -32,6 +36,9 @@ public class HealthBar extends Rect {
         updateSprites();
     }
 
+    /**
+     * Updates the sprite images for the health of the turret
+     */
     private void updateSprites(){
         for (int i = 0; i < sprites.length; i++) {
             if (hp - 1 >= i) {
@@ -42,6 +49,9 @@ public class HealthBar extends Rect {
         }
     }
 
+    /**
+     * Creates the sprites for the health bar
+     */
     private void createHealthSprites() {
         float spriteWidth = width / maxHp;
         float spriteHeight = height;

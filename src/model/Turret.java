@@ -88,6 +88,10 @@ public class Turret extends Entity {
 		shootTimer -= 1;
 	}
 
+	/**
+	 * Indicates that the turret has taken damage
+	 * @param amount The amount of damage taken
+	 */
 	public void damage(int amount) {
 		hp -= 1;
 		if (hp <= 0) {
@@ -95,6 +99,11 @@ public class Turret extends Entity {
 		}
 	}
 
+	/**
+	 * Aims the barrel
+	 * @param dx The X Value to aim to
+	 * @param dy The Y Value to aim to
+	 */
 	private void aimBarrel(float dx, float dy) {
 		for (int i = 0; i < barrelSprites.length; i++) {
 			float segLen = (i + 5) / ((float)barrelSprites.length + 5);
