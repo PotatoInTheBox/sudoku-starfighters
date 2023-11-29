@@ -35,7 +35,7 @@ public class Coin extends Entity {
     @Override
     public void update() {
         move(0, COIN_SPEED);
-        if (collider.isOutOfBounds(0, 0, game.getWidth(), game.getHeight())) {
+        if (collider.isOutOfBounds(0, 0, game.getWidth(), game.getHeight() + collider.getHeight())) {
             delete();
         }
 
