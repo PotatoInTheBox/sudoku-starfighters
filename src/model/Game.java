@@ -17,6 +17,11 @@ import view_controller.sound.SoundPlayer;
 
 public class Game {
 
+    /**
+     *
+     */
+    private static final int INVADER_COUNT_X = 5;
+    private static final int INVADER_COUNT_Y = 6;
     private List<Entity> entities = new ArrayList<>();
     public Queue<Runnable> markedForRemoval = new ConcurrentLinkedQueue<Runnable>();
     public Queue<Runnable> markedForSpawn = new ConcurrentLinkedQueue<Runnable>();
@@ -64,9 +69,8 @@ public class Game {
             spawnAllHouses(i * width/3 + 60, height - 120, 60, 60, 3, 3);
         }
         
-
         // spawn new invaders
-        InvaderCluster cluster = spawnInvaderCluster(0, 0, width / 2, height / 2);
+        InvaderCluster cluster = spawnInvaderCluster(0, 0, width / 2, height / 3);
         increaseDifficulty();
         cluster.setDifficulty(difficultyLevel);
 
@@ -163,7 +167,7 @@ public class Game {
     public InvaderCluster spawnInvaderCluster(float x, float y, float width, float height) {
         InvaderCluster cluster = new InvaderCluster(this, 0, 0);
         Entity.instantiate(this, cluster);
-        cluster.spawnAllInvaders(x, y, width, height, 4, 4);
+        cluster.spawnAllInvaders(x, y, width, height, INVADER_COUNT_X, INVADER_COUNT_Y);
         return cluster;
     }
 
@@ -321,9 +325,8 @@ public class Game {
     }
 
     public void removeEntity(Entity entity) {
-        addOnDeletedList(() -> {
-            entities.remove(entity);
-        });
+        entities.remove(entity);
+        //entities.remove(entity);
     }
 
     public void delete() {

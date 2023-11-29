@@ -4,6 +4,7 @@ import java.util.Random;
 
 import view_controller.sound.SoundPlayer;
 import java.lang.Math;
+import java.util.Random;
 
 public class Invader extends Entity {
 
@@ -34,10 +35,11 @@ public class Invader extends Entity {
                     if (bullet.collider.hasCollidedWith(collider)) {
                         // has been hit
                         playHitSound();
-                        Explosion explosion = new Explosion(game, getX(), getY(), sprite.getWidth(), sprite.getHeight());
-			            instantiate(game, explosion);
-                        Coin coin = new Coin(game, getX(), getY(), 30, 30);
-			            instantiate(game, coin);
+                        Explosion explosion = new Explosion(game, getX(), getY(), sprite.getWidth(),
+                                sprite.getHeight());
+                        instantiate(game, explosion);
+                        if (new Random().nextDouble() < 0.25)
+                            dropCoin();
                         delete();
                         game.score.changeScore(this);
                         bullet.delete();
@@ -49,6 +51,11 @@ public class Invader extends Entity {
                 }
             }
         }
+    }
+
+    private void dropCoin() {
+        Coin coin = new Coin(game, getX(), getY(), 30, 30);
+        instantiate(game, coin);
     }
 
     public void shootBullet() {

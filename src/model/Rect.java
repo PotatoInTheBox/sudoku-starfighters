@@ -26,11 +26,11 @@ public class Rect extends Entity {
     }
 
     public float getCenterX() {
-        return x + width / 2;
+        return getX() + width / 2;
     }
 
     public float getCenterY() {
-        return y + height / 2;
+        return getY() + height / 2;
     }
 
     public void setCenterX(float x) {

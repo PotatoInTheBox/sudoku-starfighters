@@ -4,7 +4,7 @@ public class Coin extends Entity {
     public Collider collider;
     public Sprite sprite;
 
-    public final static float COIN_SPEED = 2f;
+    public final static float COIN_SPEED = 1.4f;
 
     public Coin(Game game, float x, float y, float width, float height) {
         super(game, x, y);

@@ -155,9 +155,15 @@ public abstract class Entity {
 		if (child.parent != null) {
 			throw new RuntimeException("Child belongs to another parent!");
 		}
+		// check if double child
+		if (children.contains(child)) {
+			System.err.println("Warning! Attempted child twice. Aborting.");
+			return false;
+		}
 		boolean success = children.add(child);
 		if (success) {
 			if (game == null) {
+				// new Exception("No game in Entity when adding child");
 				System.err.println("No game in Entity when adding child");
 			}
 			child.game = game;
@@ -166,7 +172,8 @@ public abstract class Entity {
 			child.parent = this;
 			child.setX(originalX);
 			child.setY(originalY);
-			instantiate(game, child);
+			// check if double instantiation
+			success = instantiate(game, child);
 		} else {
 			System.err.println("Could not add child to " + this);
 		}
@@ -221,19 +228,19 @@ public abstract class Entity {
 
 	private void unfreezeEventHandlers() {
 		for (EventHandler<?> event : keyDownEvents) {
-			Input.onKeyDown((EventHandler<KeyEvent>)event);
+			Input.onKeyDown((EventHandler<KeyEvent>) event);
 		}
 		for (EventHandler<?> event : keyUpEvents) {
-			Input.onKeyUp((EventHandler<KeyEvent>)event);
+			Input.onKeyUp((EventHandler<KeyEvent>) event);
 		}
 	}
 
 	private void freezeEventHandlers() {
 		for (EventHandler<?> event : keyDownEvents) {
-			Input.removeEventHandler((EventHandler<KeyEvent>)event);
+			Input.removeEventHandler((EventHandler<KeyEvent>) event);
 		}
 		for (EventHandler<?> event : keyUpEvents) {
-			Input.removeEventHandler((EventHandler<KeyEvent>)event);
+			Input.removeEventHandler((EventHandler<KeyEvent>) event);
 		}
 	}
 
@@ -243,7 +250,7 @@ public abstract class Entity {
 
 	public void setFrozen(boolean isFrozen) {
 		this.isFrozen = isFrozen;
-		if (isFrozen){
+		if (isFrozen) {
 			freezeEventHandlers();
 		} else {
 			unfreezeEventHandlers();
@@ -254,19 +261,26 @@ public abstract class Entity {
 	 * helper method, instead of asking Game directly to make a new entity,
 	 * we can use .instantiate() within our code to do it for us.
 	 */
-	public void instantiate(Entity entity) {
+	public boolean instantiate(Entity entity) {
 		if (game == null) {
-			System.err.println("Cannot add object because no game is attached!");
-			return;
+			System.err.println(
+					"Cannot add object because no game is attached!");
+			return false;
 		}
-		instantiate(game, entity);
+		return instantiate(game, entity);
 	}
 
-	public static void instantiate(Game game, Entity entity) {
+	public static boolean instantiate(Game game, Entity entity) {
+		if (game.getEntities().contains(entity)) {
+			System.err.println(
+					"Warning! Attempted to instantiate twice. Aborting.\n");
+			return false;
+		}
 		game.addOnSpawnList(() -> {
 			entity.game = game;
 			game.addEntity(entity);
 		});
+		return true;
 	}
 
 	public void delete() {

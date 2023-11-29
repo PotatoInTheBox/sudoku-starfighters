@@ -38,10 +38,29 @@ public class Player extends Entity {
 		float xDir = Input.getJoystickX();
 		float yDir = Input.getJoystickY();
 		if (xDir != 0) {
-			setX(getX() + xDir * speed);
+			move(xDir * speed, 0);
+			for (Entity entity : game.getEntities()) {
+				if (entity.getClass() == House.class) {
+					House house = (House) entity;
+					if (collider.hasCollidedWith(house.collider)) {
+						move(-xDir * speed, 0);
+						break;
+					}
+				}
+			}
 		}
 		if (yDir != 0) {
-			setY(getY() + yDir * speed);
+			move(0, yDir * speed);
+			for (Entity entity : game.getEntities()) {
+				if (entity.getClass() == House.class) {
+					House house = (House) entity;
+					if (collider.hasCollidedWith(house.collider)) {
+						move(0, -yDir * speed);
+						break;
+					}
+				}
+			}
+
 		}
 
 		// bound to map
@@ -55,7 +74,7 @@ public class Player extends Entity {
 
 		/// check if colliding with coin
 		Coin collidedCoin = collidedCoin();
-		if (collidedCoin != null && collidedCoin.isAlive){
+		if (collidedCoin != null && collidedCoin.isAlive) {
 			collidedCoin.delete();
 			coins += 1;
 		}

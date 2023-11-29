@@ -21,6 +21,9 @@ public class InvaderCluster extends Entity {
     private float distanceTravelled = 0f;
     private final int bulletCountLimit = 4;
 
+    private final static float INVADER_WIDTH = 30f;
+    private final static float INVADER_HEIGHT = 30f;
+
     private int startInvadersCount = 0;
 
     private float difficultyLevel = 1f;
@@ -37,7 +40,7 @@ public class InvaderCluster extends Entity {
     private float invaderBulletCount = baseInvaderBulletCount;
     private float invaderDifficultyScalingBulletCount = 1f;
 
-    private static final Color[] INVADER_PALETTE = {Color.PURPLE, Color.BLUE, Color.LIGHTGREEN, Color.RED.brighter()};
+    private static final Color[] INVADER_PALETTE = { Color.PURPLE, Color.BLUE, Color.LIGHTGREEN, Color.RED.brighter() };
     Random random = new Random();
 
     public InvaderCluster(Game game, float x, float y) {
@@ -133,35 +136,56 @@ public class InvaderCluster extends Entity {
         collider.setHeight(maxY - minY);
     }
 
-    public void spawnAllInvaders(float startX, float startY, float width, float height, int xCount, int yCount) {
-        float invaderWidth = 35f;
-        float invaderHeight = 35f;
+    public void spawnAllInvaders(float x, float y, float width, float height, int xCount, int yCount) {
+        InvaderType lastInvaderType = null;
+        Color lastColor = null;
         startInvadersCount = 0;
 
-        width = width - invaderWidth / 2;
-        width = width - invaderHeight / 2;
+        for (int r = 0; r < yCount; r++) {
+            Color color = null;
+            InvaderType invaderType = null;
+            color = getNextUniqueColor(lastColor, color);
+            lastColor = color;
+            invaderType = getNextUniqueSprite(lastInvaderType, invaderType);
+            lastInvaderType = invaderType;
 
-        for (int y = 0; y < yCount; y++) {
-            for (int x = 0; x < xCount; x++) {
-                InvaderType invaderType;
-                switch (Math.floorMod(random.nextInt(), 3)) {
-                    case 0:
-                        invaderType = InvaderType.ONION;
-                        break;
-                    case 1:
-                        invaderType = InvaderType.SPIDER;
-                        break;
-                    default:
-                        invaderType = InvaderType.MUSHROOM;
-                        break;
-                }
-                float spawnX = x * width / (xCount - 1) + startX + invaderWidth / 2;
-                float spawnY = y * height / (yCount - 1) + startY + invaderHeight / 2;
-                Color color = INVADER_PALETTE[Math.floorMod(random.nextInt(), INVADER_PALETTE.length)];
-                spawnInvader(spawnX, spawnY, invaderWidth, invaderHeight, invaderType, color);
+            for (int c = 0; c < xCount; c++) {
+                float spawnX = c * width / xCount + x + INVADER_WIDTH / 2;
+                float spawnY = r * height / yCount + y + INVADER_HEIGHT / 2;
+                spawnInvader(spawnX, spawnY, INVADER_WIDTH, INVADER_HEIGHT, invaderType, color);
                 startInvadersCount += 1;
             }
         }
+    }
+
+    private Color getNextUniqueColor(Color lastColor, Color color) {
+        for (int i = 0; i < 5; i++) {
+            color = INVADER_PALETTE[Math.floorMod(random.nextInt(), INVADER_PALETTE.length)];
+            if (lastColor != color) {
+                break;
+            }
+        }
+        return color;
+    }
+
+    private InvaderType getNextUniqueSprite(InvaderType lastInvaderType, InvaderType invaderType) {
+        for (int i = 0; i < 5; i++) {
+            switch (Math.floorMod(random.nextInt(), 3)) {
+                case 0:
+                    invaderType = InvaderType.ONION;
+                    break;
+                case 1:
+                    invaderType = InvaderType.SPIDER;
+                    break;
+                default:
+                    invaderType = InvaderType.MUSHROOM;
+                    break;
+            }
+            if (lastInvaderType != invaderType) {
+                break;
+            }
+        }
+        return invaderType;
     }
 
     public void spawnInvader(float x, float y, float width, float height, InvaderType invaderType, Color color) {
@@ -169,7 +193,6 @@ public class InvaderCluster extends Entity {
         invader.setInvaderType(invaderType);
         invader.sprite.setColor(color);
         addChild(invader);
-        instantiate(invader);
     }
 
     public void setDifficulty(float amount) {
