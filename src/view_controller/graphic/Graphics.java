@@ -109,7 +109,7 @@ public class Graphics extends VBox {
         //String fpsAverageString = String.format("Average FPS/UPS: %8.4f / %8.4f", fpsAvg, tpsAvg);
 
         //drawText(fpsAverageString, 10, 15);
-        drawText(Integer.toString(game.getScore()), 300, 100, 75, 0.2f);
+        drawText(Integer.toString(game.getScore()), (float)canvas.getWidth()/2, (float)canvas.getHeight()/3, 75, 0.2f);
         for(int i = 0; i<game.getLives(); i++) {
         	drawSprite(getSpriteFromFile("./resources/images/heart.png"), new Point2D(500 + 30*i, 565), new Point2D(25, 25));
         }

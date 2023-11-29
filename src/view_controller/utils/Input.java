@@ -44,18 +44,18 @@ public class Input {
 		putKeyBind(KeyCode.Z, KeyBinding.Type.FIRE);
 		putKeyBind(KeyCode.UP, KeyBinding.Type.MOVE_UP);
 		putKeyBind(KeyCode.DOWN, KeyBinding.Type.MOVE_DOWN);
-		putKeyBind(KeyCode.X, KeyBinding.Type.RAPID_FIRE);
+		//putKeyBind(KeyCode.X, KeyBinding.Type.RAPID_FIRE);
 		putKeyBind(KeyCode.V, KeyBinding.Type.WIREFRAME);
-		putKeyBind(KeyCode.SPACE, KeyBinding.Type.FORCE_UNPAUSE);
-		putKeyBind(KeyCode.G, KeyBinding.Type.GHOST);
+		//putKeyBind(KeyCode.SPACE, KeyBinding.Type.FORCE_UNPAUSE);
+		//putKeyBind(KeyCode.G, KeyBinding.Type.GHOST);
 		putKeyBind(KeyCode.H, KeyBinding.Type.SHOOT_MANY);
-		putKeyBind(KeyCode.DIGIT4, KeyBinding.Type.SPAWN_TURRET);
+		putKeyBind(KeyCode.X, KeyBinding.Type.SPAWN_TURRET);
 	}
 
 	public static KeyCode getKeyFromType(KeyBinding.Type type) {
 		KeyBinding keyBinding = keyBindings.get(type);
 		if (keyBinding == null) {
-			System.err.println("Warning, unbound type in Input: (" + type.name + ")!");
+			System.err.println("Warning, unbound type in Input: \"" + type + "\" Description \"" + type.name + "\"!");
 			return null;
 		}
 		return keyBinding.getKey();

@@ -15,7 +15,8 @@ public class Player extends Entity {
 	private boolean isInvincible = false;
 
 	private final static int TURRET_COST = 3;
-	private final static int SHOOT_COOLDOWN = 20;
+	private final static int SHOOT_COOLDOWN = 30;
+	private final static int SHOOT_QUEUE_BUFFER = 8;
 
 	private int shootCooldown = 0;
 	// private boolean isShootQueued = false;
@@ -111,24 +112,18 @@ public class Player extends Entity {
 		// create button press handlers (eg. shoot weapon)
 		onKeyDown(e -> {
 			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.FIRE))) {
-				shootQueuedCountdown = 8;
+				shootQueuedCountdown = SHOOT_QUEUE_BUFFER;
 				if (shootCooldown <= 0) {
 					shootBullet(0, 0);
 					shootQueuedCountdown = 0;
 					shootCooldown = SHOOT_COOLDOWN;
 				}
 			}
-			// if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.RAPID_FIRE))) {
-			// shootBullet(0, 0);
+			// if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SHOOT_MANY))) {
+			// 	for (int i = 0; i < 50; i++) {
+			// 		shootBullet(i * 4 - 25 * 4, 0);
+			// 	}
 			// }
-			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SHOOT_MANY))) {
-				for (int i = 0; i < 50; i++) {
-					shootBullet(i * 4 - 25 * 4, 0);
-				}
-			}
-			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.GHOST))) {
-				isInvincible = !isInvincible;
-			}
 			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SPAWN_TURRET))) {
 				if (coins < TURRET_COST) {
 					System.out.println("Could not spawn turret, not enough coins.");
