@@ -72,7 +72,7 @@ public class Game {
 
         // spawn houses
         for (int i = 0; i < 3; i++) {
-            spawnAllHouses(i * width/3 + 60, height - 120, 60, 60, 3, 3);
+            spawnAllHouses(i * width/3 + 60, height - 120, 60, 40, 2, 3);
         }
         
         // spawn new invaders
