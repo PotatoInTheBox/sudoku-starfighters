@@ -34,7 +34,9 @@ public class Game {
     private boolean lastIsPaused = false;
     private boolean isPaused = false;
 
+    private static final float BOSS_HP_DIFFICULTY_SCALING = 1.2f;
     private float difficultyLevel = 0f;
+    private int level = 0;
 
     private float width;
     private float height;
@@ -55,9 +57,13 @@ public class Game {
     public void startGame() {
         delete(); // make sure there are no entities in the Game
         spawnPlayer(width - 20, height - 20, 30, 30);
+        Player player = getPlayer();
+        player.setX(width / 2);
+        player.setY(height - player.collider.getHeight() * 1.5f);
         startNewRound();
-        InvaderGoal invaderGoal = new InvaderGoal(this, width/2, yInvaderGoal, width, 2);
+        InvaderGoal invaderGoal = new InvaderGoal(this, width / 2, yInvaderGoal, width, 2);
         Entity.instantiate(this, invaderGoal);
+
     }
 
     public void startNewRound() {
@@ -72,20 +78,28 @@ public class Game {
 
         // spawn houses
         for (int i = 0; i < 3; i++) {
-            spawnAllHouses(i * width/3 + 60, height - 120, 60, 40, 2, 3);
+            spawnAllHouses(i * width / 3 + 60, height - 120, 60, 40, 2, 3);
         }
-        
-        // spawn new invaders
-        InvaderCluster cluster = spawnInvaderCluster(0, 0, width / 2, height / 3);
-        increaseDifficulty();
-        cluster.setDifficulty(difficultyLevel);
 
+        level += 1;
+        
+        if (level % 3 == 0) {
+            // spawn boss
+            InvaderCluster cluster = spawnBoss(0, 0, 200f, 200f, (int)(20 + difficultyLevel * BOSS_HP_DIFFICULTY_SCALING));
+            cluster.setDifficulty(difficultyLevel);
+        } else {
+            // spawn new invaders
+            InvaderCluster cluster = spawnInvaderCluster(0, 0, width / 2, height / 3);
+            cluster.setDifficulty(difficultyLevel);
+        }
+
+        increaseDifficulty();
         startPlayerLife();
     }
 
     private void spawnAllHouses(float x, float y, float width, float height, int rowCount, int colCount) {
-        float houseWidth = width/colCount;
-        float houseHeight = height/rowCount;
+        float houseWidth = width / colCount;
+        float houseHeight = height / rowCount;
         for (int r = 0; r < rowCount; r++) {
             for (int c = 0; c < colCount; c++) {
                 float spawnX = c * width / colCount + x + houseWidth / 2;
@@ -106,9 +120,9 @@ public class Game {
         // delete all bullets
         deleteAllBullets();
         // bullets.clear();
-        Player player = getPlayer();
-        player.setX(width / 2);
-        player.setY(height - player.collider.getHeight() * 1.5f);
+        // Player player = getPlayer();
+        // player.setX(width / 2);
+        // player.setY(height - player.collider.getHeight() * 1.5f);
         isPlayerHit = false;
 
     }
@@ -134,7 +148,7 @@ public class Game {
         }
     }
 
-    private void deleteAllHouses(){
+    private void deleteAllHouses() {
         Iterator<House> houses = getHouses();
         while (houses.hasNext()) {
             House house = houses.next();
@@ -174,6 +188,13 @@ public class Game {
         InvaderCluster cluster = new InvaderCluster(this, 0, 0);
         Entity.instantiate(this, cluster);
         cluster.spawnAllInvaders(x, y, width, height, INVADER_COUNT_X, INVADER_COUNT_Y);
+        return cluster;
+    }
+
+    public InvaderCluster spawnBoss(float x, float y, float width, float height, int maxHp) {
+        InvaderCluster cluster = new InvaderCluster(this, 0, 0);
+        Entity.instantiate(this, cluster);
+        cluster.spawnBoss(x, y, width, height, maxHp);
         return cluster;
     }
 
@@ -332,7 +353,7 @@ public class Game {
 
     public void removeEntity(Entity entity) {
         entities.remove(entity);
-        //entities.remove(entity);
+        // entities.remove(entity);
     }
 
     public void delete() {

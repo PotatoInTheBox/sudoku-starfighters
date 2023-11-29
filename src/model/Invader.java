@@ -13,12 +13,19 @@ public class Invader extends Entity {
 
     private InvaderType invaderType;
 
+    private int hp;
+    private int maxHp;
+    private HealthBar healthBar = null;
+
     public Invader(Game game, float x, float y, float width, float height, float speed) {
         super(game, x, y);
         collider = new Collider(game, 0, 0, width, height);
         collider.setCenter(x, y);
         sprite = new Sprite(game, 0, 0, width, height);
         sprite.setCenter(x, y);
+
+        this.maxHp = 1;
+        this.hp = maxHp;
 
         this.team = Team.INVADERS;
         invaderType = InvaderType.ONION;
@@ -33,6 +40,19 @@ public class Invader extends Entity {
                 Bullet bullet = (Bullet) entity;
                 if (bullet.team == Team.PLAYER) {
                     if (bullet.collider.hasCollidedWith(collider)) {
+                        if (healthBar != null) {
+                            Explosion explosion = new Explosion(game, bullet.getX(), bullet.getY(),
+                                    bullet.sprite.getWidth(), bullet.sprite.getHeight());
+                            instantiate(game, explosion);
+                            bullet.delete();
+                            hp -= 1;
+                            healthBar.setHp(hp);
+                            if (hp > 0) {
+                                continue;
+                            }
+                            game.score.changeScore(500);
+                        }
+
                         // has been hit
                         playHitSound();
                         Explosion explosion = new Explosion(game, getX(), getY(), sprite.getWidth(),
@@ -49,6 +69,22 @@ public class Invader extends Entity {
                         return;
                     }
                 }
+            }
+        }
+    }
+
+    public void setMaxHp(int newMaxHp) {
+        if (this.maxHp == 1) {
+            this.maxHp = newMaxHp;
+            hp = maxHp;
+            healthBar = new HealthBar(game, getX(), sprite.getHeight() / 2 + getY(), sprite.getWidth(), 30f, newMaxHp);
+            addChild(healthBar);
+        } else {
+            this.maxHp = newMaxHp;
+            hp = maxHp;
+            if (healthBar != null) {
+                healthBar.delete();
+                healthBar = null;
             }
         }
     }

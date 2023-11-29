@@ -168,6 +168,18 @@ public class InvaderCluster extends Entity {
         }
     }
 
+    public void spawnBoss(float x, float y, float width, float height, int maxHp) {
+        Color color = null;
+        InvaderType invaderType = null;
+        color = getNextUniqueColor(null, color);
+        invaderType = getNextUniqueSprite(null, invaderType);
+
+        Invader boss = spawnInvader(x, y, width, height, invaderType, color);
+        boss.setMaxHp(maxHp);
+        System.out.println("Boss max HP: " + maxHp);
+        startInvadersCount += 1;
+    }
+
     private Color getNextUniqueColor(Color lastColor, Color color) {
         for (int i = 0; i < 5; i++) {
             color = INVADER_PALETTE[Math.floorMod(random.nextInt(), INVADER_PALETTE.length)];
@@ -198,11 +210,12 @@ public class InvaderCluster extends Entity {
         return invaderType;
     }
 
-    public void spawnInvader(float x, float y, float width, float height, InvaderType invaderType, Color color) {
+    public Invader spawnInvader(float x, float y, float width, float height, InvaderType invaderType, Color color) {
         Invader invader = new Invader(game, x, y, width, height, 2f);
         invader.setInvaderType(invaderType);
         invader.sprite.setColor(color);
         addChild(invader);
+        return invader;
     }
 
     public void setDifficulty(float amount) {
