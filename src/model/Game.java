@@ -22,6 +22,8 @@ public class Game {
      */
     private static final int INVADER_COUNT_X = 5;
     private static final int INVADER_COUNT_Y = 6;
+    public float yTurretSpawnLine;
+    public float yInvaderGoal;
     private List<Entity> entities = new ArrayList<>();
     public Queue<Runnable> markedForRemoval = new ConcurrentLinkedQueue<Runnable>();
     public Queue<Runnable> markedForSpawn = new ConcurrentLinkedQueue<Runnable>();
@@ -46,12 +48,16 @@ public class Game {
     public Game(float width, float height) {
         this.width = width;
         this.height = height;
+        yTurretSpawnLine = height - 150;
+        yInvaderGoal = height - 160;
     }
 
     public void startGame() {
         delete(); // make sure there are no entities in the Game
         spawnPlayer(width - 20, height - 20, 30, 30);
         startNewRound();
+        InvaderGoal invaderGoal = new InvaderGoal(this, width/2, yInvaderGoal, width, 2);
+        Entity.instantiate(this, invaderGoal);
     }
 
     public void startNewRound() {

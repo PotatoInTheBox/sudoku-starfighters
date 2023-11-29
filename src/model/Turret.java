@@ -15,8 +15,12 @@ public class Turret extends Entity {
 
 	private Sprite[] barrelSprites = new Sprite[8];
 	private float barrelLength = 40f;
+	private HealthBar healthBar;
 
 	public Invader currentTarget = null;
+
+	private int hp;
+	private int maxHp = 3;
 
 	public int shootTimer = 0;
 
@@ -30,13 +34,16 @@ public class Turret extends Entity {
 		sprite.setImage("player_ship.png");
 		for (int i = 0; i < barrelSprites.length; i++) {
 			barrelSprites[i] = new Sprite(game, 0, 0, width/3, height/3);
-			barrelSprites[i].setImage("player_ship.png");
+			barrelSprites[i].setImage("empty_pixel.png");
 		}
-		addChild(collider, sprite);
+		hp = maxHp;
+		healthBar = new HealthBar(game, x, y + height, width, 15, maxHp);
+		addChild(collider, healthBar, sprite);
 		addChild(barrelSprites);
 		aimBarrel(0, -1); // aim up initially
 		currentTarget = getNextTarget();
 		shootTimer = 120;
+		
 	}
 
 	@Override
@@ -47,8 +54,9 @@ public class Turret extends Entity {
 				Bullet bullet = (Bullet) entity;
 				if (bullet.team == Team.INVADERS) {
 					if (bullet.collider.hasCollidedWith(collider)) {
+						damage(1);
+						healthBar.setHp(hp);
 						bullet.delete();
-						delete();
 					}
 				}
 			}
@@ -80,9 +88,16 @@ public class Turret extends Entity {
 		shootTimer -= 1;
 	}
 
+	public void damage(int amount) {
+		hp -= 1;
+		if (hp <= 0) {
+			delete();
+		}
+	}
+
 	private void aimBarrel(float dx, float dy) {
 		for (int i = 0; i < barrelSprites.length; i++) {
-			float segLen = i / (float)barrelSprites.length;
+			float segLen = (i + 5) / ((float)barrelSprites.length + 5);
 			barrelSprites[i].setCenter(getX() + segLen * dx * barrelLength, getY() + segLen * dy * barrelLength);
 		}
 	}

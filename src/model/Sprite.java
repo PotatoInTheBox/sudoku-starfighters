@@ -38,6 +38,9 @@ public class Sprite extends Rect {
     }
 
     public Image getImage() {
+        if (sprites.size() == 0){
+            return null;
+        }
         return sprites.get(Math.floorMod(frame, sprites.size()));
     }
 

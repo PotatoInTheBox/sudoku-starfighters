@@ -14,6 +14,13 @@ public class Player extends Entity {
 	private float speed = 3f;
 	private boolean isInvincible = false;
 
+	private final static int TURRET_COST = 3;
+	private final static int SHOOT_COOLDOWN = 20;
+
+	private int shootCooldown = 0;
+	// private boolean isShootQueued = false;
+	private int shootQueuedCountdown = -1;
+
 	public int coins = 0;
 
 	public Player(Game game, float x, float y) {
@@ -60,7 +67,6 @@ public class Player extends Entity {
 					}
 				}
 			}
-
 		}
 
 		// bound to map
@@ -84,20 +90,36 @@ public class Player extends Entity {
 			SoundPlayer.playSound("player_death.wav");
 			game.loseLife();
 		}
+
+		if (shootQueuedCountdown > 0 && shootCooldown <= 0) {
+			shootBullet(0, 0);
+			shootQueuedCountdown = 0;
+			shootCooldown = SHOOT_COOLDOWN;
+		}
+
+		if (shootQueuedCountdown > 0) {
+			shootQueuedCountdown -= 1;
+		}
+
+		if (shootCooldown > 0) {
+			shootCooldown -= 1;
+		}
 	}
 
 	private void createHandlers() {
 		// create button press handlers (eg. shoot weapon)
 		onKeyDown(e -> {
 			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.FIRE))) {
-				// if (getActivePlayerBulletCount() < 1) {
-				// game.shootPlayerBullet(); // better make that shot count xd
-				// }
-				shootBullet(0, 0);
+				shootQueuedCountdown = 8;
+				if (shootCooldown <= 0) {
+					shootBullet(0, 0);
+					shootQueuedCountdown = 0;
+					shootCooldown = SHOOT_COOLDOWN;
+				}
 			}
-			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.RAPID_FIRE))) {
-				shootBullet(0, 0);
-			}
+			// if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.RAPID_FIRE))) {
+			// shootBullet(0, 0);
+			// }
 			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SHOOT_MANY))) {
 				for (int i = 0; i < 50; i++) {
 					shootBullet(i * 4 - 25 * 4, 0);
@@ -107,8 +129,21 @@ public class Player extends Entity {
 				isInvincible = !isInvincible;
 			}
 			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SPAWN_TURRET))) {
-				Turret turret = new Turret(game, getX(), getY(), 20, 20);
+				if (coins < TURRET_COST) {
+					System.out.println("Could not spawn turret, not enough coins.");
+					return;
+				}
+				Collider tempCollider = new Collider(game, getX(), game.yTurretSpawnLine, 20, 20);
+				for (Entity entity : game.getEntities()) {
+					if (entity.getClass() == Turret.class) {
+						if (tempCollider.hasCollidedWith(((Turret) entity).collider)) {
+							return;
+						}
+					}
+				}
+				Turret turret = new Turret(game, getX(), game.yTurretSpawnLine, 30, 20);
 				instantiate(game, turret);
+				coins -= TURRET_COST;
 			}
 		});
 	}
@@ -124,15 +159,15 @@ public class Player extends Entity {
 	 * Push player back into the bounds of the game
 	 */
 	private void bindToGame() {
-		if (collider.isOutOfBounds(0f, 0f, game.getWidth(), game.getHeight())) {
+		if (collider.isOutOfBounds(0f, game.yInvaderGoal, game.getWidth(), game.getHeight())) {
 			if (collider.getX() < 0) {
 				setX(getX() - collider.getX());
 			}
 			if (collider.getX() + collider.getWidth() > game.getWidth()) {
 				setX(game.getWidth() - collider.getWidth() + getX() - collider.getX());
 			}
-			if (collider.getY() < 0) {
-				setY(getY() - collider.getY());
+			if (collider.getY() < game.yInvaderGoal) {
+				setY(getY() - collider.getY() + game.yInvaderGoal);
 			}
 			if (collider.getY() + collider.getHeight() > game.getHeight()) {
 				setY(game.getHeight() - collider.getHeight() + getY() - collider.getY());

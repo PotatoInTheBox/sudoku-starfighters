@@ -100,6 +100,16 @@ public class InvaderCluster extends Entity {
         if (hasClusterReachedEnd()) {
             System.out.println("Game has reached end!");
         }
+
+        // kill player if invader cluster touches goal
+        for (Entity entity : game.getEntities()) {
+            if (entity.getClass() == InvaderGoal.class) {
+                InvaderGoal invaderGoal = (InvaderGoal) entity;
+                if (collider.hasCollidedWith(invaderGoal.collider)) {
+                    game.score.setLives(0);
+                }
+            }
+        }
     }
 
     public void calculateHitBox() {
