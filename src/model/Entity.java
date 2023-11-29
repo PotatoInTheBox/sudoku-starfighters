@@ -9,6 +9,29 @@ import view_controller.utils.Input;
 
 import java.lang.RuntimeException;
 
+/**
+ * Entity is a universal game object that participates in an entity system.
+ * It follows a hierarchical structure with parent and children nodes,
+ * providing a flexible way to organize game objects.
+ * 
+ * This system allows for quickly and easily attaching code and elements into
+ * the game. The system will also handle deleting components for further ease
+ * of access.
+ * 
+ * Example usage:
+ * {@code
+ * 
+ *	Invader invader = new Invader(game);
+ *	Entity.instantiate(game, invader);
+ *
+ * }
+ * Example continued:
+ * {@code
+ * 
+ *	invader.addChild(new Sprite(game));
+ * 
+ * }
+ */
 public abstract class Entity {
 	protected Game game = null;
 	protected float x, y, scale;
@@ -26,12 +49,26 @@ public abstract class Entity {
 	private List<EventHandler<?>> frozenKeyDownEventHandlers = new ArrayList<>();
 	private List<EventHandler<?>> frozenKeyUpEventHandlers = new ArrayList<>();
 
+	/**
+	 * Spawn entity at a given position.
+	 * 
+	 * @param game to instantiate children nodes to.
+	 * @param x    absolute x position
+	 * @param y    absolute x position
+	 */
 	public Entity(Game game, float x, float y) {
 		this.game = game;
 		this.x = x;
 		this.y = y;
 	}
 
+	/**
+	 * Set the position of the entity to a given x position. The x values will
+	 * be treated as absolute so it will use the topmost parent/game
+	 * coordinates.
+	 * 
+	 * @param x absolute x position
+	 */
 	public void setX(float x) {
 		if (this.parent != null) {
 			this.x = x - this.parent.getX();
@@ -41,6 +78,13 @@ public abstract class Entity {
 
 	}
 
+	/**
+	 * Set the position of the entity to a given y position. The y values will
+	 * be treated as absolute so it will use the topmost parent/game
+	 * coordinates.
+	 * 
+	 * @param y absolute y position
+	 */
 	public void setY(float y) {
 		if (this.parent != null) {
 			this.y = y - this.parent.getY();
@@ -49,6 +93,13 @@ public abstract class Entity {
 		}
 	}
 
+	/**
+	 * Get the position of the entity at a given x position. The x values will
+	 * be treated as absolute so it will use the topmost parent/game
+	 * coordinates.
+	 * 
+	 * @param x absolute x position
+	 */
 	public float getX() {
 		// can also be done recursively using .getX()
 		// I'm doing it iteratively in a loop
@@ -61,6 +112,13 @@ public abstract class Entity {
 		return absoluteX;
 	}
 
+	/**
+	 * Get the position of the entity at a given y position. The y values will
+	 * be treated as absolute so it will use the topmost parent/game
+	 * coordinates.
+	 * 
+	 * @param y absolute y position
+	 */
 	public float getY() {
 		// can also be done recursively using .getY()
 		// I'm doing it iteratively in a loop
@@ -73,10 +131,22 @@ public abstract class Entity {
 		return absoluteY;
 	}
 
+	/**
+	 * Set the dx value. This value can later be utilized by any entity to know
+	 * what direction it should move.
+	 * 
+	 * @param newHorizontalSpeed
+	 */
 	public void setDx(float newHorizontalSpeed) {
 		this.dx = newHorizontalSpeed;
 	}
 
+	/**
+	 * Set the dy value. This value can later be utilized by any entity to know
+	 * what direction it should move.
+	 * 
+	 * @param newHorizontalSpeed
+	 */
 	public void setDy(float newVerticalSpeed) {
 		this.dy = newVerticalSpeed;
 	}
