@@ -23,6 +23,10 @@ public class SoundPlayer {
 	private static double sfxVolume = 1d;
 	private static double musicVolume = 1d;
 	private static MediaPlayer currentThemeMusic = null;
+	private static String currentPlayingSong = null;
+
+	public static final String BOSS_THEME_PATH = "boss_theme.mp3";
+	public static final String THEME_SONG_PATH = "theme_song.mp3";
 
 	/**
 	 * Loads all of the sounds effects and songs to be used in the game
@@ -36,8 +40,8 @@ public class SoundPlayer {
 	 * Loads all the songs in the game
 	 */
 	private static void loadAllSongs() {
-		fileNameSongs.add("game_over.mp3");
-		fileNameSongs.add("theme_song.mp3");
+		fileNameSongs.add(THEME_SONG_PATH);
+		fileNameSongs.add(BOSS_THEME_PATH);
 		createMedia();
 	}
 
@@ -50,11 +54,13 @@ public class SoundPlayer {
 		fileNameSounds.add("enemy_shoot.wav");
 		fileNameSounds.add("enemy_death.wav");
 		fileNameSounds.add("enemy_death_2.wav");
+		fileNameSounds.add("game_over.mp3");
 		createSounds();
 	}
 
 	/**
 	 * Sets the volume of all the sounds
+	 * 
 	 * @param newVolume The new volume to set to
 	 */
 	public static void setVolume(double newVolume) {
@@ -64,6 +70,7 @@ public class SoundPlayer {
 
 	/**
 	 * Sets the volume of the effects
+	 * 
 	 * @param newVolume The new volume to set to
 	 */
 	public static void setSfxVolume(double newVolume) {
@@ -73,6 +80,7 @@ public class SoundPlayer {
 
 	/**
 	 * Sets the volume of the music
+	 * 
 	 * @param newVolume The new volume to set to
 	 */
 	public static void setMusicVolume(double newVolume) {
@@ -84,11 +92,34 @@ public class SoundPlayer {
 	 * Starts the theme song
 	 */
 	public static void playMainThemeMusic() {
-		if (currentThemeMusic != null) {
-			// System.err.println("Cannot play theme music, already playing theme music!");
+		if (currentPlayingSong == THEME_SONG_PATH) {
 			return;
 		}
-		currentThemeMusic = playSong("theme_song.mp3", true);
+		if (currentThemeMusic != null) {
+			currentThemeMusic.dispose();
+			currentThemeMusic = null;
+			currentPlayingSong = null;
+		}
+		currentPlayingSong = THEME_SONG_PATH;
+		currentThemeMusic = playSong(THEME_SONG_PATH);
+		currentThemeMusic.setOnEndOfMedia(() -> {
+			currentThemeMusic.seek(Duration.ZERO);
+		});
+	}
+
+	/**
+	 * Starts the boss battle theme song
+	 */
+	public static void playBossThemeMusic() {
+		if (currentPlayingSong == BOSS_THEME_PATH) {
+			return;
+		}
+		if (currentThemeMusic != null) {
+			currentThemeMusic.dispose();
+			currentThemeMusic = null;
+		}
+		currentPlayingSong = BOSS_THEME_PATH;
+		currentThemeMusic = playSong(BOSS_THEME_PATH);
 		currentThemeMusic.setOnEndOfMedia(() -> {
 			currentThemeMusic.seek(Duration.ZERO);
 		});
@@ -107,13 +138,14 @@ public class SoundPlayer {
 
 	/**
 	 * Plays a specific sound
+	 * 
 	 * @param fileName The sound to play
 	 */
 	public static void playSound(String fileName) {
-		if (!sounds.containsKey(fileName)){
+		if (!sounds.containsKey(fileName)) {
 			loadSound(fileName);
 		}
-		if (!sounds.containsKey(fileName)){
+		if (!sounds.containsKey(fileName)) {
 			return;
 		}
 		AudioClip sound = sounds.get(fileName);
@@ -123,11 +155,11 @@ public class SoundPlayer {
 
 	/**
 	 * Plays a specific song
+	 * 
 	 * @param fileName The song to play
-	 * @param isMusic Specifies that the song is music
 	 * @return The Mediaplayer
 	 */
-	public static MediaPlayer playSong(String fileName, boolean isMusic) {
+	public static MediaPlayer playSong(String fileName) {
 		Media media = null;
 
 		if (songs.containsKey(fileName)) {
@@ -135,13 +167,13 @@ public class SoundPlayer {
 		} else {
 			loadSong(fileName);
 		}
-		if (!songs.containsKey(fileName)){
+		if (!songs.containsKey(fileName)) {
 			return null;
 		}
 
 		media = songs.get(fileName);
 		songs.put(fileName, media);
-		
+
 		MediaPlayer mediaPlayer = new MediaPlayer(media);
 		mediaPlayer.setOnEndOfMedia(() -> {
 			// System.out.println("media ended");
@@ -159,18 +191,9 @@ public class SoundPlayer {
 			// System.out.println("media started");
 			if (currentlyPlayingMedia.contains(mediaPlayer) == false)
 				currentlyPlayingMedia.add(mediaPlayer);
-			if (isMusic)
-				mediaPlayer.setVolume(musicVolume * volume);
-			else
-				mediaPlayer.setVolume(sfxVolume * volume);
-		});
-		if (isMusic)
 			mediaPlayer.setVolume(musicVolume * volume);
-		else
-			mediaPlayer.setVolume(sfxVolume * volume);
-		
-		if (!isMusic) 
-			allSfxMedia.add(mediaPlayer);
+		});
+		mediaPlayer.setVolume(musicVolume * volume);
 		mediaPlayer.play();
 		return mediaPlayer;
 	}
@@ -195,6 +218,7 @@ public class SoundPlayer {
 
 	/**
 	 * Loads a specific song
+	 * 
 	 * @param fileName The song to load
 	 */
 	private static void loadSong(String fileName) {
@@ -209,6 +233,7 @@ public class SoundPlayer {
 
 	/**
 	 * Loads a specific sound
+	 * 
 	 * @param fileName The sound to load
 	 */
 	private static void loadSound(String fileName) {
@@ -222,6 +247,7 @@ public class SoundPlayer {
 
 	/**
 	 * Loads an audio file
+	 * 
 	 * @param fileName The audio to load
 	 * @return The file that was loaded
 	 */
@@ -235,8 +261,6 @@ public class SoundPlayer {
 			return null;
 		}
 	}
-
-
 
 	/**
 	 * Updates the overall volume

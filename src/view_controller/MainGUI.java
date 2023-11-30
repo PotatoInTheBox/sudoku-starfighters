@@ -2,7 +2,6 @@ package view_controller;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
@@ -16,11 +15,18 @@ import view_controller.panel.MenuPane;
 import view_controller.panel.OptionsPane;
 import view_controller.sound.SoundPlayer;
 import view_controller.utils.Input;
-import view_controller.utils.KeyBinding;
 
 import java.util.Stack;
 
+/**
+ * MainGUI is the start point of the java application which manages all the
+ * subpanes and allows switching between panes using a stack.
+ */
 public class MainGUI extends Application {
+
+	public static void main(String[] args) {
+		launch(args);
+	}
 
 	private BorderPane rootBorderPane;
 	private GamePane gamePane;
@@ -29,6 +35,7 @@ public class MainGUI extends Application {
 	private KeyBindingsPane keyBindingsPane;
 	private LeaderboardPane leaderboardPane;
 	private Scene scene;
+
 	private Stack<Pane> guiStack;
 
 	@Override
@@ -82,6 +89,7 @@ public class MainGUI extends Application {
 
 	/**
 	 * Adds all the button handlers
+	 * 
 	 * @param scene The scene
 	 */
 	private void addButtonHandlers(Scene scene) {
@@ -125,7 +133,7 @@ public class MainGUI extends Application {
 	 * Instantiates the game
 	 */
 	private void instantiateGame() {
-		if (gamePane != null){
+		if (gamePane != null) {
 			gamePane.delete();
 		}
 		gamePane = new GamePane(scene, optionsPane, 600, 600);
@@ -165,6 +173,7 @@ public class MainGUI extends Application {
 
 	/**
 	 * Pushes the pane to the GUI stack
+	 * 
 	 * @param pane The pane to push
 	 */
 	private void pushAndEnterPane(Pane pane) {
@@ -191,6 +200,7 @@ public class MainGUI extends Application {
 
 	/**
 	 * Changes the continue button if a current game is going
+	 * 
 	 * @param currentPane The current pane
 	 */
 	private void updateContinueButton(Pane currentPane) {
@@ -201,6 +211,7 @@ public class MainGUI extends Application {
 
 	/**
 	 * If a game is currently going
+	 * 
 	 * @return True if there is a game
 	 */
 	private boolean isGameExisting() {
@@ -213,6 +224,7 @@ public class MainGUI extends Application {
 
 	/**
 	 * Selects the theme music to play
+	 * 
 	 * @param currentPane The current pane
 	 */
 	private void chooseThemeMusic(Pane currentPane) {
@@ -226,13 +238,10 @@ public class MainGUI extends Application {
 
 	/**
 	 * Peeks the GUI stack
+	 * 
 	 * @return The Pane that was peeked
 	 */
 	private Pane peekGuiStack() {
 		return guiStack.peek();
-	}
-
-	public static void main(String[] args) {
-		launch(args);
 	}
 }

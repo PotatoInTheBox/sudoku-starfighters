@@ -6,6 +6,7 @@ import java.util.Random;
 import java.lang.Math;
 
 import javafx.scene.paint.Color;
+import view_controller.sound.SoundPlayer;
 
 import java.util.Iterator;
 
@@ -216,11 +217,11 @@ public class InvaderCluster extends Entity {
      * @param maxHp  of the spawned boss
      */
     public void spawnBoss(float x, float y, float width, float height, int maxHp) {
+        SoundPlayer.playBossThemeMusic();
         Color color = null;
         InvaderType invaderType = null;
         color = getNextUniqueColor(null);
         invaderType = getNextUniqueSprite(null);
-
         Invader boss = spawnInvader(x, y, width, height, invaderType, color);
         boss.setMaxHp(maxHp);
         System.out.println("Boss max HP: " + maxHp);

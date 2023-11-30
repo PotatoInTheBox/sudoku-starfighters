@@ -214,7 +214,7 @@ public class GamePane extends StackPane {
     private void loseGame() {
         pauseGame();
         // SoundPlayer.playSound("player_death.wav");
-        SoundPlayer.playSong("game_over.mp3", false);
+        SoundPlayer.playSound("game_over.mp3");
         // eventBlockedPause = true;
         promptGameOver();
     }

@@ -64,6 +64,7 @@ public class Invader extends Entity {
                             if (hp > 0) {
                                 continue;
                             }
+                            SoundPlayer.playMainThemeMusic();
                             game.score.changeScore(500);
                         }
 
