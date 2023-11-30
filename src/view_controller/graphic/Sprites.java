@@ -32,6 +32,11 @@ public class Sprites {
     private static HashMap<Image, Image> coloredImageMap = new HashMap<>();
     private static HashMap<Color, Image> colorToImageAssociation = new HashMap<>();
 
+    /**
+     * Loads an image
+     * @param path The file path to load the image from
+     * @return The loaded image
+     */
     public static Image loadImage(String path) {
 
         // check if it already exists
@@ -56,6 +61,12 @@ public class Sprites {
 
     }
 
+    /**
+     * Gets a colored image
+     * @param image The image to get
+     * @param color The color to change it to
+     * @return The colored image
+     */
     public static Image getColoredImage(Image image, Color color) {
         if (coloredImageMap.containsKey(image) &&
                 colorToImageAssociation.containsKey(color) &&
