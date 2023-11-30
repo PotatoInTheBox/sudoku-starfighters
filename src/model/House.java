@@ -43,6 +43,10 @@ public class House extends Entity {
 		}
 	}
 
+	/**
+	 * Specifies that the house has taken damage
+	 * @param amount The amount of damage taken
+	 */
 	public void damage(int amount) {
 		hp -= 1;
 		if (hp <= 0) {
@@ -51,6 +55,9 @@ public class House extends Entity {
 		chooseCurrentSprite();
 	}
 
+	/**
+	 * Chooses the damage level to display on the house
+	 */
 	private void chooseCurrentSprite() {
 		int imageCount = 4;
 		int hpSelector = (hp * imageCount) / maxHp;
