@@ -1,22 +1,26 @@
 package model;
 
-import javafx.scene.input.KeyCode;
 import view_controller.sound.SoundPlayer;
 import view_controller.utils.Input;
 import view_controller.utils.KeyBinding;
 
 import java.util.Iterator;
 
+/**
+ * Player class is responsible for allowing the player to interact with the
+ * game. The player should be at least be able to move around, shoot invaders,
+ * and pick up coins.
+ */
 public class Player extends Entity {
-	public Collider collider;
-	public Sprite sprite;
-
-	private float speed = 3f;
-	private boolean isInvincible = false;
-
 	private final static int TURRET_COST = 3;
 	private final static int SHOOT_COOLDOWN = 30;
+
 	private final static int SHOOT_QUEUE_BUFFER = 8;
+	public Collider collider;
+
+	public Sprite sprite;
+	private float speed = 3f;
+	private boolean isInvincible = false;
 
 	private int shootCooldown = 0;
 	// private boolean isShootQueued = false;
@@ -24,10 +28,29 @@ public class Player extends Entity {
 
 	public int coins = 0;
 
+	/**
+	 * Create the player at a specified position. The size is automatically
+	 * chosen at 10. Does not instantiate any children or create any handlers.
+	 * 
+	 * @param game to instantiate to
+	 * @param x    absolute x to spawn at (centered)
+	 * @param y    absolute y to spawn at (centered)
+	 */
 	public Player(Game game, float x, float y) {
 		this(game, x, y, 10, 10);
 	}
 
+	/**
+	 * Create the player at a specified location and size. The sprite and
+	 * collider will be instantiated and added as children. The handlers are
+	 * made upon creation of this instance.
+	 * 
+	 * @param game   to instantiate to
+	 * @param x      absolute x to spawn at (children centered)
+	 * @param y      absolute y to spawn at (children centered)
+	 * @param width  to scale collider and sprite to
+	 * @param height to scale collider and sprite to
+	 */
 	public Player(Game game, float x, float y, float width, float height) {
 		super(game, x, y);
 		collider = new Collider(game, 0, 0, width / 2, 2 * height / 3);
@@ -43,6 +66,7 @@ public class Player extends Entity {
 		createHandlers();
 	}
 
+	@Override
 	public void update() {
 		/// handle input
 		float xDir = Input.getJoystickX();
@@ -110,6 +134,9 @@ public class Player extends Entity {
 		}
 	}
 
+	/**
+	 * Create all the button handlers needed for each player button press.
+	 */
 	private void createHandlers() {
 		// create button press handlers (eg. shoot weapon)
 		onKeyDown(e -> {
@@ -122,9 +149,9 @@ public class Player extends Entity {
 				}
 			}
 			// if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SHOOT_MANY))) {
-			// 	for (int i = 0; i < 50; i++) {
-			// 		shootBullet(i * 4 - 25 * 4, 0);
-			// 	}
+			// for (int i = 0; i < 50; i++) {
+			// shootBullet(i * 4 - 25 * 4, 0);
+			// }
 			// }
 			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SPAWN_TURRET))) {
 				if (coins < TURRET_COST) {
@@ -146,6 +173,12 @@ public class Player extends Entity {
 		});
 	}
 
+	/**
+	 * Shoot a bullet going up with sound effect of shooting.
+	 * 
+	 * @param xOffset to displace the bullet by (from the position of the player)
+	 * @param yOffset to displace the bullet by (from the position of the player)
+	 */
 	private void shootBullet(float xOffset, float yOffset) {
 		// shoot bullet if this player can shoot
 		SoundPlayer.playSound("player_shoot.wav");
@@ -154,7 +187,8 @@ public class Player extends Entity {
 	}
 
 	/**
-	 * Push player back into the bounds of the game
+	 * Push player back into the bounds of the game. The bounds include the
+	 * visible game but not the invader section of the game.
 	 */
 	private void bindToGame() {
 		float boundsHeight = game.getHeight() - game.yInvaderGoal;
@@ -174,6 +208,12 @@ public class Player extends Entity {
 		}
 	}
 
+	/**
+	 * Check if the player is colliding with any enemy in the game.
+	 * 
+	 * @return true if colliding with any enemy, false if there is no collision
+	 *         anywhere with the invaders.
+	 */
 	private boolean collidingWithEnemy() {
 		Iterator<Invader> invaders = game.getInvaders();
 		while (invaders.hasNext()) {
@@ -185,6 +225,12 @@ public class Player extends Entity {
 		return false;
 	}
 
+	/**
+	 * Check if the player is colliding with an enemy bullet.
+	 * 
+	 * @return true is colliding with any bullet, false if not colliding with any
+	 *         bullet
+	 */
 	private boolean collidingWithBullet() {
 		Iterator<Bullet> bullets = game.getBullets();
 		while (bullets.hasNext()) {
@@ -196,6 +242,11 @@ public class Player extends Entity {
 		return false;
 	}
 
+	/**
+	 * Check if the player collided with a coin. If so then return that coin.
+	 * 
+	 * @return the coin it collided with, null if no coin was collided with.
+	 */
 	private Coin collidedCoin() {
 		for (Entity entity : game.getEntities()) {
 			if (entity.getClass() == Coin.class) {

@@ -33,21 +33,80 @@ import java.lang.RuntimeException;
  * }
  */
 public abstract class Entity {
+	/**
+	 * Instantiate the given entity into the game loop. This means that the
+	 * added entity will automatically be called by game when needed. Currently,
+	 * this means that the .update() method is called every game loop and all
+	 * keystroke events are handled. In the future this could be expanded to
+	 * also handle .collision() events.
+	 * 
+	 * Instantiated entities will automatically be read by other classes and
+	 * methods when data is needed (colliders for collision, sprites for
+	 * drawing, and other data such as entity type).
+	 * 
+	 * @param game   game to instantiate to
+	 * @param entity to instantiate
+	 * 
+	 * @return whether or not the instantiation was successful.
+	 */
+	public static boolean instantiate(Game game, Entity entity) {
+		if (game.getEntities().contains(entity)) {
+			System.err.println(
+					"Warning! Attempted to instantiate twice. Aborting.\n");
+			return false;
+		}
+		game.addOnSpawnList(() -> {
+			entity.game = game;
+			game.addEntity(entity);
+		});
+		return true;
+	}
+	/**
+	 * Instantiate the given entities into the game loop. This means that the
+	 * added entity will automatically be called by game when needed. Currently,
+	 * this means that the .update() method is called every game loop and all
+	 * keystroke events are handled. In the future this could be expanded to
+	 * also handle .collision() events.
+	 * 
+	 * Instantiated entities will automatically be read by other classes and
+	 * methods when data is needed (colliders for collision, sprites for
+	 * drawing, and other data such as entity type).
+	 * 
+	 * @param game        game to instantiate to
+	 * @param entities... to instantiate
+	 */
+	public static void instantiate(Game game, Entity... entities) {
+		for (Entity entity : entities) {
+			if (game.getEntities().contains(entity)) {
+				System.err.println(
+						"Warning! Attempted to instantiate twice. Aborting.\n");
+				continue;
+			}
+			game.addOnSpawnList(() -> {
+				entity.game = game;
+				game.addEntity(entity);
+			});
+		}
+	}
 	protected Game game = null;
 	protected float x, y, scale;
 	protected float dx = 0f;
 	protected float dy = 0f;
+
 	protected boolean isFrozen = false;
+
 	protected boolean isAlive = true;
-
 	protected Team team = Team.NEUTRAL;
-
 	private Entity parent = null;
 	private List<Entity> children = new ArrayList<>();
+
 	private List<EventHandler<?>> keyDownEvents = new ArrayList<>();
+
 	private List<EventHandler<?>> keyUpEvents = new ArrayList<>();
-	private List<EventHandler<?>> frozenKeyDownEventHandlers = new ArrayList<>();
-	private List<EventHandler<?>> frozenKeyUpEventHandlers = new ArrayList<>();
+	// @SuppressWarnings("unused") // may be needed later, not currently used
+	// private List<EventHandler<?>> frozenKeyDownEventHandlers = new ArrayList<>();
+	// @SuppressWarnings("unused") // may be needed later, not currently used
+	// private List<EventHandler<?>> frozenKeyUpEventHandlers = new ArrayList<>();
 
 	/**
 	 * Spawn entity at a given position.
@@ -190,6 +249,131 @@ public abstract class Entity {
 	}
 
 	/**
+	 * Should be overriden to add functionality for game tick updates. If
+	 * instantiated, the game will be able to call this method on every game
+	 * update. Will not be called as soon as it is deleted with .delete().
+	 */
+	public void update() {
+	}
+
+	/**
+	 * Helper method to add keyevent to entities. The event handlers will be
+	 * automatically added/frozen/deleted when needed. The only thing the
+	 * programmer needs to do is specifiy the Event code that should be run.
+	 * Take great care when modifying any loop inside of an event handler. The
+	 * code could be running inside a for-loop and changing the size of an
+	 * associated for-loop could cause a ConcurrentModification exception.
+	 * 
+	 * @param event to be called when a key is pressed down.
+	 */
+	public void onKeyDown(EventHandler<KeyEvent> event) {
+		Input.onKeyDown(event);
+		keyDownEvents.add(event);
+	}
+
+	/**
+	 * Helper method to add keyevent to entities.
+	 * See
+	 * {@link #onKeyDown(EventHandler event)
+	 * onKeyDown(EventHandler<KeyEvent> event)}
+	 * for more information.
+	 * 
+	 * @param event to be called when a key is released.
+	 */
+	public void onKeyUp(EventHandler<KeyEvent> event) {
+		Input.onKeyUp(event);
+		keyUpEvents.add(event);
+	}
+
+	/**
+	 * Check if the current entity is frozen. Frozen entities temporarily stop
+	 * participating in the events and update() calls.
+	 * 
+	 * @return whether it is currently frozen
+	 */
+	public boolean isFrozen() {
+		return isFrozen;
+	}
+
+	/**
+	 * Set the frozen status of this entity. Frozen entities temporarily stop
+	 * participating in the events and update() calls.
+	 * 
+	 * @param isFrozen new frozen value to set the entity to.
+	 */
+	public void setFrozen(boolean isFrozen) {
+		this.isFrozen = isFrozen;
+		if (isFrozen) {
+			freezeEventHandlers();
+		} else {
+			unfreezeEventHandlers();
+		}
+	}
+
+	/**
+	 * Instantiate the given entity into the game loop. This means that the
+	 * added entity will automatically be called by game when needed. Currently,
+	 * this means that the .update() method is called every game loop and all
+	 * keystroke events are handled. In the future this could be expanded to
+	 * also handle .collision() events.
+	 * 
+	 * Instantiated entities will automatically be read by other classes and
+	 * methods when data is needed (colliders for collision, sprites for
+	 * drawing, and other data such as entity type).
+	 * 
+	 * @return whether or not the instantiation was successful.
+	 */
+	public boolean instantiate() {
+		if (game == null) {
+			System.err.println(
+					"Cannot add object because no game is attached!");
+			return false;
+		}
+		return instantiate(game, this);
+	}
+
+	/**
+	 * Delete this entity from the game loop. Deleting an entity from the game
+	 * loop simply means detaching it from the game objects. The children will
+	 * also subsequently be removed from the game. All parent/child references
+	 * will be removed. This is because .delete() usually means you no longer
+	 * want to use the entity ever again (this is java so all references to
+	 * this entity or children are valid pointers).
+	 * 
+	 * If the entity has to remain inside of the game consider using
+	 * .setFrozen(). If only the parent has to be deleted then use
+	 * {@link #removeChild(Entity child) removeChild(Entity child)} or
+	 * {@link #removeChild(Entity... child) removeChild(Entity... child)}.
+	 * 
+	 */
+	public void delete() {
+		if (game == null) {
+			return;
+		}
+		isAlive = false;
+		game.addOnDeletedList(() -> {
+			for (EventHandler<?> event : keyDownEvents) {
+				Input.removeEventHandler(event);
+			}
+			for (EventHandler<?> event : keyUpEvents) {
+				Input.removeEventHandler(event);
+			}
+			keyDownEvents.clear();
+			keyUpEvents.clear();
+			game.removeEntity(this);
+			for (Entity child : children) {
+				child.delete();
+			}
+			children.clear();
+			if (parent != null) {
+				parent.children.remove(this);
+				parent = null;
+			}
+		});
+
+	}
+
+	/**
 	 * Add a given entity as a child to this current entity. The child will only
 	 * be added if it doesn't have a parent. The entity will NOT be instantiated
 	 * when added as a child (should be manually instantiated if needed).
@@ -243,6 +427,11 @@ public abstract class Entity {
 	}
 
 	/**
+	 * helper method, instead of asking Game directly to make a new entity,
+	 * we can use .instantiate() within our code to do it for us.
+	 */
+
+	/**
 	 * Remove child entity from this entity. The remove child is unassigned from
 	 * parent but is still instantiated.
 	 * 
@@ -281,45 +470,9 @@ public abstract class Entity {
 	}
 
 	/**
-	 * Should be overriden to add functionality for game tick updates. If
-	 * instantiated, the game will be able to call this method on every game
-	 * update. Will not be called as soon as it is deleted.
-	 */
-	public void update() {
-	}
-
-	/**
-	 * Helper method to add keyevent to entities. The event handlers will be
-	 * automatically added/frozen/deleted when needed. The only thing the
-	 * programmer needs to do is specifiy the Event code that should be run.
-	 * Take great care when modifying any loop inside of an event handler. The
-	 * code could be running inside a for-loop and changing the size of an
-	 * associated for-loop could cause a ConcurrentModification exception.
-	 * 
-	 * @param event to be called when a key is pressed down.
-	 */
-	public void onKeyDown(EventHandler<KeyEvent> event) {
-		Input.onKeyDown(event);
-		keyDownEvents.add(event);
-	}
-
-	/**
-	 * Helper method to add keyevent to entities.
-	 * See
-	 * {@link #onKeyDown(EventHandler event)
-	 * onKeyDown(EventHandler<KeyEvent> event)}
-	 * for more information.
-	 * 
-	 * @param event to be called when a key is released.
-	 */
-	public void onKeyUp(EventHandler<KeyEvent> event) {
-		Input.onKeyUp(event);
-		keyUpEvents.add(event);
-	}
-
-	/**
 	 * Unfreeze all event handlers.
 	 */
+	@SuppressWarnings("unchecked")
 	private void unfreezeEventHandlers() {
 		for (EventHandler<?> event : keyDownEvents) {
 			Input.onKeyDown((EventHandler<KeyEvent>) event);
@@ -332,6 +485,7 @@ public abstract class Entity {
 	/**
 	 * Freeze all event handlers.
 	 */
+	@SuppressWarnings("unchecked")
 	private void freezeEventHandlers() {
 		for (EventHandler<?> event : keyDownEvents) {
 			Input.removeEventHandler((EventHandler<KeyEvent>) event);
@@ -339,155 +493,5 @@ public abstract class Entity {
 		for (EventHandler<?> event : keyUpEvents) {
 			Input.removeEventHandler((EventHandler<KeyEvent>) event);
 		}
-	}
-
-	/**
-	 * Check if the current entity is frozen. Frozen entities temporarily stop
-	 * participating in the events and update() calls.
-	 * 
-	 * @return whether it is currently frozen
-	 */
-	public boolean isFrozen() {
-		return isFrozen;
-	}
-
-	/**
-	 * Set the frozen status of this entity. Frozen entities temporarily stop
-	 * participating in the events and update() calls.
-	 * 
-	 * @param isFrozen new frozen value to set the entity to.
-	 */
-	public void setFrozen(boolean isFrozen) {
-		this.isFrozen = isFrozen;
-		if (isFrozen) {
-			freezeEventHandlers();
-		} else {
-			unfreezeEventHandlers();
-		}
-	}
-
-	/**
-	 * helper method, instead of asking Game directly to make a new entity,
-	 * we can use .instantiate() within our code to do it for us.
-	 */
-
-	/**
-	 * Instantiate the given entity into the game loop. This means that the
-	 * added entity will automatically be called by game when needed. Currently,
-	 * this means that the .update() method is called every game loop and all
-	 * keystroke events are handled. In the future this could be expanded to
-	 * also handle .collision() events.
-	 * 
-	 * Instantiated entities will automatically be read by other classes and
-	 * methods when data is needed (colliders for collision, sprites for
-	 * drawing, and other data such as entity type).
-	 * 
-	 * @return whether or not the instantiation was successful.
-	 */
-	public boolean instantiate() {
-		if (game == null) {
-			System.err.println(
-					"Cannot add object because no game is attached!");
-			return false;
-		}
-		return instantiate(game, this);
-	}
-
-	/**
-	 * Instantiate the given entity into the game loop. This means that the
-	 * added entity will automatically be called by game when needed. Currently,
-	 * this means that the .update() method is called every game loop and all
-	 * keystroke events are handled. In the future this could be expanded to
-	 * also handle .collision() events.
-	 * 
-	 * Instantiated entities will automatically be read by other classes and
-	 * methods when data is needed (colliders for collision, sprites for
-	 * drawing, and other data such as entity type).
-	 * 
-	 * @param game   game to instantiate to
-	 * @param entity to instantiate
-	 * 
-	 * @return whether or not the instantiation was successful.
-	 */
-	public static boolean instantiate(Game game, Entity entity) {
-		if (game.getEntities().contains(entity)) {
-			System.err.println(
-					"Warning! Attempted to instantiate twice. Aborting.\n");
-			return false;
-		}
-		game.addOnSpawnList(() -> {
-			entity.game = game;
-			game.addEntity(entity);
-		});
-		return true;
-	}
-
-	/**
-	 * Instantiate the given entities into the game loop. This means that the
-	 * added entity will automatically be called by game when needed. Currently,
-	 * this means that the .update() method is called every game loop and all
-	 * keystroke events are handled. In the future this could be expanded to
-	 * also handle .collision() events.
-	 * 
-	 * Instantiated entities will automatically be read by other classes and
-	 * methods when data is needed (colliders for collision, sprites for
-	 * drawing, and other data such as entity type).
-	 * 
-	 * @param game        game to instantiate to
-	 * @param entities... to instantiate
-	 */
-	public static void instantiate(Game game, Entity... entities) {
-		for (Entity entity : entities) {
-			if (game.getEntities().contains(entity)) {
-				System.err.println(
-						"Warning! Attempted to instantiate twice. Aborting.\n");
-				continue;
-			}
-			game.addOnSpawnList(() -> {
-				entity.game = game;
-				game.addEntity(entity);
-			});
-		}
-	}
-
-	/**
-	 * Delete this entity from the game loop. Deleting an entity from the game
-	 * loop simply means detaching it from the game objects. The children will
-	 * also subsequently be removed from the game. All parent/child references
-	 * will be removed. This is because .delete() usually means you no longer
-	 * want to use the entity ever again (this is java so all references to
-	 * this entity or children are valid pointers).
-	 * 
-	 * If the entity has to remain inside of the game consider using
-	 * .setFrozen(). If only the parent has to be deleted then use
-	 * {@link #removeChild(Entity child) removeChild(Entity child)} or
-	 * {@link #removeChild(Entity... child) removeChild(Entity... child)}.
-	 * 
-	 */
-	public void delete() {
-		if (game == null) {
-			return;
-		}
-		isAlive = false;
-		game.addOnDeletedList(() -> {
-			for (EventHandler<?> event : keyDownEvents) {
-				Input.removeEventHandler(event);
-			}
-			for (EventHandler<?> event : keyUpEvents) {
-				Input.removeEventHandler(event);
-			}
-			keyDownEvents.clear();
-			keyUpEvents.clear();
-			game.removeEntity(this);
-			for (Entity child : children) {
-				child.delete();
-			}
-			children.clear();
-			if (parent != null) {
-				parent.children.remove(this);
-				parent = null;
-			}
-		});
-
 	}
 }

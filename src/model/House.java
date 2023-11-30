@@ -1,15 +1,28 @@
 package model;
 
-import javafx.scene.image.Image;
-
+/**
+ * House represents an obstruction to the invaders (and even the player). The
+ * house has a set hp value and will graphically look more damaged as it loses
+ * hp.
+ */
 public class House extends Entity {
 
 	public Collider collider;
 	public Sprite sprite;
 
+	private static final int MAX_HP = 4;
 	private int hp;
 	private int maxHp;
 
+	/**
+	 * Construct house.
+	 * 
+	 * @param game   to instantiate to
+	 * @param x      absolute x to spawn at (children centered)
+	 * @param y      absolute y to spawn at (children centered)
+	 * @param width  to scale collider and sprite to
+	 * @param height to scale collider and sprite to
+	 */
 	public House(Game game, float x, float y, float width, float height) {
 		super(game, x, y);
 		collider = new Collider(game, 0, 0, width, height);
@@ -19,8 +32,8 @@ public class House extends Entity {
 
 		this.team = Team.PLAYER;
 		this.team = Team.NEUTRAL;
-		hp = 4;
-		maxHp = hp;
+		hp = MAX_HP;
+		maxHp = MAX_HP;
 
 		collider.instantiate();
 		sprite.instantiate();
@@ -43,6 +56,11 @@ public class House extends Entity {
 		}
 	}
 
+	/**
+	 * Damage the house by a given amount. Subtracting the hp.
+	 * 
+	 * @param amount to decrease by
+	 */
 	public void damage(int amount) {
 		hp -= 1;
 		if (hp <= 0) {
@@ -51,6 +69,9 @@ public class House extends Entity {
 		chooseCurrentSprite();
 	}
 
+	/**
+	 * Load the correct sprite depending on the current hp value.
+	 */
 	private void chooseCurrentSprite() {
 		int imageCount = 4;
 		int hpSelector = (hp * imageCount) / maxHp;

@@ -5,19 +5,21 @@ package model;
  * goes down and dissapears once off-screen.
  */
 public class Coin extends Entity {
+    public final static float COIN_SPEED = 1.4f;
+    private final static int COIN_FRAME_DELAY = 30;
+
     public Collider collider;
     public Sprite sprite;
-
-    public final static float COIN_SPEED = 1.4f;
     private int coinFrameCountDown = 0;
-    private final static int COIN_FRAME_DELAY = 30;
 
     /**
      * Coin constructor creates a coin with the given dimensions.
      * 
      * @param game   to instantiate children nodes to.
-     * @param x      absolute x position to place the coin object.
-     * @param y      absolute y position to place the coin object.
+     * @param x      absolute x position to place the coin object (children
+     *               centered).
+     * @param y      absolute y position to place the coin object (children
+     *               centered).
      * @param width  for the coin size.
      * @param height for the coin size.
      */
@@ -41,7 +43,7 @@ public class Coin extends Entity {
             delete();
         }
 
-        if (coinFrameCountDown <= 0){
+        if (coinFrameCountDown <= 0) {
             sprite.nextFrame();
             coinFrameCountDown = COIN_FRAME_DELAY;
         }

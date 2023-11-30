@@ -3,9 +3,11 @@ package model;
 import java.util.Random;
 
 import view_controller.sound.SoundPlayer;
-import java.lang.Math;
-import java.util.Random;
 
+/**
+ * The Invader class is responsible for all Invader logic. The Invader can
+ * shoot, be shot, have hp values greater than 1, and drop coins.
+ */
 public class Invader extends Entity {
 
     public Collider collider;
@@ -17,6 +19,16 @@ public class Invader extends Entity {
     private int maxHp;
     private HealthBar healthBar = null;
 
+    /**
+     * Construct invader.
+     * 
+     * @param game   to instantiate to
+     * @param x      absolute x to spawn at (children centered)
+     * @param y      absolute y to spawn at (children centered)
+     * @param width  to scale collider and sprite to
+     * @param height to scale collider and sprite to
+     * @param speed  of the invader (vertical and horizontal)
+     */
     public Invader(Game game, float x, float y, float width, float height, float speed) {
         super(game, x, y);
         collider = new Collider(game, 0, 0, width, height);
@@ -75,28 +87,29 @@ public class Invader extends Entity {
         }
     }
 
+    /**
+     * Set a new max hp for the invader. If the hp is greater than one then we
+     * make a healthbar to show it has more than 1 hp.
+     * 
+     * @param newMaxHp to set
+     */
     public void setMaxHp(int newMaxHp) {
-        if (this.maxHp == 1) {
+        removeHealthBar();
+        this.maxHp = newMaxHp;
+        if (newMaxHp > 1) {
             this.maxHp = newMaxHp;
             hp = maxHp;
-            healthBar = new HealthBar(game, getX(), sprite.getHeight() / 2 + getY(), sprite.getWidth(), 30f, newMaxHp);
+            healthBar = new HealthBar(game, getX(), sprite.getHeight() / 2 + getY(), sprite.getWidth(), 30f,
+                    newMaxHp);
             healthBar.instantiate();
             addChild(healthBar);
-        } else {
-            this.maxHp = newMaxHp;
-            hp = maxHp;
-            if (healthBar != null) {
-                healthBar.delete();
-                healthBar = null;
-            }
+
         }
     }
 
-    private void dropCoin() {
-        Coin coin = new Coin(game, getX(), getY(), 30, 30);
-        instantiate(game, coin);
-    }
-
+    /**
+     * Shoot an invader bullet going downwards while making a shooting sound.
+     */
     public void shootBullet() {
         SoundPlayer.playSound("enemy_shoot.wav");
         Bullet bullet = new Bullet(game, getX(), getY(), 1, team);
@@ -105,15 +118,31 @@ public class Invader extends Entity {
         bullet.instantiate();
     }
 
+    /**
+     * Set the type of invader this is. The InvaderType can later be used to
+     * determine point counts and invader sprite.
+     * 
+     * @param invaderType to set this invader to.
+     */
     public void setInvaderType(InvaderType invaderType) {
         this.invaderType = invaderType;
         chooseSprites(invaderType);
     }
 
+    /**
+     * Get the invader type this.
+     * 
+     * @return the invader type of this.
+     */
     public InvaderType getInvaderType() {
         return invaderType;
     }
 
+    /**
+     * Get the score that this invader is worth.
+     * 
+     * @return the score worth of the invader as int
+     */
     public int getScoreChange() {
         switch (invaderType) {
             case ONION:
@@ -127,6 +156,28 @@ public class Invader extends Entity {
         }
     }
 
+    /**
+     * Removes any previous health bars.
+     */
+    private void removeHealthBar() {
+        hp = maxHp;
+        if (healthBar != null) {
+            healthBar.delete();
+            healthBar = null;
+        }
+    }
+
+    /**
+     * Drop a coin from the invaders position.
+     */
+    private void dropCoin() {
+        Coin coin = new Coin(game, getX(), getY(), 30, 30);
+        instantiate(game, coin);
+    }
+
+    /**
+     * Play the sound of getting hit, choosing between two types of sounds.
+     */
     private void playHitSound() {
         Random r = new Random();
         if (r.nextBoolean()) {
@@ -136,6 +187,11 @@ public class Invader extends Entity {
         }
     }
 
+    /**
+     * Choose the sprite based on the invader type.
+     * 
+     * @param invaderType type of invader sprite to get.
+     */
     private void chooseSprites(InvaderType invaderType) {
         sprite.clearImages();
         if (invaderType == InvaderType.ONION) {

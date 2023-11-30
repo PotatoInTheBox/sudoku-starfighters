@@ -1,5 +1,12 @@
 package model;
 
+/**
+ * HealthBar represents a health bar. It can be given a maxHp which it will use
+ * to hold the maximum health which is also set as the current health. The
+ * HealthBar will represent health by using heart sprites within its width and
+ * height constraints. Each unit of hp is an individual heart sprite that gets
+ * drawn.
+ */
 public class HealthBar extends Rect {
 
     public Sprite[] sprites;
@@ -7,6 +14,16 @@ public class HealthBar extends Rect {
     private int hp;
     private int maxHp;
 
+    /**
+     * Constructs the HealthBar
+     * 
+     * @param game   to instantiate to
+     * @param x      absolute x to spawn at (children centered)
+     * @param y      absolute y to spawn at
+     * @param width  to scale collider and sprite to
+     * @param height to scale collider and sprite to
+     * @param maxHp  to set the max hp, current hp, and heart sprite count to
+     */
     public HealthBar(Game game, float x, float y, float width, float height, int maxHp) {
         super(game, 0, y, width, height);
         setCenterX(x);
@@ -21,13 +38,9 @@ public class HealthBar extends Rect {
         addChild(sprites);
     }
 
-    @Override
-    public void update() {
-
-    }
-
     /**
      * Sets the HP of the health bar
+     * 
      * @param newHp The HP to set to
      */
     public void setHp(int newHp) {
@@ -41,7 +54,7 @@ public class HealthBar extends Rect {
     /**
      * Updates the sprite images for the health of the turret
      */
-    private void updateSprites(){
+    private void updateSprites() {
         for (int i = 0; i < sprites.length; i++) {
             if (hp - 1 >= i) {
                 sprites[i].setImage("heart.png");

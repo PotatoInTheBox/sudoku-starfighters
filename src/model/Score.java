@@ -2,8 +2,12 @@ package model;
 
 import java.io.Serializable;
 
+/**
+ * The score class contains the current score of the game. It has is
+ * serializable meaning it can be stored on disk.
+ */
 public class Score implements Serializable {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 	private int score;
 	private int lives;
@@ -19,6 +23,7 @@ public class Score implements Serializable {
 
 	/**
 	 * Gets player score
+	 * 
 	 * @return Players current score
 	 */
 	public int getScore() {
@@ -27,14 +32,16 @@ public class Score implements Serializable {
 
 	/**
 	 * Gets player lives
+	 * 
 	 * @return Players current lives
 	 */
 	public int getLives() {
 		return lives;
 	}
-	
+
 	/**
 	 * Gets player coins
+	 * 
 	 * @return Players current coins
 	 */
 	public int getCoins() {
@@ -43,14 +50,16 @@ public class Score implements Serializable {
 
 	/**
 	 * Sets the player's lives
+	 * 
 	 * @param lives The amount of lives to set the player to
 	 */
 	public void setLives(int lives) {
 		this.lives = lives;
 	}
-	
+
 	/**
 	 * Changes the amount of coins the player has
+	 * 
 	 * @param change The amount to change by
 	 */
 	public void changeCoins(int change) {
@@ -59,6 +68,7 @@ public class Score implements Serializable {
 
 	/**
 	 * Gets the user's user name
+	 * 
 	 * @return The current user's name
 	 */
 	public String getUsername() {
@@ -67,6 +77,7 @@ public class Score implements Serializable {
 
 	/**
 	 * Sets the user's name for the leader board
+	 * 
 	 * @param user The user's name
 	 */
 	public void setUsername(String user) {
@@ -75,6 +86,7 @@ public class Score implements Serializable {
 
 	/**
 	 * Changes the Score
+	 * 
 	 * @param change The score amount to change by
 	 */
 	public void changeScore(int change) {
@@ -83,6 +95,7 @@ public class Score implements Serializable {
 
 	/**
 	 * Changes the Score
+	 * 
 	 * @param invader The invader which contains the amount of points to change by
 	 */
 	public void changeScore(Invader invader) {

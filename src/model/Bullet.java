@@ -49,8 +49,10 @@ public class Bullet extends Entity {
 	 * speed depending on the team).
 	 * 
 	 * @param game   to instantiate children nodes to.
-	 * @param x      absolute x position to place the bullet object.
-	 * @param y      absolute y position to place the bullet object.
+	 * @param x      absolute x position to place the bullet object (children
+	 *               centered).
+	 * @param y      absolute y position to place the bullet object (children
+	 *               centered).
 	 * @param width  for the bullet size.
 	 * @param height for the bullet size.
 	 * @param dy     direction/magnitude the bullet should travel along the y-axis.
