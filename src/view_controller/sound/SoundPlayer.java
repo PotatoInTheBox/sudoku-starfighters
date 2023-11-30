@@ -32,12 +32,18 @@ public class SoundPlayer {
 		loadAllSounds();
 	}
 
+	/**
+	 * Loads all the songs in the game
+	 */
 	private static void loadAllSongs() {
 		fileNameSongs.add("game_over.mp3");
 		fileNameSongs.add("theme_song.mp3");
 		createMedia();
 	}
 
+	/**
+	 * Loads all sounds in the game
+	 */
 	private static void loadAllSounds() {
 		fileNameSounds.add("player_shoot.wav");
 		fileNameSounds.add("player_death.wav");
@@ -99,6 +105,10 @@ public class SoundPlayer {
 		}
 	}
 
+	/**
+	 * Plays a specific sound
+	 * @param fileName The sound to play
+	 */
 	public static void playSound(String fileName) {
 		if (!sounds.containsKey(fileName)){
 			loadSound(fileName);
@@ -111,6 +121,12 @@ public class SoundPlayer {
 		sound.play();
 	}
 
+	/**
+	 * Plays a specific song
+	 * @param fileName The song to play
+	 * @param isMusic Specifies that the song is music
+	 * @return The Mediaplayer
+	 */
 	public static MediaPlayer playSong(String fileName, boolean isMusic) {
 		Media media = null;
 
@@ -168,12 +184,19 @@ public class SoundPlayer {
 		}
 	}
 
+	/**
+	 * Creates sounds based on loaded files
+	 */
 	private static void createSounds() {
 		for (String fileName : fileNameSounds) {
 			loadSound(fileName);
 		}
 	}
 
+	/**
+	 * Loads a specific song
+	 * @param fileName The song to load
+	 */
 	private static void loadSong(String fileName) {
 		File file = loadAudioFile(fileName);
 		if (file != null) {
@@ -184,6 +207,10 @@ public class SoundPlayer {
 		}
 	}
 
+	/**
+	 * Loads a specific sound
+	 * @param fileName The sound to load
+	 */
 	private static void loadSound(String fileName) {
 		File file = loadAudioFile(fileName);
 		if (file != null) {
@@ -193,6 +220,11 @@ public class SoundPlayer {
 		}
 	}
 
+	/**
+	 * Loads an audio file
+	 * @param fileName The audio to load
+	 * @return The file that was loaded
+	 */
 	private static File loadAudioFile(String fileName) {
 		String path = "resources/sounds/" + fileName;
 		try {

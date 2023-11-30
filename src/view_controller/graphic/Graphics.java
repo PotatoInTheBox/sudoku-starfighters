@@ -259,6 +259,12 @@ public class Graphics extends VBox {
 
     }
 
+    /**
+     * Draws a wire frame
+     * @param startPoint Start of the wire frame
+     * @param size The size of the lines to draw
+     * @param color The color of the frame
+     */
     private void drawWireframe(Point2D startPoint, Point2D size, Color color) {
         Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);
         Point2D mappedEndPoint = mapGamePointOntoGraphics(size);
@@ -274,6 +280,12 @@ public class Graphics extends VBox {
         gc.strokeLine(x, y + h, x + w, y + h); // down
     }
 
+    /**
+     * Draw a circle wire frame
+     * @param startPoint Start of the wire frame
+     * @param size The size of the lines to draw
+     * @param color The color of the frame
+     */
     private void drawCircleWireframe(Point2D startPoint, Point2D size, Color color) {
         Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);
         Point2D mappedEndPoint = mapGamePointOntoGraphics(size);
@@ -286,6 +298,14 @@ public class Graphics extends VBox {
         gc.strokeOval(x, y, w, h);
     }
 
+    /**
+     * Draws a rectangle
+     * @param x The x coordinate
+     * @param y The y coordinate
+     * @param width The width of the rectangle
+     * @param height The height of the rectangle
+     * @param color The color of the rectangle
+     */
     private void drawRectangle(double x, double y, double width, double height, Color color) {
         gc.setFill(color);
         gc.fillRect(x, y, width, height);
