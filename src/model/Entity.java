@@ -157,7 +157,7 @@ public abstract class Entity {
 	 * be treated as absolute so it will use the topmost parent/game
 	 * coordinates.
 	 * 
-	 * @param x absolute x position
+	 * @return absolute x position
 	 */
 	public float getX() {
 		// can also be done recursively using .getX()
@@ -176,7 +176,7 @@ public abstract class Entity {
 	 * be treated as absolute so it will use the topmost parent/game
 	 * coordinates.
 	 * 
-	 * @param y absolute y position
+	 * @return absolute y position
 	 */
 	public float getY() {
 		// can also be done recursively using .getY()
@@ -194,7 +194,7 @@ public abstract class Entity {
 	 * Set the dx value. This value can later be utilized by any entity to know
 	 * what direction it should move.
 	 * 
-	 * @param newHorizontalSpeed
+	 * @param newHorizontalSpeed The new horizontal speed to set it to
 	 */
 	public void setDx(float newHorizontalSpeed) {
 		this.dx = newHorizontalSpeed;
@@ -204,7 +204,7 @@ public abstract class Entity {
 	 * Set the dy value. This value can later be utilized by any entity to know
 	 * what direction it should move.
 	 * 
-	 * @param newHorizontalSpeed
+	 * @param newVerticalSpeed The new vertical speed to set it to
 	 */
 	public void setDy(float newVerticalSpeed) {
 		this.dy = newVerticalSpeed;
@@ -273,10 +273,6 @@ public abstract class Entity {
 
 	/**
 	 * Helper method to add keyevent to entities.
-	 * See
-	 * {@link #onKeyDown(EventHandler event)
-	 * onKeyDown(EventHandler<KeyEvent> event)}
-	 * for more information.
 	 * 
 	 * @param event to be called when a key is released.
 	 */

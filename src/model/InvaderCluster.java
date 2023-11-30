@@ -209,7 +209,6 @@ public class InvaderCluster extends Entity {
      * determine the size of this invader. A maxHp will also be passed to
      * determine the amount of health this invader will have.
      * 
-     * @param game   to instantiate to
      * @param x      absolute x to spawn at (centered)
      * @param y      absolute y to spawn at (centered)
      * @param width  to scale collider and sprite to
@@ -233,7 +232,6 @@ public class InvaderCluster extends Entity {
      * the size of the invader. The invader type and color will determine the
      * sprite and sprite color of the invader.
      * 
-     * @param game        to instantiate to
      * @param x           absolute x to spawn at (centered)
      * @param y           absolute y to spawn at (centered)
      * @param width       to scale collider and sprite of Invader to

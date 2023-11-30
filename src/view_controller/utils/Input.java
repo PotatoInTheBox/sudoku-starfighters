@@ -273,7 +273,7 @@ public class Input {
 	 * Removes a given event from the event handlers, so it is no longer called
 	 * on new keypresses.
 	 * 
-	 * @param eventHandler to remove
+	 * @param event to remove
 	 */
 	@SuppressWarnings("unchecked")
 	public static void removeEventHandler(EventHandler<?> event) {
