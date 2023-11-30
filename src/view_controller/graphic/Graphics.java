@@ -130,7 +130,7 @@ public class Graphics extends VBox {
         }
         // drawText("Lives: " + Integer.toString(game.getLives()), 10, 45);
         if (game.getPlayer() != null) {
-            drawText("Coins: " + Integer.toString(game.getPlayer().coins), 45, 580, 20, 0.7f);
+            drawText("Coins: " + Integer.toString(game.getPlayer().coins), 45, (float)canvas.getHeight()-20, 20, 0.7f);
         }
 
         try {
