@@ -61,7 +61,7 @@ public class MenuPane extends GridPane {
 		shootTutorial = new Label("Z to Shoot");
 		turretTutorial = new Label("X to Spawn Turret (Costs 3 Coins)");
 
-		gameLogo = getSpriteFromFile("./resources/images/game_logo.png");
+		gameLogo = getSpriteFromFile("./resources/images/Game_Logo.png");
 
 		setAlignment(Pos.CENTER);
 		setHalignment(continueButton, HPos.CENTER);

@@ -1,1 +1,7 @@
 model
+tests
+view_controller
+view_controller.graphic
+view_controller.panel
+view_controller.sound
+view_controller.utils
