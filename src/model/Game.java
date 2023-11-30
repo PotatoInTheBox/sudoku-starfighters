@@ -82,10 +82,11 @@ public class Game {
         }
 
         level += 1;
-        
+
         if (level % 3 == 0) {
             // spawn boss
-            InvaderCluster cluster = spawnBoss(0, 0, 200f, 200f, (int)(20 + difficultyLevel * BOSS_HP_DIFFICULTY_SCALING));
+            InvaderCluster cluster = spawnBoss(0, 0, 200f, 200f,
+                    (int) (20 + difficultyLevel * BOSS_HP_DIFFICULTY_SCALING));
             cluster.setDifficulty(difficultyLevel);
         } else {
             // spawn new invaders

@@ -11,6 +11,8 @@ public class InvaderGoal extends Entity {
         sprite = new Sprite(game, 0, 0, width, height);
         sprite.setCenter(x, y);
 
+        collider.instantiate();
+        sprite.instantiate();
         addChild(collider, sprite);
         sprite.setImage("empty_pixel.png");
     }

@@ -123,7 +123,7 @@ public class Graphics extends VBox {
             if (optionsPane.isWireframeEnabled())
                 drawAllWireFrames();
         } catch (ConcurrentModificationException e) {
-            System.err.println(e);
+            //System.err.println(e);
         }
         
         frameRateTracker.logFrameUpdate();

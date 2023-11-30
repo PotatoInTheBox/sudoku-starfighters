@@ -30,6 +30,8 @@ public class Invader extends Entity {
         this.team = Team.INVADERS;
         invaderType = InvaderType.ONION;
 
+        collider.instantiate();
+        sprite.instantiate();
         addChild(collider, sprite);
     }
 
@@ -78,6 +80,7 @@ public class Invader extends Entity {
             this.maxHp = newMaxHp;
             hp = maxHp;
             healthBar = new HealthBar(game, getX(), sprite.getHeight() / 2 + getY(), sprite.getWidth(), 30f, newMaxHp);
+            healthBar.instantiate();
             addChild(healthBar);
         } else {
             this.maxHp = newMaxHp;
@@ -99,7 +102,7 @@ public class Invader extends Entity {
         Bullet bullet = new Bullet(game, getX(), getY(), 1, team);
         bullet.sprite.setHeight(-bullet.sprite.getHeight()); // flip the bullet
         bullet.sprite.setCenter(getX(), getY());
-        instantiate(bullet);
+        bullet.instantiate();
     }
 
     public void setInvaderType(InvaderType invaderType) {

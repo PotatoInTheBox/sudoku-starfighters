@@ -95,8 +95,8 @@ public class GamePane extends StackPane {
         if (eventBlockedPause){
             return;
         }
-        // cannot unpause while the player is hit
-        if (game.isPlayerHit()){
+        // cannot unpause while the player is hit or game is over
+        if (game.isPlayerHit() || game.isGameOver()){
             return;
         }
         if (!isGamePaused) {

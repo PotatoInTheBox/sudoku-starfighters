@@ -38,7 +38,11 @@ public class Turret extends Entity {
 		}
 		hp = maxHp;
 		healthBar = new HealthBar(game, x, y + height, width, 15, maxHp);
+		collider.instantiate();
+		sprite.instantiate();
+		healthBar.instantiate();
 		addChild(collider, healthBar, sprite);
+		instantiate(game, barrelSprites);
 		addChild(barrelSprites);
 		aimBarrel(0, -1); // aim up initially
 		currentTarget = getNextTarget();
@@ -116,7 +120,7 @@ public class Turret extends Entity {
 		Bullet bullet = new Bullet(game, getX() + xOffset, getY() + yOffset, Bullet.BULLET_PLAYER_SPEED, team);
 		bullet.dx = dx;
 		bullet.dy = dy;
-		instantiate(bullet);
+		bullet.instantiate();
 	}
 
 	private Invader getNextTarget() {

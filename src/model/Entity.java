@@ -135,7 +135,7 @@ public abstract class Entity {
 	 * Set the dx value. This value can later be utilized by any entity to know
 	 * what direction it should move.
 	 * 
-	 * @param newHorizontalSpeed 
+	 * @param newHorizontalSpeed
 	 */
 	public void setDx(float newHorizontalSpeed) {
 		this.dx = newHorizontalSpeed;
@@ -151,84 +151,63 @@ public abstract class Entity {
 		this.dy = newVerticalSpeed;
 	}
 
-	public float getAbsoluteX() {
-		float absoluteX = 0;
-		Entity currEntity = this;
-		while (this != null) {
-			absoluteX += currEntity.getX();
-			currEntity = this.parent;
-		}
-		return absoluteX;
-	}
-
-	// public float getAbsoluteY() {
-	// float absoluteY = this.y;
-	// Entity currEntity = this;
-	// while (this != null) {
-	// absoluteY += currEntity.getY();
-	// currEntity = this.parent;
-	// }
-	// return absoluteY;
-	// }
-
-	// public void setAbsoluteX(float newX) {
-	// Entity currEntity = this;
-	// while (this != null) {
-	// newX -= currEntity.getX();
-	// currEntity = this.parent;
-	// }
-	// this.setX(newX);
-	// }
-
-	// public void setAbsoluteY(float newY) {
-	// Entity currEntity = this;
-	// while (this != null) {
-	// newY -= currEntity.getY();
-	// currEntity = this.parent;
-	// }
-	// this.setY(newY);
-	// }
-
-	public float getDx() {
-		return dx;
-	}
-
-	public float getDy() {
-		return dy;
-	}
-
-	public void setTeam(Team team) {
-		this.team = team;
-	}
-
+	/**
+	 * Get the Team this entity is assigned to.
+	 * 
+	 * @return the Team enum.
+	 */
 	public Team getTeam() {
 		return team;
 	}
 
+	/**
+	 * Move the topmost parent entity by the given delta x and delta y offsets.
+	 * 
+	 * @param dx amount to move by
+	 * @param dy amount to move by
+	 */
 	public void move(float dx, float dy) {
 		setX(getX() + dx);
 		setY(getY() + dy);
 	}
 
+	/**
+	 * Get the parent of this entity (but not the topmost parent).
+	 *
+	 * @return this entitie's parent
+	 */
 	public Entity getParent() {
 		return parent;
 	}
 
+	/**
+	 * Get the entitie's children list. This is the actual list the entity has.
+	 * 
+	 * @return a reference to the entitie's list of children
+	 */
 	public List<Entity> getChildren() {
 		return children;
 	}
 
+	/**
+	 * Add a given entity as a child to this current entity. The child will only
+	 * be added if it doesn't have a parent. The entity will NOT be instantiated
+	 * when added as a child (should be manually instantiated if needed).
+	 * 
+	 * @param child to add to this entity
+	 * @return true if the child was added, false if the child was not added.
+	 */
 	protected boolean addChild(Entity child) {
 		if (child == null) {
 			throw new RuntimeException("Passed child was null!");
-		}
-		if (child.parent != null) {
-			throw new RuntimeException("Child belongs to another parent!");
 		}
 		// check if double child
 		if (children.contains(child)) {
 			System.err.println("Warning! Attempted child twice. Aborting.");
 			return false;
+		}
+		if (child.parent != null) {
+			throw new RuntimeException("Child belongs to another parent!");
 		}
 		boolean success = children.add(child);
 		if (success) {
@@ -243,19 +222,33 @@ public abstract class Entity {
 			child.setX(originalX);
 			child.setY(originalY);
 			// check if double instantiation
-			success = instantiate(game, child);
+			// success = instantiate(game, child);
 		} else {
 			System.err.println("Could not add child to " + this);
 		}
 		return success;
 	}
 
+	/**
+	 * Add multiple children to entity at a time. Does not return success or
+	 * fail. See {@link #addChild(Entity child) addChild(Entity child)} for more
+	 * information.
+	 * 
+	 * @param children to add to this entity.
+	 */
 	protected void addChild(Entity... children) {
 		for (int i = 0; i < children.length; i++) {
 			addChild(children[i]);
 		}
 	}
 
+	/**
+	 * Remove child entity from this entity. The remove child is unassigned from
+	 * parent but is still instantiated.
+	 * 
+	 * @param child
+	 * @return
+	 */
 	protected boolean removeChild(Entity child) {
 		if (child == null) {
 			throw new RuntimeException("Passed child was null!");
@@ -274,6 +267,13 @@ public abstract class Entity {
 		return success;
 	}
 
+	/**
+	 * Remove multiple children from entity at a time. Does not return success
+	 * or fail. See {@link #removeChild(Entity child) removeChild(Entity child)}
+	 * for more information.
+	 * 
+	 * @param children to remove from this entity.
+	 */
 	protected void removeChild(Entity... children) {
 		for (int i = 0; i < children.length; i++) {
 			removeChild(children[i]);
@@ -281,21 +281,45 @@ public abstract class Entity {
 	}
 
 	/**
-	 * Should be overriden to add functionality for game tick updates
+	 * Should be overriden to add functionality for game tick updates. If
+	 * instantiated, the game will be able to call this method on every game
+	 * update. Will not be called as soon as it is deleted.
 	 */
 	public void update() {
 	}
 
+	/**
+	 * Helper method to add keyevent to entities. The event handlers will be
+	 * automatically added/frozen/deleted when needed. The only thing the
+	 * programmer needs to do is specifiy the Event code that should be run.
+	 * Take great care when modifying any loop inside of an event handler. The
+	 * code could be running inside a for-loop and changing the size of an
+	 * associated for-loop could cause a ConcurrentModification exception.
+	 * 
+	 * @param event to be called when a key is pressed down.
+	 */
 	public void onKeyDown(EventHandler<KeyEvent> event) {
 		Input.onKeyDown(event);
 		keyDownEvents.add(event);
 	}
 
+	/**
+	 * Helper method to add keyevent to entities.
+	 * See
+	 * {@link #onKeyDown(EventHandler event)
+	 * onKeyDown(EventHandler<KeyEvent> event)}
+	 * for more information.
+	 * 
+	 * @param event to be called when a key is released.
+	 */
 	public void onKeyUp(EventHandler<KeyEvent> event) {
 		Input.onKeyUp(event);
 		keyUpEvents.add(event);
 	}
 
+	/**
+	 * Unfreeze all event handlers.
+	 */
 	private void unfreezeEventHandlers() {
 		for (EventHandler<?> event : keyDownEvents) {
 			Input.onKeyDown((EventHandler<KeyEvent>) event);
@@ -305,6 +329,9 @@ public abstract class Entity {
 		}
 	}
 
+	/**
+	 * Freeze all event handlers.
+	 */
 	private void freezeEventHandlers() {
 		for (EventHandler<?> event : keyDownEvents) {
 			Input.removeEventHandler((EventHandler<KeyEvent>) event);
@@ -314,10 +341,22 @@ public abstract class Entity {
 		}
 	}
 
+	/**
+	 * Check if the current entity is frozen. Frozen entities temporarily stop
+	 * participating in the events and update() calls.
+	 * 
+	 * @return whether it is currently frozen
+	 */
 	public boolean isFrozen() {
 		return isFrozen;
 	}
 
+	/**
+	 * Set the frozen status of this entity. Frozen entities temporarily stop
+	 * participating in the events and update() calls.
+	 * 
+	 * @param isFrozen new frozen value to set the entity to.
+	 */
 	public void setFrozen(boolean isFrozen) {
 		this.isFrozen = isFrozen;
 		if (isFrozen) {
@@ -331,15 +370,45 @@ public abstract class Entity {
 	 * helper method, instead of asking Game directly to make a new entity,
 	 * we can use .instantiate() within our code to do it for us.
 	 */
-	public boolean instantiate(Entity entity) {
+
+	/**
+	 * Instantiate the given entity into the game loop. This means that the
+	 * added entity will automatically be called by game when needed. Currently,
+	 * this means that the .update() method is called every game loop and all
+	 * keystroke events are handled. In the future this could be expanded to
+	 * also handle .collision() events.
+	 * 
+	 * Instantiated entities will automatically be read by other classes and
+	 * methods when data is needed (colliders for collision, sprites for
+	 * drawing, and other data such as entity type).
+	 * 
+	 * @return whether or not the instantiation was successful.
+	 */
+	public boolean instantiate() {
 		if (game == null) {
 			System.err.println(
 					"Cannot add object because no game is attached!");
 			return false;
 		}
-		return instantiate(game, entity);
+		return instantiate(game, this);
 	}
 
+	/**
+	 * Instantiate the given entity into the game loop. This means that the
+	 * added entity will automatically be called by game when needed. Currently,
+	 * this means that the .update() method is called every game loop and all
+	 * keystroke events are handled. In the future this could be expanded to
+	 * also handle .collision() events.
+	 * 
+	 * Instantiated entities will automatically be read by other classes and
+	 * methods when data is needed (colliders for collision, sprites for
+	 * drawing, and other data such as entity type).
+	 * 
+	 * @param game   game to instantiate to
+	 * @param entity to instantiate
+	 * 
+	 * @return whether or not the instantiation was successful.
+	 */
 	public static boolean instantiate(Game game, Entity entity) {
 		if (game.getEntities().contains(entity)) {
 			System.err.println(
@@ -353,7 +422,52 @@ public abstract class Entity {
 		return true;
 	}
 
+	/**
+	 * Instantiate the given entities into the game loop. This means that the
+	 * added entity will automatically be called by game when needed. Currently,
+	 * this means that the .update() method is called every game loop and all
+	 * keystroke events are handled. In the future this could be expanded to
+	 * also handle .collision() events.
+	 * 
+	 * Instantiated entities will automatically be read by other classes and
+	 * methods when data is needed (colliders for collision, sprites for
+	 * drawing, and other data such as entity type).
+	 * 
+	 * @param game        game to instantiate to
+	 * @param entities... to instantiate
+	 */
+	public static void instantiate(Game game, Entity... entities) {
+		for (Entity entity : entities) {
+			if (game.getEntities().contains(entity)) {
+				System.err.println(
+						"Warning! Attempted to instantiate twice. Aborting.\n");
+				continue;
+			}
+			game.addOnSpawnList(() -> {
+				entity.game = game;
+				game.addEntity(entity);
+			});
+		}
+	}
+
+	/**
+	 * Delete this entity from the game loop. Deleting an entity from the game
+	 * loop simply means detaching it from the game objects. The children will
+	 * also subsequently be removed from the game. All parent/child references
+	 * will be removed. This is because .delete() usually means you no longer
+	 * want to use the entity ever again (this is java so all references to
+	 * this entity or children are valid pointers).
+	 * 
+	 * If the entity has to remain inside of the game consider using
+	 * .setFrozen(). If only the parent has to be deleted then use
+	 * {@link #removeChild(Entity child) removeChild(Entity child)} or
+	 * {@link #removeChild(Entity... child) removeChild(Entity... child)}.
+	 * 
+	 */
 	public void delete() {
+		if (game == null) {
+			return;
+		}
 		isAlive = false;
 		game.addOnDeletedList(() -> {
 			for (EventHandler<?> event : keyDownEvents) {

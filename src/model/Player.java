@@ -37,6 +37,8 @@ public class Player extends Entity {
 
 		this.team = Team.PLAYER;
 
+		collider.instantiate();
+		sprite.instantiate();
 		addChild(collider, sprite);
 		createHandlers();
 	}
@@ -148,7 +150,7 @@ public class Player extends Entity {
 		// shoot bullet if this player can shoot
 		SoundPlayer.playSound("player_shoot.wav");
 		Bullet bullet = new Bullet(game, getX() + xOffset, getY() + yOffset, -1, team);
-		instantiate(bullet);
+		bullet.instantiate();
 	}
 
 	/**

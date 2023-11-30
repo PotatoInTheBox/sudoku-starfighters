@@ -22,6 +22,8 @@ public class House extends Entity {
 		hp = 4;
 		maxHp = hp;
 
+		collider.instantiate();
+		sprite.instantiate();
 		addChild(collider, sprite);
 		chooseCurrentSprite();
 	}

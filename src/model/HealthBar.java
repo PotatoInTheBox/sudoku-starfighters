@@ -16,6 +16,8 @@ public class HealthBar extends Rect {
 
         createHealthSprites();
         updateSprites();
+
+        instantiate(game, sprites);
         addChild(sprites);
     }
 

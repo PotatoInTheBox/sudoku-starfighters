@@ -46,6 +46,7 @@ public class InvaderCluster extends Entity {
     public InvaderCluster(Game game, float x, float y) {
         super(game, x, y);
         collider = new Collider(game, 0, 0, 0, 0);
+        collider.instantiate();
         addChild(collider);
     }
 
@@ -214,6 +215,7 @@ public class InvaderCluster extends Entity {
         Invader invader = new Invader(game, x, y, width, height, 2f);
         invader.setInvaderType(invaderType);
         invader.sprite.setColor(color);
+        invader.instantiate();
         addChild(invader);
         return invader;
     }

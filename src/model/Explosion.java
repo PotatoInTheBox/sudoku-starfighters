@@ -12,6 +12,9 @@ public class Explosion extends Entity {
 		collider.setCenter(x, y);
 		sprite = new Sprite(game, 0, 0, width, height, "destruction_frame.png");
         sprite.setCenter(x, y);
+        
+        collider.instantiate();
+        sprite.instantiate();
         addChild(collider, sprite);
     }
 

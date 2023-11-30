@@ -29,6 +29,8 @@ public class Coin extends Entity {
         sprite.addImage("coin_frame1.png", "coin_frame2.png", "coin_frame3.png", "coin_frame4.png");
         sprite.setCenter(x, y);
 
+        collider.instantiate();
+        sprite.instantiate();
         addChild(collider, sprite);
     }
 
