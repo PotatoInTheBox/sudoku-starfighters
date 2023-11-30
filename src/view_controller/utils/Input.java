@@ -49,6 +49,7 @@ public class Input {
 	 * @param scene to get information about key events from.
 	 */
 	public static void setScene(Scene scene) {
+		Input.scene = scene;
 		assignButtonHandlers();
 		putKeyBind(KeyCode.LEFT, KeyBinding.Type.MOVE_LEFT);
 		putKeyBind(KeyCode.RIGHT, KeyBinding.Type.MOVE_RIGHT);
