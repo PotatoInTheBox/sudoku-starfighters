@@ -115,6 +115,13 @@ public class Turret extends Entity {
 		}
 	}
 
+	/**
+	 * Shoots a bullet at a specified location
+	 * @param xOffset Offset of the X coordinate
+	 * @param yOffset Offset of the Y coordinate
+	 * @param dx X coordinate
+	 * @param dy Y coordinate
+	 */
 	private void shootBullet(float xOffset, float yOffset, float dx, float dy) {
 		SoundPlayer.playSound("player_shoot.wav");
 		Bullet bullet = new Bullet(game, getX() + xOffset, getY() + yOffset, Bullet.BULLET_PLAYER_SPEED, team);
@@ -123,6 +130,10 @@ public class Turret extends Entity {
 		bullet.instantiate();
 	}
 
+	/**
+	 * Gets the next invader to target
+	 * @return The targeted invader
+	 */
 	private Invader getNextTarget() {
 		int invaderCount = 0;
 		Iterator<Invader> invaders = game.getInvaders();
