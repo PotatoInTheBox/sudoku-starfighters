@@ -29,6 +29,13 @@ import view_controller.utils.FrameRateTracker;
 import view_controller.utils.Input;
 import view_controller.utils.KeyBinding;
 
+/**
+ * GamePane is the pane that is responsible for presenting the game to the
+ * player. It uses the Graphics and Game to produce the Space Invaders game.
+ * The Game object itself doesn't have a concept of time so this GamePane
+ * controls the framerates for graphics and game updates. If the game
+ * wins/loses/pauses the GamePane handles setting the game back up.
+ */
 public class GamePane extends StackPane {
 
     public Game game;
@@ -46,6 +53,15 @@ public class GamePane extends StackPane {
     private boolean isRenderPaused = false;
     private boolean eventBlockedPause = false;
 
+    /**
+     * GamePane constructor which makes the gamepane, game, graphics, and starts
+     * the game.
+     * 
+     * @param scene       to attach to
+     * @param optionsPane to get options from
+     * @param width       of the this gamepane/game/graphics
+     * @param height      of the this gamepane/game/graphics
+     */
     public GamePane(Scene scene, OptionsPane optionsPane, double width, double height) {
         this.scene = scene;
         this.optionsPane = optionsPane;
@@ -92,11 +108,11 @@ public class GamePane extends StackPane {
      */
     public void unpauseGame() {
         // cannot unpause if an event is blocking it
-        if (eventBlockedPause){
+        if (eventBlockedPause) {
             return;
         }
         // cannot unpause while the player is hit or game is over
-        if (game.isPlayerHit() || game.isGameOver()){
+        if (game.isPlayerHit() || game.isGameOver()) {
             return;
         }
         if (!isGamePaused) {

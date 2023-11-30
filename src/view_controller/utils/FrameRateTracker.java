@@ -1,5 +1,10 @@
 package view_controller.utils;
 
+/**
+ * FrameRateTracker is a tool for keeping track of how much time has passed.
+ * More specifically it can keep track of how many updates have been made in
+ * a given time interval. This is useful for debugging.
+ */
 public class FrameRateTracker {
 
     private long lastFpsTime = 0l;
@@ -10,6 +15,7 @@ public class FrameRateTracker {
 
     /**
      * Tracks the frame rate
+     * 
      * @param frameCounterBufferSize Adjusts the buffer
      */
     public FrameRateTracker(int frameCounterBufferSize) {
@@ -37,6 +43,7 @@ public class FrameRateTracker {
 
     /**
      * Gets the average duration for an update method call
+     * 
      * @return The average duration
      */
     public double getAverageUpdate() {

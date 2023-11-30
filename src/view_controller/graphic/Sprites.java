@@ -26,6 +26,12 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
+/**
+ * Sprites is responsible for keeping a cache of all the images for the game.
+ * It helps with loading the sprites from a file or retrieving the already
+ * loaded sprite. It also has the ability to change the colors of the sprite and
+ * cache that result too.
+ */
 public class Sprites {
 
     private static HashMap<String, Image> imageMap = new HashMap<>();
@@ -34,6 +40,7 @@ public class Sprites {
 
     /**
      * Loads an image
+     * 
      * @param path The file path to load the image from
      * @return The loaded image
      */
@@ -63,6 +70,7 @@ public class Sprites {
 
     /**
      * Gets a colored image
+     * 
      * @param image The image to get
      * @param color The color to change it to
      * @return The colored image
@@ -73,25 +81,27 @@ public class Sprites {
                 colorToImageAssociation.get(color) == coloredImageMap.get(image)) {
             return coloredImageMap.get(image);
         }
-        Image newImage = debugTempReColor(image, Color.WHITE, color);
+        Image newImage = reColor(image, Color.WHITE, color);
         coloredImageMap.put(image, newImage);
         colorToImageAssociation.put(color, newImage);
         return newImage;
     }
 
     /**
-     * reColor the given InputImage to the given color
-     * inspired by https://stackoverflow.com/a/12945629/1497139
+     * Create a new image with replaced colors from a given image and target
+     * colors.
+     * 
+     * StackOverflow snippet changed to fix bugs and work with the project needs.
      * 
      * @author Wolfgang Fahl https://stackoverflow.com/a/51726678
-     * 
-     * @param inputImage
-     * @param oldColor
-     * @param newColor
-     * @return reColored Image
-     * 
+     *         Author's notes: "reColor the given InputImage to the given color
+     *         inspired by https://stackoverflow.com/a/12945629/1497139"
+     * @param inputImage to generate from
+     * @param oldColor   to replace
+     * @param newColor   to set replaced color to
+     * @return Image with the newly generated pixel colors
      */
-    public static Image debugTempReColor(Image inputImage, Color oldColor, Color newColor) {
+    public static Image reColor(Image inputImage, Color oldColor, Color newColor) {
         int W = (int) inputImage.getWidth();
         int H = (int) inputImage.getHeight();
         WritableImage outputImage = new WritableImage(W, H);

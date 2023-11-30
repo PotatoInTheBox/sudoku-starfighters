@@ -22,18 +22,22 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
+/**
+ * Menu pane contains the actual buttons for each button option. It doesn't not
+ * provide any functionality other than event handlers which listen for button
+ * presses.
+ */
 public class MenuPane extends GridPane {
 	private Button continueButton;
 	private Button newGameButton;
 	private Button optionsButton;
 	private Button exitButton;
 	private Button leaderboardButton;
-	
-    private Image gameLogo;
-    private Label moveTutorial;
-    private Label shootTutorial;
-    private Label turretTutorial;
 
+	private Image gameLogo;
+	private Label moveTutorial;
+	private Label shootTutorial;
+	private Label turretTutorial;
 
 	private List<EventHandler<ActionEvent>> continueGameHandlers = new ArrayList<>();
 	private List<EventHandler<ActionEvent>> newGameHandlers = new ArrayList<>();
@@ -41,6 +45,10 @@ public class MenuPane extends GridPane {
 	private List<EventHandler<ActionEvent>> optionsHandlers = new ArrayList<>();
 	private List<EventHandler<ActionEvent>> exitHandlers = new ArrayList<>();
 
+	/**
+	 * Create the menu pane with continue, newgame, leaderboard, and options
+	 * buttons.
+	 */
 	public MenuPane() {
 		this.getStyleClass().add("main-menu");
 		continueButton = new Button("Continue");
@@ -48,12 +56,12 @@ public class MenuPane extends GridPane {
 		leaderboardButton = new Button("Leaderboard");
 		optionsButton = new Button("Options");
 		exitButton = new Button("Exit");
-		
+
 		moveTutorial = new Label("Arrow Keys to Move");
 		shootTutorial = new Label("Z to Shoot");
 		turretTutorial = new Label("X to Spawn Turret (Costs 3 Coins)");
-		
-        gameLogo = getSpriteFromFile("./resources/images/game_logo.png");
+
+		gameLogo = getSpriteFromFile("./resources/images/game_logo.png");
 
 		setAlignment(Pos.CENTER);
 		setHalignment(continueButton, HPos.CENTER);
@@ -64,21 +72,20 @@ public class MenuPane extends GridPane {
 
 		setVgap(20);
 
-        ImageView logoView = new ImageView(gameLogo);
-        logoView.setFitWidth(400);
-        logoView.setFitHeight(200);
-        setConstraints(logoView, 0, 0);
-        getChildren().add(logoView);
-        
-        setConstraints(moveTutorial, 0, 5);
-        setConstraints(shootTutorial, 0, 6);
-        setConstraints(turretTutorial, 0, 7);
-        
-		addColumn(0, continueButton, newGameButton, leaderboardButton, optionsButton, exitButton);
-		
-        getChildren().addAll(moveTutorial, shootTutorial, turretTutorial);
+		ImageView logoView = new ImageView(gameLogo);
+		logoView.setFitWidth(400);
+		logoView.setFitHeight(200);
+		setConstraints(logoView, 0, 0);
+		getChildren().add(logoView);
 
-		
+		setConstraints(moveTutorial, 0, 5);
+		setConstraints(shootTutorial, 0, 6);
+		setConstraints(turretTutorial, 0, 7);
+
+		addColumn(0, continueButton, newGameButton, leaderboardButton, optionsButton, exitButton);
+
+		getChildren().addAll(moveTutorial, shootTutorial, turretTutorial);
+
 		continueButton.setOnAction(e -> {
 			for (EventHandler<ActionEvent> event : continueGameHandlers)
 				event.handle(e);
@@ -103,6 +110,7 @@ public class MenuPane extends GridPane {
 
 	/**
 	 * Continue game handler
+	 * 
 	 * @param eventHandler The event
 	 */
 	public void onContinueGame(EventHandler<ActionEvent> eventHandler) {
@@ -111,6 +119,7 @@ public class MenuPane extends GridPane {
 
 	/**
 	 * On New Game handler
+	 * 
 	 * @param eventHandler The event
 	 */
 	public void onNewGame(EventHandler<ActionEvent> eventHandler) {
@@ -119,6 +128,7 @@ public class MenuPane extends GridPane {
 
 	/**
 	 * On Leader board handler
+	 * 
 	 * @param eventHandler The event
 	 */
 	public void onLeaderboard(EventHandler<ActionEvent> eventHandler) {
@@ -127,6 +137,7 @@ public class MenuPane extends GridPane {
 
 	/**
 	 * Continue game handler
+	 * 
 	 * @param eventHandler The event
 	 */
 	public void onOptions(EventHandler<ActionEvent> eventHandler) {
@@ -135,6 +146,7 @@ public class MenuPane extends GridPane {
 
 	/**
 	 * On exit handler
+	 * 
 	 * @param eventHandler The event
 	 */
 	public void onExit(EventHandler<ActionEvent> eventHandler) {
@@ -143,26 +155,28 @@ public class MenuPane extends GridPane {
 
 	/**
 	 * Disables the continue button
+	 * 
 	 * @param disable The state of the continue button
 	 */
-	public void setDisableContinueButton(boolean disable){
+	public void setDisableContinueButton(boolean disable) {
 		continueButton.setDisable(disable);
 	}
-	
+
 	/**
 	 * Retrieves a sprite from a file
+	 * 
 	 * @param path The path of the sprite
 	 * @return The sprite
 	 */
-    private Image getSpriteFromFile(String path) {
-        FileInputStream playerImageFile;
-        try {
-            playerImageFile = new FileInputStream(path);
-            Image sprite = new Image(playerImageFile);
-            return sprite;
-        } catch (FileNotFoundException e) {
-            System.out.println("Could not find" + path);
-            return null;
-        }
-    }
+	private Image getSpriteFromFile(String path) {
+		FileInputStream playerImageFile;
+		try {
+			playerImageFile = new FileInputStream(path);
+			Image sprite = new Image(playerImageFile);
+			return sprite;
+		} catch (FileNotFoundException e) {
+			System.out.println("Could not find" + path);
+			return null;
+		}
+	}
 }

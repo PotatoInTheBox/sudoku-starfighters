@@ -6,19 +6,21 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
+/**
+ * SoundPlayer is responsible for loading and playing song and sounds. It allows
+ * other classes to simply play any requested file from the project resources.
+ */
 public class SoundPlayer {
 	public static HashMap<String, Media> songs = new HashMap<>();
 	public static HashMap<String, AudioClip> sounds = new HashMap<>();
 	public static ArrayList<String> fileNameSongs = new ArrayList<>();
 	public static ArrayList<String> fileNameSounds = new ArrayList<>();
 	private static List<MediaPlayer> currentlyPlayingMedia = new ArrayList<>();
-	private static List<MediaPlayer> allSfxMedia = new ArrayList<>();
 	private static double volume = 1d;
 	private static double sfxVolume = 1d;
 	private static double musicVolume = 1d;

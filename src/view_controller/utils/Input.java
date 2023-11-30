@@ -19,6 +19,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 // Input class for delivering input to the Game.
 // To simplify Game logic, considering having more specific methods such as
 // `onJump(EventHandler e)`.
+/**
+ * Input is responsible for handling all input from the player. When the user
+ * presses down a key, the Input class is able to call any methods listening for
+ * key events.
+ */
 public class Input {
 	private static Scene scene;
 
@@ -36,22 +41,34 @@ public class Input {
 	// private HashMap<KeyBinding.Type, EventHandler<KeyEvent>>
 	// keyBindReleasedHandlers = new HashMap<>();
 
+	/**
+	 * Assign the static Input a scene to collect button information from. When
+	 * the user presses a key, the events will be detected by the scene. So the
+	 * Input class will need to get that data from scene.
+	 * 
+	 * @param scene to get information about key events from.
+	 */
 	public static void setScene(Scene scene) {
-		Input.scene = scene;
 		assignButtonHandlers();
 		putKeyBind(KeyCode.LEFT, KeyBinding.Type.MOVE_LEFT);
 		putKeyBind(KeyCode.RIGHT, KeyBinding.Type.MOVE_RIGHT);
 		putKeyBind(KeyCode.Z, KeyBinding.Type.FIRE);
 		putKeyBind(KeyCode.UP, KeyBinding.Type.MOVE_UP);
 		putKeyBind(KeyCode.DOWN, KeyBinding.Type.MOVE_DOWN);
-		//putKeyBind(KeyCode.X, KeyBinding.Type.RAPID_FIRE);
+		// putKeyBind(KeyCode.X, KeyBinding.Type.RAPID_FIRE);
 		putKeyBind(KeyCode.V, KeyBinding.Type.WIREFRAME);
-		//putKeyBind(KeyCode.SPACE, KeyBinding.Type.FORCE_UNPAUSE);
-		//putKeyBind(KeyCode.G, KeyBinding.Type.GHOST);
-		putKeyBind(KeyCode.H, KeyBinding.Type.SHOOT_MANY);
+		// putKeyBind(KeyCode.SPACE, KeyBinding.Type.FORCE_UNPAUSE);
+		// putKeyBind(KeyCode.G, KeyBinding.Type.GHOST);
+		// putKeyBind(KeyCode.H, KeyBinding.Type.SHOOT_MANY);
 		putKeyBind(KeyCode.X, KeyBinding.Type.SPAWN_TURRET);
 	}
 
+	/**
+	 * Convert a KeyBinding type into its associated key.
+	 * 
+	 * @param type keybinding type to read key from
+	 * @return the key the keybinding is associated with
+	 */
 	public static KeyCode getKeyFromType(KeyBinding.Type type) {
 		KeyBinding keyBinding = keyBindings.get(type);
 		if (keyBinding == null) {
@@ -74,6 +91,12 @@ public class Input {
 		keyPressedHandlers.add(eventHandler);
 	}
 
+	/**
+	 * Removes a given event from the event handler, so it is no longer called
+	 * on new keypresses.
+	 * 
+	 * @param eventHandler to remove
+	 */
 	public static void removeOnKeyDown(EventHandler<KeyEvent> eventHandler) {
 		if (keyPressedHandlers.contains(eventHandler)) {
 			markedKeyPressedHandlers.add(eventHandler);
@@ -93,6 +116,12 @@ public class Input {
 		keyReleasedHandlers.add(eventHandler);
 	}
 
+	/**
+	 * Removes a given event from the event handler, so it is no longer called
+	 * on new keypresses.
+	 * 
+	 * @param eventHandler to remove
+	 */
 	public static void removeOnKeyUp(EventHandler<KeyEvent> eventHandler) {
 		if (keyReleasedHandlers.contains(eventHandler)) {
 			markedKeyReleasedHandlers.add(eventHandler);
@@ -219,14 +248,32 @@ public class Input {
 		});
 	}
 
+	/**
+	 * Makes a new keybinding association with the given type being the hashkey
+	 * that maps onto a keycode value.
+	 * 
+	 * @param key  keycode to assign as value
+	 * @param type keybinding type to assign as the key which points to keycode
+	 */
 	private static void putKeyBind(KeyCode key, KeyBinding.Type type) {
 		keyBindings.put(type, new KeyBinding(key, type));
 	}
 
+	/**
+	 * Get a Collection of all keybindings.
+	 * 
+	 * @return a Collection of all keybindings
+	 */
 	public static Collection<KeyBinding> getKeyBindings() {
 		return keyBindings.values();
 	}
 
+	/**
+	 * Removes a given event from the event handlers, so it is no longer called
+	 * on new keypresses.
+	 * 
+	 * @param eventHandler to remove
+	 */
 	@SuppressWarnings("unchecked")
 	public static void removeEventHandler(EventHandler<?> event) {
 		removeOnKeyDown((EventHandler<KeyEvent>) event);

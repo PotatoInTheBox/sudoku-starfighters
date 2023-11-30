@@ -8,22 +8,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import model.Bullet;
+import model.Game;
 import model.Team;
 
 public class BulletTest {
     @Test
-    void testGetTeam() {
+    void testBulletInitialization() {
         // The bullet should request a team as a construct parameter.
         // Having a "neutral" or unexpected Team should be clearly stated.
         // Note: neutral bullets should not collide/harm anything.
-        Bullet bullet = new Bullet(0, 0, 1, 1, 1, Team.INVADERS);
-        assertEquals(Team.INVADERS, bullet.getTeam());
-        assertNotEquals(Team.NEUTRAL, bullet.getTeam());
-        assertEquals(1, bullet.getDy());
-        bullet = new Bullet(0, 0, 1, 1, -1f, Team.PLAYER);
-        assertEquals(Team.PLAYER, bullet.getTeam());
-        assertNotEquals(Team.NEUTRAL, bullet.getTeam());
-        assertEquals(-1, bullet.getDy());
+        Game game = new Game();
+        Bullet bullet = new Bullet(game, 0f, 0f, -1f, Team.NEUTRAL);
+        assertEquals(0, bullet.getY());
+        bullet.update();
+        assertTrue(bullet.getY() < 0);
     }
 
     // TODO there isn't a whole lot to test to be honest.

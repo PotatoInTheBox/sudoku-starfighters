@@ -22,6 +22,10 @@ import javafx.scene.layout.Pane;
 import view_controller.sound.SoundPlayer;
 
 // NOTE: Pane won't resize the child panes, BorderPane will.
+/**
+ * Option pane contains all the settings that can be changed for the game, such
+ * as sound, wireframes, and keybinds settings.
+ */
 public class OptionsPane extends BorderPane {
     private GridPane gridList;
 
@@ -37,6 +41,10 @@ public class OptionsPane extends BorderPane {
     private Button backButton;
     private List<EventHandler<ActionEvent>> backHandlers = new ArrayList<>();
 
+    /**
+     * Construct the options pane with wireframe, fps cap, volume, and keybinds
+     * options.
+     */
     public OptionsPane() {
         Label paneTitleLabel = new Label("Options");
         paneTitleLabel.getStyleClass().add("dark-mode-header");
@@ -110,6 +118,7 @@ public class OptionsPane extends BorderPane {
 
     /**
      * If wire frame is enabled
+     * 
      * @return Wire Frame State
      */
     public boolean isWireframeEnabled() {
@@ -118,6 +127,7 @@ public class OptionsPane extends BorderPane {
 
     /**
      * If FPS cap is enabled
+     * 
      * @return FPS state
      */
     public boolean isCapFpsEnabled() {
@@ -126,6 +136,7 @@ public class OptionsPane extends BorderPane {
 
     /**
      * Sets the wire frame
+     * 
      * @param newValue If the wire frame is enabled or not
      */
     public void setWireframeEnabled(boolean newValue) {
@@ -134,6 +145,7 @@ public class OptionsPane extends BorderPane {
 
     /**
      * Sets on key binding button pressed
+     * 
      * @param eventHandler The event
      */
     public void onKeyBindingsButton(EventHandler<ActionEvent> eventHandler) {
@@ -142,8 +154,9 @@ public class OptionsPane extends BorderPane {
 
     /**
      * Add an item to the settings list
+     * 
      * @param label The label for the setting
-     * @param item The item to set
+     * @param item  The item to set
      */
     private void addSettingsItem(Label label, Control item) {
         gridList.addColumn(0, label);
@@ -152,6 +165,7 @@ public class OptionsPane extends BorderPane {
 
     /**
      * Sets on back
+     * 
      * @param eventHandler The event
      */
     public void onBack(EventHandler<ActionEvent> eventHandler) {

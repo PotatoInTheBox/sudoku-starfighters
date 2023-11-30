@@ -27,6 +27,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import model.Score;
 
+/**
+ * LeaderboardPane contains the submitted names in the saved score file.
+ */
 public class LeaderboardPane extends GridPane {
 
 	public static ArrayList<Score> topScores = new ArrayList<Score>();
@@ -37,6 +40,9 @@ public class LeaderboardPane extends GridPane {
 	private Button backButton;
 	private List<EventHandler<ActionEvent>> backHandlers = new ArrayList<>();
 
+	/**
+	 * Construct the leaderboard pane with names on the leaderboard.
+	 */
 	public LeaderboardPane() {
 		setAlignment(Pos.CENTER);
 		paneTitleLabel = new Label("Leaderboard");

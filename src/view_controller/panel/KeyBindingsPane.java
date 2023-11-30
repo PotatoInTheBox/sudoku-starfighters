@@ -30,6 +30,11 @@ import javafx.scene.layout.Pane;
 import view_controller.utils.Input;
 import view_controller.utils.KeyBinding;
 
+/**
+ * KeybindingsPane contains all the keybindings given by other classes. Another
+ * class can access this instance and provide new keybinds which can show up on
+ * the list and be modified by the user to be a different key.
+ */
 public class KeyBindingsPane extends BorderPane {
     private GridPane gridList;
     ScrollPane scrollPane;
@@ -39,6 +44,9 @@ public class KeyBindingsPane extends BorderPane {
     private Button backButton;
     private List<EventHandler<ActionEvent>> backHandlers = new ArrayList<>();
 
+    /**
+     * Constructor which makes the keybindings pane to hold all the keybindings.
+     */
     public KeyBindingsPane() {
 
         Label paneTitleLabel = new Label("Keybindings");

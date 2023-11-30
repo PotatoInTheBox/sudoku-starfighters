@@ -8,7 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import model.Bullet;
+import model.Game;
 import model.Player;
+import model.Team;
 
 public class PlayerTest {
     // @Test
@@ -21,33 +23,10 @@ public class PlayerTest {
     // Rather, it is being controlled by the joystick.
     // move() is not needed because the player does not go in motion.
     @Test
-    void testMovePlayer() {
-        Player player = new Player(0, 0, 10, 10, 10);
-        player.moveHorizontal(1f);
-        player.moveVertical(0.5f);
-        // with a speed of 10 it should have gone 10 right, 5 down
-        assertEquals(10, player.getX());
-        assertEquals(5, player.getY());
-        player.moveHorizontal(-0.5f);
-        player.moveVertical(-1f);
-        assertEquals(5, player.getX());
-        assertEquals(-5, player.getY());
+    void testPlayerInitialization() {
+        Game game = new Game();
+        Player player = new Player(game, 0, 0);
+         
+        assertEquals(Team.PLAYER, player.getTeam());
     }
-
-    @Test
-    void testShootBullet() {
-        Player player = new Player(0, 0, 10, 10, 10);
-        Bullet bullet = player.shootBullet();
-        // location doesn't really matter, however, it should be near the
-        // player and above it.
-        assertEquals(5f, bullet.getX(), 6f);
-        // after the bullet has moved it should always be in front of the
-        // character (even if by a single pixel)
-        bullet.move();
-        assertTrue(bullet.getY() < player.getY() + player.getHeight() / 2);
-
-        // no assumptions can be made about the speed and exact position
-        // of the spawned bullet.
-    }
-
 }

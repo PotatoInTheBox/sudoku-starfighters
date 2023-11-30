@@ -54,6 +54,10 @@ import view_controller.utils.FrameRateTracker;
 
 import java.util.ConcurrentModificationException;
 
+/**
+ * Graphics is responsible for drawing all the sprites from Game over to a
+ * canvas so the player can see the game.
+ */
 public class Graphics extends VBox {
 
     private GamePane gamePane;
@@ -71,6 +75,15 @@ public class Graphics extends VBox {
     Image destructionSprite;
     Image bulletSprite;
 
+    /**
+     * Construct graphics with a canvas to begin drawing at. The gamepane
+     * provided is needed to access the game. The graphics will access game to
+     * draw on every .update() call from gamepane.
+     * 
+     * @param gamePane to get information about game and pane from
+     * @param width    of the graphics pane/canvas
+     * @param height   of the graphics pane/canvas
+     */
     public Graphics(GamePane gamePane, double width, double height) {
         this.gamePane = gamePane;
         this.game = gamePane.game;
@@ -104,28 +117,30 @@ public class Graphics extends VBox {
         // clear screen
         drawRectangle(0, 0, canvas.getWidth(), canvas.getHeight(), Color.BLACK);
 
-        //double fpsAvg = frameRateTracker.getAverageUpdate();
-        //double tpsAvg = gamePane.frameRateTracker.getAverageUpdate();
-        //String fpsAverageString = String.format("Average FPS/UPS: %8.4f / %8.4f", fpsAvg, tpsAvg);
+        // double fpsAvg = frameRateTracker.getAverageUpdate();
+        // double tpsAvg = gamePane.frameRateTracker.getAverageUpdate();
+        // String fpsAverageString = String.format("Average FPS/UPS: %8.4f / %8.4f",
+        // fpsAvg, tpsAvg);
 
-        //drawText(fpsAverageString, 10, 15);
-        drawText(Integer.toString(game.getScore()), (float)canvas.getWidth()/2, (float)canvas.getHeight()/3, 75, 0.2f);
-        for(int i = 0; i<game.getLives(); i++) {
-        	drawSprite(getSpriteFromFile("./resources/images/heart.png"), new Point2D(500 + 30*i, 565), new Point2D(25, 25));
+        // drawText(fpsAverageString, 10, 15);
+        drawText(Integer.toString(game.getScore()), (float) canvas.getWidth() / 2, (float) canvas.getHeight() / 3, 75,
+                0.2f);
+        for (int i = 0; i < game.getLives(); i++) {
+            drawSprite(Sprites.loadImage("heart.png"), new Point2D(500 + 30 * i, 565), new Point2D(25, 25));
         }
-        //drawText("Lives: " + Integer.toString(game.getLives()), 10, 45);
-        if (game.getPlayer() != null){
+        // drawText("Lives: " + Integer.toString(game.getLives()), 10, 45);
+        if (game.getPlayer() != null) {
             drawText("Coins: " + Integer.toString(game.getPlayer().coins), 45, 580, 20, 0.7f);
         }
-        
+
         try {
             drawSprites();
             if (optionsPane.isWireframeEnabled())
                 drawAllWireFrames();
         } catch (ConcurrentModificationException e) {
-            //System.err.println(e);
+            // System.err.println(e);
         }
-        
+
         frameRateTracker.logFrameUpdate();
     }
 
@@ -144,67 +159,30 @@ public class Graphics extends VBox {
         }
     }
 
-    /**
-     * reColor the given InputImage to the given color
-     * inspired by https://stackoverflow.com/a/12945629/1497139
-     * 
-     * @author Wolfgang Fahl https://stackoverflow.com/a/51726678
-     * 
-     * @param inputImage The input image
-     * @param oldColor The old color
-     * @param newColor The new color
-     * @return reColored Image The final recolored image
-     * 
-     */
-    public static Image debugTempReColor(Image inputImage, Color oldColor, Color newColor) {
-        int W = (int) inputImage.getWidth();
-        int H = (int) inputImage.getHeight();
-        WritableImage outputImage = new WritableImage(W, H);
-        PixelReader reader = inputImage.getPixelReader();
-        PixelWriter writer = outputImage.getPixelWriter();
-        int ob = (int) (oldColor.getBlue() * 255);
-        int or = (int) (oldColor.getRed() * 255);
-        int og = (int) (oldColor.getGreen() * 255);
-        int nb = (int) (newColor.getBlue() * 255);
-        int nr = (int) (newColor.getRed() * 255);
-        int ng = (int) (newColor.getGreen() * 255);
-        for (int y = 0; y < H; y++) {
-            for (int x = 0; x < W; x++) {
-                int argb = reader.getArgb(x, y);
-                int a = (argb >> 24) & 0xFF;
-                int r = (argb >> 16) & 0xFF;
-                int g = (argb >> 8) & 0xFF;
-                int b = argb & 0xFF;
-                if (g == og && r == or && b == ob) {
-                    r = nr;
-                    g = ng;
-                    b = nb;
-                }
-
-                argb = (a << 24) | (r << 16) | (g << 8) | b;
-                writer.setArgb(x, y, argb);
-            }
-        }
-        return outputImage;
-    }
+    // /**
+    // * Gets a sprite from a file
+    // * @param path The path to the Image
+    // * @return The final Image
+    // */
+    // private Image getSpriteFromFile(String path) {
+    // FileInputStream playerImageFile;
+    // try {
+    // playerImageFile = new FileInputStream(path);
+    // Image sprite = new Image(playerImageFile);
+    // return sprite;
+    // } catch (FileNotFoundException e) {
+    // System.out.println("Could not find" + path);
+    // return null;
+    // }
+    // }
 
     /**
-     * Gets a sprite from a file
-     * @param path The path to the Image
-     * @return The final Image
+     * Draw sprite from game onto screen.
+     * 
+     * @param image      sprite image to draw
+     * @param startPoint point to draw (from game)
+     * @param size       size to draw at (from game)
      */
-    private Image getSpriteFromFile(String path) {
-        FileInputStream playerImageFile;
-        try {
-            playerImageFile = new FileInputStream(path);
-            Image sprite = new Image(playerImageFile);
-            return sprite;
-        } catch (FileNotFoundException e) {
-            System.out.println("Could not find" + path);
-            return null;
-        }
-    }
-
     private void drawSprite(Image image, Point2D startPoint, Point2D size) {
         Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);
         Point2D mappedEndPoint = mapGamePointOntoGraphics(size);
@@ -222,30 +200,44 @@ public class Graphics extends VBox {
 
     }
 
-    /*
-     * Draws text
+    // /*
+    // * Draws text
+    // */
+    // private void drawText(String string, float x, float y) {
+    // gc.setLineWidth(1);
+    // gc.setStroke(Color.WHITE);
+    // gc.strokeText(string, x, y + 5);
+    // }
+
+    /**
+     * Draw text at a given position and size.
+     * 
+     * @param string  text to use
+     * @param x       position to draw at (relative to pane)
+     * @param y       position to draw at (relative to pane)
+     * @param width   of the text
+     * @param opacity of the text
      */
-    private void drawText(String string, float x, float y) {
-        gc.setLineWidth(1);
-        gc.setStroke(Color.WHITE);
-        gc.strokeText(string, x, y + 5);
-    }
-    
     private void drawText(String string, float x, float y, float width, float opacity) {
         gc.setLineWidth(1);
         gc.setStroke(Color.WHITE);
-        
+
         gc.setGlobalAlpha(opacity);
         gc.setFont(Font.font(width));
         gc.setTextAlign(TextAlignment.CENTER);
-        
+
         gc.strokeText(string, x, y + 5);
-        
+
         gc.setGlobalAlpha(1);
         gc.setTextAlign(TextAlignment.LEFT);
         gc.setFont(Font.font(12));
     }
 
+    /**
+     * Draw wireframe as debug (only targets colliders instead of all rectangles)
+     * 
+     * @param entity to draw wireframe for (will only draw if it is a collider)
+     */
     private void drawWireFrame(Entity entity) {
         for (Entity subEntity : entity.getChildren()) {
             if (subEntity.getClass() == Collider.class) {
@@ -261,9 +253,10 @@ public class Graphics extends VBox {
 
     /**
      * Draws a wire frame
+     * 
      * @param startPoint Start of the wire frame
-     * @param size The size of the lines to draw
-     * @param color The color of the frame
+     * @param size       The size of the lines to draw
+     * @param color      The color of the frame
      */
     private void drawWireframe(Point2D startPoint, Point2D size, Color color) {
         Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);
@@ -282,9 +275,10 @@ public class Graphics extends VBox {
 
     /**
      * Draw a circle wire frame
+     * 
      * @param startPoint Start of the wire frame
-     * @param size The size of the lines to draw
-     * @param color The color of the frame
+     * @param size       The size of the lines to draw
+     * @param color      The color of the frame
      */
     private void drawCircleWireframe(Point2D startPoint, Point2D size, Color color) {
         Point2D mappedStartPoint = mapGamePointOntoGraphics(startPoint);
@@ -300,11 +294,12 @@ public class Graphics extends VBox {
 
     /**
      * Draws a rectangle
-     * @param x The x coordinate
-     * @param y The y coordinate
-     * @param width The width of the rectangle
+     * 
+     * @param x      The x coordinate
+     * @param y      The y coordinate
+     * @param width  The width of the rectangle
      * @param height The height of the rectangle
-     * @param color The color of the rectangle
+     * @param color  The color of the rectangle
      */
     private void drawRectangle(double x, double y, double width, double height, Color color) {
         gc.setFill(color);
@@ -313,6 +308,7 @@ public class Graphics extends VBox {
 
     /**
      * Maps a game point to the graphics
+     * 
      * @param point The point to map to
      * @return The point on the graphics
      */

@@ -10,6 +10,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * GameOverPane places itself ontop of the game to inform the player that the
+ * game is over and telling the player they can submit their game for a score.
+ * After which the GameOverPane will inform the player that the game needs to be
+ * restarted to continue.
+ */
 public class GameOverPane extends BorderPane {
     VBox enterScorePane;
     VBox submittedPane;
