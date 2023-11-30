@@ -12,6 +12,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -29,6 +30,10 @@ public class MenuPane extends GridPane {
 	private Button leaderboardButton;
 	
     private Image gameLogo;
+    private Label moveTutorial;
+    private Label shootTutorial;
+    private Label turretTutorial;
+
 
 	private List<EventHandler<ActionEvent>> continueGameHandlers = new ArrayList<>();
 	private List<EventHandler<ActionEvent>> newGameHandlers = new ArrayList<>();
@@ -43,6 +48,10 @@ public class MenuPane extends GridPane {
 		leaderboardButton = new Button("Leaderboard");
 		optionsButton = new Button("Options");
 		exitButton = new Button("Exit");
+		
+		moveTutorial = new Label("Arrow Keys to Move");
+		shootTutorial = new Label("Z to Shoot");
+		turretTutorial = new Label("X to Spawn Turret (Costs 3 Coins)");
 		
         gameLogo = getSpriteFromFile("./resources/images/game_logo.png");
 
@@ -61,7 +70,14 @@ public class MenuPane extends GridPane {
         setConstraints(logoView, 0, 0);
         getChildren().add(logoView);
         
+        setConstraints(moveTutorial, 0, 5);
+        setConstraints(shootTutorial, 0, 6);
+        setConstraints(turretTutorial, 0, 7);
+        
 		addColumn(0, continueButton, newGameButton, leaderboardButton, optionsButton, exitButton);
+		
+        getChildren().addAll(moveTutorial, shootTutorial, turretTutorial);
+
 		
 		continueButton.setOnAction(e -> {
 			for (EventHandler<ActionEvent> event : continueGameHandlers)
