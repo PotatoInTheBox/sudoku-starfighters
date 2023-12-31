@@ -134,14 +134,22 @@ public class KeyBindingsPane extends BorderPane {
      * @param button     A specific button
      * @param keyBinding A specific key bind
      */
-    private void assigningButton(Button button, KeyBinding keyBinding) {  
+    private void assigningButton(Button button, KeyBinding keyBinding) {
         newKeybindEvent = (e -> {
-            if (e.getCode() != KeyCode.ESCAPE) {
+            // placeholder ignore (allow fullscreen in this context)
+            // and don't try to consume fullscreen (F11 will always be for
+            // fullscren and never for gameplay)
+            if (e.getCode() == KeyCode.F11) {
+                return; // placeholder
+            }
+            if (e.getCode() != KeyCode.ESCAPE) { // ESC as panic button
                 keyBinding.setKey(e.getCode());
             }
             button.setText(keyBinding.getKey().toString());
             releaseNewKeybindHook(button, newKeybindEvent);
-            e.consume(); // Consume so that global button listeners do not accept
+            // WARNING: Doesn't work with the current event handling system.
+            // ESC may or may not be seen by a different handler first.
+            // e.consume();  // <-- problematic/broken statement
         });
         beginNewKeybindHook(button, newKeybindEvent);
         button.setText("<waiting for input>");
