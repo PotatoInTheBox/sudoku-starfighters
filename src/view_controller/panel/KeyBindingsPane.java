@@ -40,6 +40,7 @@ public class KeyBindingsPane extends BorderPane {
     ScrollPane scrollPane;
     private boolean isUsingEscapeKey = false;
     private List<KeyBindingEntry> keyBindingEntries = new ArrayList<>();
+    private EventHandler<KeyEvent> newKeybindEvent = null;
 
     private Button backButton;
     private List<EventHandler<ActionEvent>> backHandlers = new ArrayList<>();
@@ -78,6 +79,7 @@ public class KeyBindingsPane extends BorderPane {
 
     /**
      * Finds if user is using the escape key
+     * 
      * @return Boolean of user state
      */
     public boolean isUsingEscapeKey() {
@@ -98,6 +100,7 @@ public class KeyBindingsPane extends BorderPane {
 
     /**
      * Add key binding fields
+     * 
      * @param keyBindings The Collection of KeyBindings
      */
     public void addKeyBindFields(Collection<KeyBinding> keyBindings) {
@@ -107,6 +110,7 @@ public class KeyBindingsPane extends BorderPane {
 
     /**
      * Add key binding fields
+     * 
      * @param keyBinding One specific key binding
      */
     public void addKeyBindField(KeyBinding keyBinding) {
@@ -126,38 +130,33 @@ public class KeyBindingsPane extends BorderPane {
 
     /**
      * Assigns a certain button
-     * @param button A specific button
+     * 
+     * @param button     A specific button
      * @param keyBinding A specific key bind
      */
-    private void assigningButton(Button button, KeyBinding keyBinding) {
-        isUsingEscapeKey = true;
-        scrollPane.setDisable(true);
-        button.setText("<waiting for input>");
-        Input.onKeyDown(new NewKeyHandler(button, keyBinding));
-    }
-
-    private class NewKeyHandler implements EventHandler<KeyEvent> {
-        Button button;
-        KeyBinding keyBinding;
-
-        public NewKeyHandler(Button button, KeyBinding keyBinding) {
-            isUsingEscapeKey = true;
-            this.button = button;
-            this.keyBinding = keyBinding;
-        }
-
-        /**
-         * Handles a key press
-         */
-        public void handle(KeyEvent e) {
+    private void assigningButton(Button button, KeyBinding keyBinding) {  
+        newKeybindEvent = (e -> {
             if (e.getCode() != KeyCode.ESCAPE) {
                 keyBinding.setKey(e.getCode());
             }
             button.setText(keyBinding.getKey().toString());
-            scrollPane.setDisable(false);
-            Input.removeOnKeyDown(this);
-            isUsingEscapeKey = false;
-        }
+            releaseNewKeybindHook(button, newKeybindEvent);
+            e.consume(); // Consume so that global button listeners do not accept
+        });
+        beginNewKeybindHook(button, newKeybindEvent);
+        button.setText("<waiting for input>");
+    }
+
+    private void beginNewKeybindHook(Button button, EventHandler<KeyEvent> newKeybindEvent) {
+        isUsingEscapeKey = true;
+        this.setDisable(true);
+        Input.onKeyDown(newKeybindEvent);
+    }
+
+    private void releaseNewKeybindHook(Button button, EventHandler<KeyEvent> newKeybindEvent) {
+        isUsingEscapeKey = false;
+        this.setDisable(false);
+        Input.removeOnKeyDown(newKeybindEvent);
     }
 
     private class KeyBindingEntry {
