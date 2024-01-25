@@ -39,6 +39,9 @@ public class House extends Entity {
 		sprite.instantiate();
 		addChild(collider, sprite);
 		chooseCurrentSprite();
+
+		// deal with edge case of House spawning on top of Player
+		ghostCollidingPlayers();
 	}
 
 	@Override
@@ -83,6 +86,18 @@ public class House extends Entity {
 			sprite.setImage("house_damage_level_3.png");
 		} else {
 			sprite.setImage("house_damage_level_4.png");
+		}
+	}
+
+	private void ghostCollidingPlayers() {
+		for (Entity entity : game.getEntities()) {
+			if (entity.getClass() == Player.class) {
+				Player player = (Player) entity;
+				if (collider.hasCollidedWith(player.collider)) {
+					player.isGhost = true;
+					System.out.println("Ghosted Player");
+				}
+			}
 		}
 	}
 }

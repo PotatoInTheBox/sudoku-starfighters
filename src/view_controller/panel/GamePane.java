@@ -211,7 +211,6 @@ public class GamePane extends StackPane {
      * Calls logic update
      */
     private void logicUpdate() {
-        // game.movePlayer(Input.getJoystickX(), Input.getJoystickY());
 
         game.update();
 

@@ -21,6 +21,7 @@ public class Player extends Entity {
 	public Sprite sprite;
 	private float speed = 3f;
 	private boolean isInvincible = false;
+	public boolean isGhost = false; // edge case to deal with House spawning inside Player
 
 	private int shootCooldown = 0;
 	// private boolean isShootQueued = false;
@@ -71,29 +72,54 @@ public class Player extends Entity {
 		/// handle input
 		float xDir = Input.getJoystickX();
 		float yDir = Input.getJoystickY();
+
+		boolean isCollidingWithWall = false;
 		if (xDir != 0) {
 			move(xDir * speed, 0);
+			
 			for (Entity entity : game.getEntities()) {
 				if (entity.getClass() == House.class) {
 					House house = (House) entity;
 					if (collider.hasCollidedWith(house.collider)) {
-						move(-xDir * speed, 0);
+						if (!isGhost){
+							move(-xDir * speed, 0);
+						}
+						isCollidingWithWall = true;
 						break;
 					}
 				}
 			}
 		}
+
 		if (yDir != 0) {
 			move(0, yDir * speed);
 			for (Entity entity : game.getEntities()) {
 				if (entity.getClass() == House.class) {
 					House house = (House) entity;
 					if (collider.hasCollidedWith(house.collider)) {
-						move(0, -yDir * speed);
+						if (!isGhost){
+							move(0, -yDir * speed);
+						}
+						isCollidingWithWall = true;
 						break;
 					}
 				}
 			}
+		}
+
+		for (Entity entity : game.getEntities()) {
+			if (entity.getClass() == House.class) {
+				House house = (House) entity;
+				if (collider.hasCollidedWith(house.collider)) {
+					isCollidingWithWall = true;
+					break;
+				}
+			}
+		}
+
+		if (isCollidingWithWall == false && isGhost){
+			isGhost = false;
+			System.out.println("UnGhosted Player");
 		}
 
 		// bound to map
@@ -148,11 +174,11 @@ public class Player extends Entity {
 					shootCooldown = SHOOT_COOLDOWN;
 				}
 			}
-			// if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SHOOT_MANY))) {
-			// for (int i = 0; i < 50; i++) {
-			// shootBullet(i * 4 - 25 * 4, 0);
-			// }
-			// }
+			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SHOOT_MANY))) {
+				for (int i = 0; i < 50; i++) {
+					shootBullet(i * 4 - 25 * 4, 0);
+				}
+			}
 			if (e.getCode().equals(Input.getKeyFromType(KeyBinding.Type.SPAWN_TURRET))) {
 				if (coins < TURRET_COST) {
 					System.out.println("Could not spawn turret, not enough coins.");

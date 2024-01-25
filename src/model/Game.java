@@ -171,6 +171,14 @@ public class Game {
             markedForRemoval.remove().run();
         }
 
+        // add any items that were spawned before game tick (TEMP)
+        // while (markedForSpawn.isEmpty() == false) {
+        //     if (markedForSpawn.size() > 0){
+        //         System.out.println("Had to add " + markedForSpawn.size() + " elements before update tick");
+        //     }
+        //     markedForSpawn.remove().run();
+        // }
+
         /// update all entities
         for (Entity entity : entities) {
             if (entity.isFrozen() == false && entity.isAlive)

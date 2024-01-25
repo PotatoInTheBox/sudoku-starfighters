@@ -110,7 +110,7 @@ public class KeyBinding {
         WIREFRAME("Debug toggle wireframe"),
         //FORCE_UNPAUSE("Debug force unpause"),
         //GHOST("Can't be hit or hit others"),
-        //SHOOT_MANY("Shoot dozens of bullets"),
+        SHOOT_MANY("Shoot dozens of bullets"),
         SPAWN_TURRET("Spawns turret for 3 coins");
 
         public final String name;
