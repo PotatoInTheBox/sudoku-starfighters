@@ -1,0 +1,21 @@
+In src directory:
+javac --module-path "../lib/javafx-sdk-21.0.1/lib/" --add-modules javafx.controls,javafx.media,javafx.fxml -d ../build/ .\view_controller\*.java .\model\*.java
+
+in project directory:
+jar cfm SpaceInvaders.jar MANIFEST.MF -C ./build .
+
+to run (in project directory):
+java --module-path ./lib/javafx-sdk-21.0.1/lib --add-modules javafx.controls,javafx.media,javafx.fxml -jar SpaceInvaders.jar
+
+then launch4j to create .exe:
+In Basic
+* Pick an exe output
+* select SpaceInvaders.jar as Jar
+In Classpath
+* set main class as view_controller.MainGUI
+In JRE
+* Use %PATH% as JRE path
+* Set min JRE version to 21.0.5
+* For JVM options type: --module-path "./lib/javafx-sdk-21.0.1/lib/" --add-modules javafx.controls,javafx.media,javafx.fxml
+Click cogwheel to build.
+Play button should work.
