@@ -5,7 +5,7 @@ be working on creating Space Invaders in Java
 
 ![Image showing gameplay of the Space Invaders project](example.png)
 
-`Note: JavaSE-17 is used for this project. Configure your workspace with this version of Java.`
+`Note: JavaSE-17/JavaSE-21 is used for this project. Configure your workspace with this version of Java.`
 
 | Contributors      |
 | ----------------- |
